@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en-US" data-deployment-environment="{{DEPLOYMENT_ENV}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script data-theme-initializer>
+      (() => {
+        const storageKey = 'lawscope-theme';
+        let storedTheme = null;
+
+        try {
+          storedTheme = window.localStorage.getItem(storageKey);
+        } catch {
+          storedTheme = null;
+        }
+
+        const hasStoredChoice = storedTheme === 'light' || storedTheme === 'dark';
+        const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+        const resolvedTheme = hasStoredChoice
+          ? storedTheme
+          : systemPrefersDark
+            ? 'dark'
+            : 'light';
+
+        document.documentElement.dataset.theme = resolvedTheme;
+      })();
+    </script>
+    <meta name="robots" content="{{ROBOTS_DIRECTIVE}}">
+    <meta name="description" content="{{PAGE_DESCRIPTION}}">
+    <title>{{PAGE_TITLE}}</title>
+    <link rel="canonical" href="{{CANONICAL_URL}}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lawscope">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="{{PAGE_TITLE}}">
+    <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
+    <meta property="og:url" content="{{CANONICAL_URL}}">
+    <meta property="og:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:secure_url" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{PAGE_TITLE}}">
+    <meta name="twitter:description" content="{{PAGE_DESCRIPTION}}">
+    <meta name="twitter:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta name="twitter:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <script type="application/ld+json">{{PAGE_JSON_LD}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Merriweather:wght@700;900&amp;display=swap"
+    >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <script src="/js/theme.js" defer></script>
+    <script src="/js/header.js" defer></script>
+    <script src="/js/search.js" defer></script>
+    <script src="/js/consent.js" defer></script>
+    <script src="/js/analytics-config.js" defer></script>
+    <script src="/js/analytics.js" defer></script>
+    <script src="/js/newsletter.js" defer></script>
+    <script src="/js/back-to-top.js" defer></script>
+    <script src="/js/scroll-reveal.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header" data-site-header>
+      <div class="site-header__inner container">
+        <a
+          class="site-header__logo"
+          id="page-top"
+          href="/"
+          aria-label="Lawscope home"
+          data-page-top-focus
+        >Lawscope</a>
+
+        <nav
+          class="site-header__navigation"
+          id="primary-navigation"
+          aria-label="Primary navigation"
+          data-primary-navigation
+        >
+          <div class="site-header__navigation-heading">
+            <span>Main menu</span>
+            <button
+              class="site-header__navigation-close"
+              type="button"
+              aria-label="Close main menu"
+              data-menu-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span>Close</span>
+            </button>
+          </div>
+          <ul class="site-header__navigation-list" role="list">
+            <li>
+              <a class="site-header__navigation-link" href="/">Home</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/articles/">Articles</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/categories/">Categories</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/about/" aria-current="page">About</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/contact/">Contact</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="site-header__controls" role="group" aria-label="Site controls">
+          <button
+            class="site-header__control site-header__search-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="site-search-panel"
+            aria-label="Open site search"
+            data-search-toggle
+          >
+            <i
+              class="site-header__control-icon fa-solid fa-magnifying-glass"
+              aria-hidden="true"
+            ></i>
+            <span class="site-header__control-label">Search</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__theme-toggle"
+            type="button"
+            aria-pressed="false"
+            aria-label="Switch to dark mode"
+            data-theme-toggle
+          >
+            <i
+              class="site-header__control-icon fa-regular fa-moon"
+              aria-hidden="true"
+              data-theme-icon
+            ></i>
+            <span class="site-header__control-label" data-theme-label>Dark mode</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open main menu"
+            data-menu-toggle
+          >
+            <i class="site-header__control-icon fa-solid fa-bars" aria-hidden="true"></i>
+            <span class="site-header__control-label">Menu</span>
+          </button>
+        </div>
+      </div>
+
+      <section
+        class="site-search"
+        id="site-search-panel"
+        aria-label="Search Lawscope"
+        data-search-panel
+        hidden
+      >
+        <div class="site-search__inner container">
+          <form
+            class="site-search__form"
+            role="search"
+            action="/articles/"
+            method="get"
+            data-search-form
+          >
+            <label class="site-search__label" for="site-search-input">Search Lawscope</label>
+            <div class="site-search__field-wrap">
+              <i
+                class="site-search__field-icon fa-solid fa-magnifying-glass"
+                aria-hidden="true"
+              ></i>
+              <input
+                class="site-search__field"
+                id="site-search-input"
+                name="q"
+                type="search"
+                placeholder="Search articles by topic or phrase"
+                autocomplete="off"
+                enterkeyhint="search"
+                maxlength="120"
+                aria-controls="site-search-results"
+                aria-describedby="site-search-help site-search-status"
+                data-search-field
+              >
+              <button
+                class="site-search__clear"
+                type="button"
+                aria-label="Clear search"
+                data-search-clear
+                hidden
+              >
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </div>
+            <button class="site-search__submit" type="submit">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <span>Search</span>
+            </button>
+            <button
+              class="site-search__close"
+              type="button"
+              aria-label="Close search"
+              data-search-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span class="visually-hidden">Close search</span>
+            </button>
+            <p class="site-search__hint" id="site-search-help">
+              Matches published article titles, categories, tags, and summaries. Use the Up and
+              Down arrow keys to move through results.
+            </p>
+            <div
+              class="site-search__results"
+              id="site-search-results"
+              data-search-results
+              data-search-index-url="/data/search-index.json"
+              data-search-limit="6"
+              data-search-state="idle"
+              aria-busy="false"
+            >
+              <p
+                class="site-search__status"
+                id="site-search-status"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                data-search-status
+              >
+                Enter a legal topic or phrase to search published Lawscope guides.
+              </p>
+              <ul
+                class="site-search__list"
+                aria-label="Search results"
+                data-search-list
+                hidden
+              ></ul>
+              <nav
+                class="site-search__fallback"
+                aria-label="Search alternatives"
+                data-search-fallback
+                hidden
+              >
+                <a href="/articles/">Browse all articles</a>
+                <a href="/categories/">Browse categories</a>
+              </nav>
+            </div>
+            <noscript>
+              <p class="site-search__noscript">
+                Interactive search requires JavaScript. You can still browse
+                <a href="/articles/">Articles</a> or <a href="/categories/">Categories</a>.
+              </p>
+            </noscript>
+          </form>
+        </div>
+      </section>
+    </header>
+
+    <main class="about-page" id="main-content" tabindex="-1">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol class="breadcrumb__list" role="list">
+            <li class="breadcrumb__item"><a href="/">Home</a></li>
+            <li class="breadcrumb__item" aria-current="page">About</li>
+          </ol>
+        </nav>
+
+        <header class="about-hero">
+          <div class="about-hero__content">
+            <p class="eyebrow">Our mission</p>
+            <h1>About Lawscope</h1>
+            <p class="about-hero__lead">
+              Lawscope exists to make U.S. legal information easier to understand. We publish
+              carefully sourced, plain-English explanations that help readers learn the vocabulary,
+              processes, and questions behind common legal situations.
+            </p>
+            <p>
+              Our work is educational—not a substitute for advice from a lawyer who can evaluate
+              the facts and law that apply to you.
+            </p>
+          </div>
+          <figure class="about-hero__media">
+            <img
+              src="/assets/images/about-lawscope-editorial.jpg"
+              width="1376"
+              height="768"
+              alt="Abstract layered paper forms connected by fine lines, representing Lawscope’s research and editing process."
+              fetchpriority="high"
+              decoding="async"
+            >
+          </figure>
+        </header>
+
+        <section class="about-purpose" aria-labelledby="about-purpose-title" data-scroll-reveal>
+          <div class="about-purpose__narrative">
+            <p class="eyebrow">A clearer starting point</p>
+            <h2 id="about-purpose-title">Why Lawscope Exists</h2>
+            <p>
+              Legal information can be difficult to find, dense to read, and easy to misapply.
+              Lawscope organizes important concepts into readable guides, identifies the
+              jurisdictional limits, and points readers toward credible sources.
+            </p>
+            <p>
+              We aim to help readers recognize relevant terms, understand common processes, and
+              ask better questions—without overstating what general information can do.
+            </p>
+          </div>
+          <ul class="about-principles" role="list" aria-label="Lawscope trust principles">
+            <li class="about-principles__item">
+              <span class="about-principles__icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></span>
+              <div><h3>Clarity</h3><p>We define legal terms, use direct language, and organize articles for scanning and careful reading.</p></div>
+            </li>
+            <li class="about-principles__item">
+              <span class="about-principles__icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
+              <div><h3>Accuracy</h3><p>We cite authoritative sources, show publication and update dates, and correct material errors transparently.</p></div>
+            </li>
+            <li class="about-principles__item">
+              <span class="about-principles__icon" aria-hidden="true"><i class="fa-solid fa-border-all"></i></span>
+              <div><h3>Boundaries</h3><p>We explain general law without predicting outcomes or presenting information as personal legal advice.</p></div>
+            </li>
+          </ul>
+        </section>
+
+        <section class="about-process" aria-labelledby="about-process-title" data-scroll-reveal>
+          <div class="about-process__header">
+            <p class="eyebrow">From source to guide</p>
+            <h2 id="about-process-title">How We Work</h2>
+            <p>Each guide moves through a documented editorial process designed to preserve both clarity and important legal context.</p>
+          </div>
+          <ol class="about-process__list">
+            <li class="about-process__item">
+              <span class="about-process__number" aria-hidden="true">01</span>
+              <h3>Research</h3>
+              <p>We begin with primary legal materials and authoritative public guidance whenever available.</p>
+            </li>
+            <li class="about-process__item">
+              <span class="about-process__number" aria-hidden="true">02</span>
+              <h3>Plain-English Editing</h3>
+              <p>We translate complexity without removing important qualifications or exceptions.</p>
+            </li>
+            <li class="about-process__item">
+              <span class="about-process__number" aria-hidden="true">03</span>
+              <h3>Source Review</h3>
+              <p>We check citations, dates, jurisdiction, and whether a source still supports the statement made.</p>
+            </li>
+            <li class="about-process__item">
+              <span class="about-process__number" aria-hidden="true">04</span>
+              <h3>Updates &amp; Corrections</h3>
+              <p>We update time-sensitive guides and invite readers to report possible errors.</p>
+            </li>
+          </ol>
+        </section>
+
+        <section class="about-boundaries" aria-labelledby="about-boundaries-title" data-scroll-reveal>
+          <div class="about-boundaries__content">
+            <p class="eyebrow">Clear limits</p>
+            <h2 id="about-boundaries-title">What Lawscope Is—and Is Not</h2>
+            <p>
+              Lawscope is an independent educational publication. It is not a law firm, does not
+              create attorney-client relationships, and cannot evaluate individual claims,
+              deadlines, or legal strategies.
+            </p>
+          </div>
+          <ul class="about-boundaries__list" role="list">
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i><span>General educational information about U.S. law</span></li>
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i><span>Plain-English context with visible sources and dates</span></li>
+            <li><i class="fa-solid fa-xmark" aria-hidden="true"></i><span>Not legal advice or an assessment of personal facts</span></li>
+            <li><i class="fa-solid fa-xmark" aria-hidden="true"></i><span>Not a substitute for a licensed lawyer in the relevant jurisdiction</span></li>
+          </ul>
+        </section>
+
+        <section class="about-standards" aria-labelledby="about-standards-title" data-scroll-reveal>
+          <span class="about-standards__icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span>
+          <div class="about-standards__content">
+            <p class="eyebrow">Accountable publishing</p>
+            <h2 id="about-standards-title">Our Editorial Standards</h2>
+            <p>Read how we select sources, handle corrections, disclose advertising, and use editorial tools responsibly.</p>
+            <a class="button button--secondary" href="/editorial-policy/">
+              <span>Read our Editorial Policy</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </section>
+
+        <section class="about-publication" aria-labelledby="about-publication-title" data-scroll-reveal>
+          <div>
+            <p class="eyebrow">Publication identity</p>
+            <h2 id="about-publication-title">Meet the Publication</h2>
+          </div>
+          <div class="about-publication__body">
+            <p class="about-publication__byline"><i class="fa-regular fa-newspaper" aria-hidden="true"></i><strong>Lawscope Editorial</strong></p>
+            <p>
+              Articles are initially published by Lawscope Editorial. Verified contributor and
+              reviewer profiles may be introduced as the publication grows; Lawscope will not
+              display unverified credentials.
+            </p>
+          </div>
+        </section>
+
+        <aside class="about-corrections" aria-labelledby="about-corrections-title" data-scroll-reveal>
+          <span class="about-corrections__icon" aria-hidden="true"><i class="fa-regular fa-message"></i></span>
+          <div>
+            <h2 id="about-corrections-title">Help Us Keep Information Accurate</h2>
+            <p>
+              If you believe an article contains an error, outdated source, or broken citation,
+              send the article URL and a clear description through our Contact page.
+            </p>
+            <a href="/contact/">Report a correction <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </aside>
+
+        {{ABOUT_NEWSLETTER}}
+      </div>
+    </main>
+
+    {{SITE_FOOTER}}
+    {{CONSENT_MANAGER}}
+    {{BACK_TO_TOP}}
+  </body>
+</html>

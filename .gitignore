@@ -1,0 +1,29 @@
+# Dependencies and package-manager state
+node_modules/
+.npm/
+
+# Generated deployment output
+generated/
+
+# Local environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Vercel and Netlify local state
+.vercel/
+.netlify/
+
+# Logs and test artifacts
+*.log
+coverage/
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.swp

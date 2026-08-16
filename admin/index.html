@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="referrer" content="no-referrer">
+    <meta name="color-scheme" content="light">
+    <meta http-equiv="Content-Security-Policy" content="{{CMS_ADMIN_CSP}}">
+    <meta
+      name="cms-companion-origin"
+      content="{{CMS_COMPANION_ORIGIN}}"
+      data-module-32-runtime-setting
+    >
+    <title>Editorial CMS | Lawscope</title>
+    <link rel="stylesheet" href="/admin/cms-shell.css">
+    <script src="/admin/cms-manual-init.js" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/netlify-identity-widget@2.0.3/build/netlify-identity-widget.js"
+      integrity="sha384-MDUpeNysRoXS3J89jBylG2fdrQQ0dwDBTXhXGt3XQCgsFF92tnRKZS5vCKNs3XhD"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/decap-cms@3.15.1/dist/decap-cms.js"
+      integrity="sha384-in6eHztHveqQ7uMZ1fDaKlDmacQLFuLH2wWrFTiymyuS8zQ5bixwL8U3AeRi8h/L"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+      defer
+    ></script>
+    <script src="/admin/cms.js" defer></script>
+  </head>
+  <body>
+    <div id="nc-root">
+      <main class="cms-loading" aria-labelledby="cms-loading-title">
+        <div class="cms-loading__panel">
+          <span class="cms-loading__mark" aria-hidden="true">LS</span>
+          <h1 class="cms-loading__title" id="cms-loading-title">Lawscope Editorial CMS</h1>
+          <p class="cms-loading__copy">
+            Loading the restricted editorial workspace. Access is limited to individually invited editors.
+          </p>
+          <noscript>
+            <p class="cms-loading__copy">
+              JavaScript is required to use the editorial CMS. Public Lawscope pages remain available without it.
+            </p>
+          </noscript>
+        </div>
+      </main>
+    </div>
+    <aside
+      class="cms-boundary"
+      data-cms-auth-boundary
+      aria-live="polite"
+      aria-label="CMS authentication status"
+    >
+      <strong class="cms-boundary__title">Authentication bridge not provisioned</strong>
+      <p class="cms-boundary__copy">
+        The editor schema and previews are ready, but sign-in and publishing remain disabled until the owner completes the invite-only Identity and Git Gateway activation checklist.
+      </p>
+    </aside>
+  </body>
+</html>

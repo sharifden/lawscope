@@ -1,0 +1,22 @@
+<section
+  class="latest-articles"
+  aria-labelledby="latest-articles-title"
+  data-latest-count="{{LATEST_COUNT}}"
+  data-scroll-reveal
+>
+  <header class="latest-articles__header">
+    <h2 id="latest-articles-title">Latest Legal Guides</h2>
+    <p class="latest-articles__intro">
+      Explore Lawscope’s newest plain-English overviews of common legal questions and processes.
+    </p>
+  </header>
+  <div class="latest-articles__grid" data-latest-grid>
+    {{LATEST_CARDS}}
+  </div>
+  <div class="latest-articles__actions">
+    <a class="button button--secondary" href="/articles/">
+      <span>View all law articles</span>
+      <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+    </a>
+  </div>
+</section>

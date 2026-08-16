@@ -1,0 +1,43 @@
+<section
+  class="home-hero"
+  aria-labelledby="home-hero-title"
+  data-hero-slug="{{HERO_SLUG}}"
+>
+  <div class="home-hero__content">
+    <a class="category-badge" href="/categories/{{CATEGORY_SLUG}}/">
+      {{CATEGORY_NAME}}
+    </a>
+    <h1 class="home-hero__title" id="home-hero-title">{{HERO_TITLE}}</h1>
+    <p class="home-hero__excerpt">{{HERO_EXCERPT}}</p>
+    <p class="home-hero__meta">
+      <span class="home-hero__meta-item">
+        <i class="fa-regular fa-clock" aria-hidden="true"></i>
+        {{READING_TIME}} min read
+      </span>
+      <span class="home-hero__meta-separator" aria-hidden="true">·</span>
+      <time datetime="{{PUBLISH_DATE_ISO}}">{{PUBLISH_DATE_DISPLAY}}</time>
+    </p>
+    <a class="button button--primary home-hero__action" href="/articles/{{HERO_SLUG}}/">
+      <span>Read the guide</span>
+      <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+    </a>
+  </div>
+
+  <figure class="home-hero__media">
+    <a
+      class="home-hero__image-link"
+      href="/articles/{{HERO_SLUG}}/"
+      aria-label="Read {{HERO_TITLE}}"
+    >
+      <img
+        class="home-hero__image"
+        src="{{IMAGE_SOURCE}}"
+        width="{{IMAGE_WIDTH}}"
+        height="{{IMAGE_HEIGHT}}"
+        alt="{{IMAGE_ALT}}"
+        decoding="async"
+        fetchpriority="high"
+      >
+    </a>
+  </figure>
+</section>

@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en-US" data-deployment-environment="{{DEPLOYMENT_ENV}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script data-theme-initializer>
+      (() => {
+        const storageKey = 'lawscope-theme';
+        let storedTheme = null;
+
+        try {
+          storedTheme = window.localStorage.getItem(storageKey);
+        } catch {
+          storedTheme = null;
+        }
+
+        const hasStoredChoice = storedTheme === 'light' || storedTheme === 'dark';
+        const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+        const resolvedTheme = hasStoredChoice
+          ? storedTheme
+          : systemPrefersDark
+            ? 'dark'
+            : 'light';
+
+        document.documentElement.dataset.theme = resolvedTheme;
+      })();
+    </script>
+    <meta name="robots" content="{{ROBOTS_DIRECTIVE}}">
+    <meta name="description" content="{{PAGE_DESCRIPTION}}">
+    <title>{{PAGE_TITLE}}</title>
+    <link rel="canonical" href="{{CANONICAL_URL}}">
+    {{PAGINATION_HEAD_LINKS}}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lawscope">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="{{PAGE_TITLE}}">
+    <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
+    <meta property="og:url" content="{{CANONICAL_URL}}">
+    <meta property="og:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:secure_url" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{PAGE_TITLE}}">
+    <meta name="twitter:description" content="{{PAGE_DESCRIPTION}}">
+    <meta name="twitter:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta name="twitter:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <script type="application/ld+json">{{ARTICLES_JSON_LD}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Merriweather:wght@700;900&amp;display=swap"
+    >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <script src="/js/theme.js" defer></script>
+    <script src="/js/header.js" defer></script>
+    <script src="/js/search.js" defer></script>
+    <script src="/js/consent.js" defer></script>
+    <script src="/js/analytics-config.js" defer></script>
+    <script src="/js/analytics.js" defer></script>
+    <script src="/js/adsense-config.js" defer></script>
+    <script src="/js/ad-slots.js" defer></script>
+    <script src="/js/adsense.js" defer></script>
+    <script src="/js/article-filters.js" type="module" defer></script>
+    <script src="/js/newsletter.js" defer></script>
+    <script src="/js/back-to-top.js" defer></script>
+    <script src="/js/scroll-reveal.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header" data-site-header>
+      <div class="site-header__inner container">
+        <a
+          class="site-header__logo"
+          id="page-top"
+          href="/"
+          aria-label="Lawscope home"
+          data-page-top-focus
+        >Lawscope</a>
+
+        <nav
+          class="site-header__navigation"
+          id="primary-navigation"
+          aria-label="Primary navigation"
+          data-primary-navigation
+        >
+          <div class="site-header__navigation-heading">
+            <span>Main menu</span>
+            <button
+              class="site-header__navigation-close"
+              type="button"
+              aria-label="Close main menu"
+              data-menu-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span>Close</span>
+            </button>
+          </div>
+          <ul class="site-header__navigation-list" role="list">
+            <li>
+              <a class="site-header__navigation-link" href="/">Home</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/articles/" aria-current="page">Articles</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/categories/">Categories</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/about/">About</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/contact/">Contact</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="site-header__controls" role="group" aria-label="Site controls">
+          <button
+            class="site-header__control site-header__search-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="site-search-panel"
+            aria-label="Open site search"
+            data-search-toggle
+          >
+            <i
+              class="site-header__control-icon fa-solid fa-magnifying-glass"
+              aria-hidden="true"
+            ></i>
+            <span class="site-header__control-label">Search</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__theme-toggle"
+            type="button"
+            aria-pressed="false"
+            aria-label="Switch to dark mode"
+            data-theme-toggle
+          >
+            <i
+              class="site-header__control-icon fa-regular fa-moon"
+              aria-hidden="true"
+              data-theme-icon
+            ></i>
+            <span class="site-header__control-label" data-theme-label>Dark mode</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open main menu"
+            data-menu-toggle
+          >
+            <i class="site-header__control-icon fa-solid fa-bars" aria-hidden="true"></i>
+            <span class="site-header__control-label">Menu</span>
+          </button>
+        </div>
+      </div>
+
+      <section
+        class="site-search"
+        id="site-search-panel"
+        aria-label="Search Lawscope"
+        data-search-panel
+        hidden
+      >
+        <div class="site-search__inner container">
+          <form
+            class="site-search__form"
+            role="search"
+            action="/articles/"
+            method="get"
+            data-search-form
+          >
+            <label class="site-search__label" for="site-search-input">Search Lawscope</label>
+            <div class="site-search__field-wrap">
+              <i
+                class="site-search__field-icon fa-solid fa-magnifying-glass"
+                aria-hidden="true"
+              ></i>
+              <input
+                class="site-search__field"
+                id="site-search-input"
+                name="q"
+                type="search"
+                placeholder="Search articles by topic or phrase"
+                autocomplete="off"
+                enterkeyhint="search"
+                maxlength="120"
+                aria-controls="site-search-results"
+                aria-describedby="site-search-help site-search-status"
+                data-search-field
+              >
+              <button
+                class="site-search__clear"
+                type="button"
+                aria-label="Clear search"
+                data-search-clear
+                hidden
+              >
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </div>
+            <button class="site-search__submit" type="submit">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <span>Search</span>
+            </button>
+            <button
+              class="site-search__close"
+              type="button"
+              aria-label="Close search"
+              data-search-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span class="visually-hidden">Close search</span>
+            </button>
+            <p class="site-search__hint" id="site-search-help">
+              Matches published article titles, categories, tags, and summaries. Use the Up and
+              Down arrow keys to move through results.
+            </p>
+            <div
+              class="site-search__results"
+              id="site-search-results"
+              data-search-results
+              data-search-index-url="/data/search-index.json"
+              data-search-limit="6"
+              data-search-state="idle"
+              aria-busy="false"
+            >
+              <p
+                class="site-search__status"
+                id="site-search-status"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                data-search-status
+              >
+                Enter a legal topic or phrase to search published Lawscope guides.
+              </p>
+              <ul
+                class="site-search__list"
+                aria-label="Search results"
+                data-search-list
+                hidden
+              ></ul>
+              <nav
+                class="site-search__fallback"
+                aria-label="Search alternatives"
+                data-search-fallback
+                hidden
+              >
+                <a href="/articles/">Browse all articles</a>
+                <a href="/categories/">Browse categories</a>
+              </nav>
+            </div>
+            <noscript>
+              <p class="site-search__noscript">
+                Interactive search requires JavaScript. You can still browse
+                <a href="/articles/">Articles</a> or <a href="/categories/">Categories</a>.
+              </p>
+            </noscript>
+          </form>
+        </div>
+      </section>
+    </header>
+
+    <main class="articles-page" id="main-content" tabindex="-1">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol class="breadcrumb__list" role="list">
+            <li class="breadcrumb__item"><a href="/">Home</a></li>
+            {{ARTICLES_BREADCRUMB_ITEMS}}
+          </ol>
+        </nav>
+
+        <header class="articles-page__intro" data-scroll-reveal>
+          <p class="eyebrow">Legal information library</p>
+          <h1>Law Articles</h1>
+          <p class="articles-page__lead">
+            Browse Lawscope’s plain-English guides to common U.S. legal topics. Filter by category
+            or search by keyword. Every article identifies its publication date, sources, and limits.
+          </p>
+          <aside class="articles-page__boundary" aria-label="Legal information, not legal advice">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            <p>
+              This library provides general educational information and does not replace advice
+              from a qualified attorney.
+            </p>
+          </aside>
+        </header>
+
+        <section
+          class="article-library"
+          aria-labelledby="article-library-title"
+          data-article-library
+          data-total-articles="{{ARTICLE_TOTAL_COUNT}}"
+          data-current-page="{{CURRENT_PAGE_NUMBER}}"
+        >
+          <div class="article-library__heading">
+            <div>
+              <p class="eyebrow">Browse the library</p>
+              <h2 id="article-library-title">Find a Lawscope guide</h2>
+            </div>
+            <p
+              class="article-library__result-count"
+              id="article-result-count"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              data-article-result-count
+            >{{ARTICLE_RESULT_SUMMARY}}</p>
+          </div>
+
+          <form
+            class="article-filter"
+            role="search"
+            action="/articles/"
+            method="get"
+            aria-label="Filter law articles"
+            data-article-filter-form
+          >
+            <div class="article-filter__field article-filter__field--keyword">
+              <label class="article-filter__label" for="article-filter-keyword">
+                Search articles by topic or phrase
+              </label>
+              <div class="article-filter__input-wrap">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input
+                  class="article-filter__control article-filter__control--search"
+                  id="article-filter-keyword"
+                  name="q"
+                  type="search"
+                  placeholder="Search articles by topic or phrase"
+                  maxlength="120"
+                  enterkeyhint="search"
+                  autocomplete="off"
+                  data-article-filter-keyword
+                >
+              </div>
+            </div>
+
+            <div class="article-filter__field">
+              <label class="article-filter__label" for="article-filter-category">
+                Filter by legal category
+              </label>
+              <select
+                class="article-filter__control"
+                id="article-filter-category"
+                name="category"
+                data-article-filter-category
+              >
+                <option value="">All legal categories</option>
+                {{ARTICLE_CATEGORY_OPTIONS}}
+              </select>
+            </div>
+
+            <div class="article-filter__field">
+              <label class="article-filter__label" for="article-filter-sort">Sort articles</label>
+              <select
+                class="article-filter__control"
+                id="article-filter-sort"
+                name="sort"
+                data-article-filter-sort
+              >
+                <option value="newest">Newest first</option>
+                <option value="updated">Recently updated</option>
+              </select>
+            </div>
+
+            <div class="article-filter__actions">
+              <button class="button button--primary" type="submit">Apply filters</button>
+              <a
+                class="button button--secondary"
+                href="/articles/"
+                aria-disabled="true"
+                data-article-filter-clear
+              >Clear filters</a>
+            </div>
+
+            <p class="article-filter__summary" data-article-filter-summary>
+              No filters applied.
+            </p>
+          </form>
+
+          <div
+            class="article-library__grid"
+            aria-label="Law articles, page {{CURRENT_PAGE_NUMBER}} of {{TOTAL_PAGE_COUNT}}"
+            data-article-results
+          >
+            {{ARTICLE_FEED}}
+          </div>
+
+          <template data-article-filter-supplement>
+            {{ARTICLE_FILTER_SUPPLEMENT}}
+          </template>
+          <template data-article-empty-template>
+            {{ARTICLE_EMPTY_STATE}}
+          </template>
+
+          {{ARTICLE_PAGINATION}}
+        </section>
+
+        {{ARTICLES_NEWSLETTER}}
+      </div>
+    </main>
+
+    {{SITE_FOOTER}}
+    {{CONSENT_MANAGER}}
+    {{BACK_TO_TOP}}
+  </body>
+</html>

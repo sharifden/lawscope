@@ -1,0 +1,44 @@
+<section
+  class="category-featured"
+  aria-labelledby="category-featured-title"
+  data-featured-article="{{ARTICLE_SLUG}}"
+  data-scroll-reveal
+>
+  <div class="category-featured__heading">
+    <p class="eyebrow">Featured guide</p>
+    <h2 id="category-featured-title">Start with this guide</h2>
+  </div>
+  <article class="category-featured__card">
+    <a
+      class="category-featured__image-link"
+      href="/articles/{{ARTICLE_SLUG}}/"
+      aria-label="Read {{ARTICLE_TITLE}}"
+    >
+      <img
+        class="category-featured__image"
+        src="{{IMAGE_SOURCE}}"
+        width="{{IMAGE_WIDTH}}"
+        height="{{IMAGE_HEIGHT}}"
+        alt="{{IMAGE_ALT}}"
+        decoding="async"
+      >
+    </a>
+    <div class="category-featured__content">
+      <span class="category-badge">{{CATEGORY_NAME}}</span>
+      <h3><a href="/articles/{{ARTICLE_SLUG}}/">{{ARTICLE_TITLE}}</a></h3>
+      <p class="category-featured__excerpt">{{ARTICLE_EXCERPT}}</p>
+      <p class="category-featured__meta">
+        <span><i class="fa-regular fa-user" aria-hidden="true"></i> By {{AUTHOR}}</span>
+        <span aria-hidden="true">·</span>
+        <span><i class="fa-regular fa-clock" aria-hidden="true"></i> {{READING_TIME}} min read</span>
+        <span aria-hidden="true">·</span>
+        <time datetime="{{PUBLISH_DATE_ISO}}">{{PUBLISH_DATE_DISPLAY}}</time>
+      </p>
+      <a class="category-featured__action" href="/articles/{{ARTICLE_SLUG}}/">
+        Read this guide
+        <span class="visually-hidden">: {{ARTICLE_TITLE}}</span>
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </article>
+</section>

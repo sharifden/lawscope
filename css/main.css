@@ -1,0 +1,537 @@
+/**
+ * Lawscope design tokens and accessible base reset.
+ *
+ * Module 02 establishes the shared visual vocabulary. Components must consume
+ * semantic custom properties rather than introducing raw colors, fonts, or spacing.
+ */
+
+:root {
+  /* Font families (Google Fonts are loaded in Module 03). */
+  --font-family-heading: "Merriweather", Georgia, "Times New Roman", serif;
+  --font-family-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-family-monospace: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  /* Font weights. */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+
+  /* Mobile-first type scale. */
+  --font-size-100: 0.75rem;
+  --font-size-200: 0.8125rem;
+  --font-size-300: 0.875rem;
+  --font-size-400: 1rem;
+  --font-size-500: 1.125rem;
+  --font-size-600: 1.25rem;
+  --font-size-700: 1.5rem;
+  --font-size-800: 1.875rem;
+  --font-size-900: 2.25rem;
+  --font-size-1000: 3rem;
+  --font-size-h1: clamp(2.125rem, 7vw, 3rem);
+  --font-size-h2: clamp(1.75rem, 5vw, 2.25rem);
+  --font-size-h3: clamp(1.375rem, 3.5vw, 1.625rem);
+  --font-size-h4: clamp(1.1875rem, 2.5vw, 1.25rem);
+  --font-size-body: var(--font-size-400);
+  --font-size-article: clamp(1.0625rem, 2vw, 1.125rem);
+  --font-size-small: var(--font-size-300);
+  --font-size-caption: var(--font-size-100);
+  --font-size-lead: var(--font-size-600);
+  --font-size-code: var(--font-size-300);
+  --font-size-logo: var(--font-size-700);
+
+  /* Line heights. */
+  --line-height-none: 1;
+  --line-height-tight: 1.15;
+  --line-height-heading: 1.22;
+  --line-height-subheading: 1.3;
+  --line-height-ui: 1.5;
+  --line-height-body: 1.6;
+  --line-height-reading: 1.75;
+  --line-height-h4: 1.35;
+  --line-height-caption: 1.45;
+
+  /* Letter spacing. */
+  --letter-spacing-tightest: -0.02em;
+  --letter-spacing-tighter: -0.015em;
+  --letter-spacing-tight: -0.01em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-meta: 0.01em;
+  --letter-spacing-label: 0.04em;
+
+  /* Four-pixel spacing scale. */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-30: 7.5rem;
+
+  /* Responsive semantic spacing. */
+  --space-page-gutter: clamp(var(--space-4), 4vw, var(--space-8));
+  --space-section: clamp(var(--space-10), 8vw, var(--space-24));
+  --space-section-compact: clamp(var(--space-8), 6vw, var(--space-16));
+  --space-grid: clamp(var(--space-4), 3vw, var(--space-8));
+  --space-card: clamp(var(--space-4), 2.5vw, var(--space-6));
+  --space-flow: var(--space-6);
+  --space-reading-flow: var(--space-5);
+
+  /* Layout dimensions. */
+  --size-full: 100%;
+  --size-viewport-block: 100vh;
+  --size-container: 80rem;
+  --size-content: 75rem;
+  --size-reading: 48.75rem;
+  --size-legal-reading: 51.25rem;
+  --size-sidebar: 20rem;
+  --size-touch-target: 2.75rem;
+  --size-input-min-block: 2.75rem;
+  --size-textarea-min-block: 8.25rem;
+  --size-text-measure: 70ch;
+  --size-text-measure-compact: 60ch;
+  --size-heading-measure: 30ch;
+  --size-header-row: 4.75rem;
+  --size-search-panel: 48rem;
+  --size-search-results-block: 22rem;
+  --size-control-icon: 1.125rem;
+  --size-ad-horizontal-max: 60.625rem;
+  --size-ad-slot-mobile-min-block: 6.25rem;
+  --size-ad-slot-desktop-min-block: 5.625rem;
+  --size-consent-dialog: 44rem;
+  --size-consent-switch-inline: 3rem;
+  --size-consent-switch-block: 1.75rem;
+  --size-consent-switch-thumb: 1.25rem;
+  --consent-safe-block-offset: var(--space-0);
+  --safe-area-inset-block-end: env(safe-area-inset-bottom, 0rem);
+  --safe-area-inset-inline-end: env(safe-area-inset-right, 0rem);
+  --size-hairline: 0.0625rem;
+  --size-border-strong: 0.125rem;
+  --ratio-landscape: 16 / 9;
+  --size-focus-ring: 0.1875rem;
+  --size-focus-offset: 0.1875rem;
+  --size-underline-offset: 0.18em;
+
+  /* Reference breakpoints for JavaScript and implementation documentation. */
+  --breakpoint-small: 30rem;
+  --breakpoint-medium: 48rem;
+  --breakpoint-large: 64rem;
+  --breakpoint-wide: 80rem;
+
+  /* Corners. */
+  --radius-none: 0;
+  --radius-small: 0.375rem;
+  --radius-medium: 0.5rem;
+  --radius-large: 0.625rem;
+  --radius-round: 50%;
+  --radius-pill: 999rem;
+
+  /* Motion. */
+  --duration-instant: 0.001ms;
+  --duration-fast: 150ms;
+  --duration-standard: 200ms;
+  --duration-reveal: 350ms;
+  --easing-standard: ease;
+  --easing-emphasized: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-distance-small: 0.1875rem;
+  --motion-distance-reveal: 1rem;
+  --motion-scale-card: 1.01;
+  --filter-image-hover: brightness(0.96);
+  --opacity-transparent: 0;
+  --opacity-opaque: 1;
+  --opacity-disabled: 0.62;
+  --reveal-observer-root-margin: 0% 0% -10% 0%;
+  --reveal-observer-threshold: 0.12;
+  --motion-reduced-iterations: 1;
+
+  /* Stacking order. */
+  --z-index-base: 0;
+  --z-index-raised: 10;
+  --z-index-sticky: 100;
+  --z-index-overlay: 500;
+  --z-index-modal: 1000;
+  --z-index-toast: 1100;
+
+  /* Light palette primitives. */
+  --palette-light-white: #ffffff;
+  --palette-light-page: #ffffff;
+  --palette-light-alternate: #f8f9fa;
+  --palette-light-muted: #f1f5f9;
+  --palette-light-primary-text: #1a1a2e;
+  --palette-light-secondary-text: #4a4a68;
+  --palette-light-muted-text: #64748b;
+  --palette-light-brand: #12355b;
+  --palette-light-brand-hover: #0b2745;
+  --palette-light-link: #1d4ed8;
+  --palette-light-link-hover: #1e40af;
+  --palette-light-focus: #2563eb;
+  --palette-light-border: #e5e7eb;
+  --palette-light-border-strong: #8795a8;
+  --palette-light-success: #166534;
+  --palette-light-success-surface: #f0fdf4;
+  --palette-light-error: #b91c1c;
+  --palette-light-error-surface: #fef2f2;
+  --palette-light-disclaimer-border: #d97706;
+  --palette-light-disclaimer-surface: #fffbeb;
+  --palette-light-disclaimer-text: #78350f;
+  --palette-light-overlay: rgb(11 17 32 / 72%);
+
+  /* Dark palette primitives. */
+  --palette-dark-page: #0b1120;
+  --palette-dark-alternate: #0f172a;
+  --palette-dark-surface: #111827;
+  --palette-dark-raised: #172033;
+  --palette-dark-primary-text: #f3f4f6;
+  --palette-dark-secondary-text: #cbd5e1;
+  --palette-dark-muted-text: #94a3b8;
+  --palette-dark-brand: #60a5fa;
+  --palette-dark-brand-hover: #93c5fd;
+  --palette-dark-on-brand: #0b1120;
+  --palette-dark-link: #93c5fd;
+  --palette-dark-link-hover: #bfdbfe;
+  --palette-dark-focus: #60a5fa;
+  --palette-dark-border: #334155;
+  --palette-dark-border-strong: #5a6b84;
+  --palette-dark-success: #86efac;
+  --palette-dark-success-surface: #14291d;
+  --palette-dark-error: #fca5a5;
+  --palette-dark-error-surface: #321a1a;
+  --palette-dark-disclaimer-border: #fbbf24;
+  --palette-dark-disclaimer-surface: #2a2112;
+  --palette-dark-disclaimer-text: #fde68a;
+  --palette-dark-ad-surface: #101827;
+  --palette-dark-overlay: rgb(2 6 23 / 78%);
+  --palette-dark-shadow: rgb(0 0 0 / 24%);
+  --palette-dark-shadow-strong: rgb(0 0 0 / 38%);
+
+  /* Semantic colors: light mode is the explicit default. */
+  color-scheme: light;
+  --color-background: var(--palette-light-page);
+  --color-background-alternate: var(--palette-light-alternate);
+  --color-surface: var(--palette-light-white);
+  --color-surface-muted: var(--palette-light-muted);
+  --color-surface-raised: var(--palette-light-white);
+  --color-text-primary: var(--palette-light-primary-text);
+  --color-text-secondary: var(--palette-light-secondary-text);
+  --color-text-muted: var(--palette-light-muted-text);
+  --color-brand: var(--palette-light-brand);
+  --color-brand-hover: var(--palette-light-brand-hover);
+  --color-on-brand: var(--palette-light-white);
+  --color-link: var(--palette-light-link);
+  --color-link-hover: var(--palette-light-link-hover);
+  --color-focus: var(--palette-light-focus);
+  --color-border: var(--palette-light-border);
+  --color-border-strong: var(--palette-light-border-strong);
+  --color-success: var(--palette-light-success);
+  --color-success-surface: var(--palette-light-success-surface);
+  --color-error: var(--palette-light-error);
+  --color-error-surface: var(--palette-light-error-surface);
+  --color-disclaimer-border: var(--palette-light-disclaimer-border);
+  --color-disclaimer-surface: var(--palette-light-disclaimer-surface);
+  --color-disclaimer-text: var(--palette-light-disclaimer-text);
+  --color-ad-surface: var(--palette-light-alternate);
+  --color-overlay: var(--palette-light-overlay);
+  --color-transparent: transparent;
+
+  /* Elevation follows the active theme through semantic shadow tokens. */
+  --shadow-color: rgb(15 23 42 / 8%);
+  --shadow-color-strong: rgb(15 23 42 / 14%);
+  --shadow-card: 0 var(--space-1) var(--space-3) var(--shadow-color);
+  --shadow-card-hover: 0 var(--space-3) var(--space-6) var(--shadow-color-strong);
+  --shadow-overlay: 0 var(--space-4) var(--space-10) var(--shadow-color-strong);
+}
+
+/* Accessible, low-specificity reset. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-block-size: var(--size-full);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  text-size-adjust: var(--size-full);
+  -webkit-text-size-adjust: var(--size-full);
+}
+
+body {
+  min-block-size: var(--size-viewport-block);
+  margin: var(--space-0);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
+  text-rendering: optimizeLegibility;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin-block: var(--space-0);
+}
+
+ul[role="list"],
+ol[role="list"] {
+  margin: var(--space-0);
+  padding: var(--space-0);
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  text-wrap: balance;
+}
+
+h1,
+.text-h1 {
+  max-inline-size: var(--size-heading-measure);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-black);
+  letter-spacing: var(--letter-spacing-tightest);
+  line-height: var(--line-height-tight);
+}
+
+h2,
+.text-h2 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tighter);
+  line-height: var(--line-height-heading);
+}
+
+h3,
+.text-h3 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-subheading);
+}
+
+h4,
+.text-h4 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-normal);
+  line-height: var(--line-height-h4);
+}
+
+p,
+li,
+dd {
+  max-inline-size: var(--size-text-measure);
+  text-wrap: pretty;
+}
+
+strong,
+b {
+  font-weight: var(--font-weight-bold);
+}
+
+small,
+.text-small {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-ui);
+}
+
+.text-lead {
+  max-inline-size: var(--size-text-measure-compact);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lead);
+  line-height: var(--line-height-body);
+}
+
+.text-meta {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-meta);
+  line-height: var(--line-height-ui);
+}
+
+.text-caption,
+.eyebrow {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-label);
+  line-height: var(--line-height-caption);
+  text-transform: uppercase;
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.prose {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-article);
+  line-height: var(--line-height-reading);
+}
+
+.prose > * + * {
+  margin-block-start: var(--space-reading-flow);
+}
+
+.prose > :where(h2, h3, h4) {
+  margin-block-start: var(--space-10);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-family-monospace);
+  font-size: var(--font-size-code);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration-thickness: var(--size-hairline);
+  text-underline-offset: var(--size-underline-offset);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+button,
+input,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
+}
+
+button,
+select {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+img,
+picture,
+svg,
+canvas,
+video {
+  display: block;
+  max-inline-size: var(--size-full);
+}
+
+img,
+picture,
+video {
+  block-size: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  min-block-size: var(--size-input-min-block);
+}
+
+textarea:not([rows]) {
+  min-block-size: var(--size-textarea-min-block);
+}
+
+table {
+  border-collapse: collapse;
+  border-color: inherit;
+}
+
+hr {
+  block-size: var(--size-hairline);
+  margin-block: var(--space-8);
+  border: var(--space-0);
+  background-color: var(--color-border);
+}
+
+:focus-visible {
+  outline: var(--size-focus-ring) solid var(--color-focus);
+  outline-offset: var(--size-focus-offset);
+}
+
+::selection {
+  background-color: var(--color-brand);
+  color: var(--color-on-brand);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: var(--size-hairline);
+  block-size: var(--size-hairline);
+  padding: var(--space-0);
+  margin: calc(var(--size-hairline) * -1);
+  overflow: hidden;
+  clip: rect(var(--space-0), var(--space-0), var(--space-0), var(--space-0));
+  white-space: nowrap;
+  border: var(--space-0);
+}
+
+.container {
+  inline-size: min(
+    calc(var(--size-full) - (var(--space-page-gutter) * 2)),
+    var(--size-container)
+  );
+  margin-inline: auto;
+}
+
+.region {
+  padding-block: var(--space-section-compact);
+}
+
+.flow > * + * {
+  margin-block-start: var(--space-flow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: var(--duration-instant) !important;
+    animation-iteration-count: var(--motion-reduced-iterations) !important;
+    transition-duration: var(--duration-instant) !important;
+  }
+}

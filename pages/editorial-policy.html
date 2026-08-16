@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en-US" data-deployment-environment="{{DEPLOYMENT_ENV}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script data-theme-initializer>
+      (() => {
+        const storageKey = 'lawscope-theme';
+        let storedTheme = null;
+
+        try {
+          storedTheme = window.localStorage.getItem(storageKey);
+        } catch {
+          storedTheme = null;
+        }
+
+        const hasStoredChoice = storedTheme === 'light' || storedTheme === 'dark';
+        const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+        const resolvedTheme = hasStoredChoice
+          ? storedTheme
+          : systemPrefersDark
+            ? 'dark'
+            : 'light';
+
+        document.documentElement.dataset.theme = resolvedTheme;
+      })();
+    </script>
+    <meta name="robots" content="{{ROBOTS_DIRECTIVE}}">
+    <meta name="description" content="{{PAGE_DESCRIPTION}}">
+    <meta name="date" content="{{POLICY_PUBLICATION_DATE}}">
+    <meta name="last-modified" content="{{POLICY_MODIFICATION_DATE}}">
+    <title>{{PAGE_TITLE}}</title>
+    <link rel="canonical" href="{{CANONICAL_URL}}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lawscope">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="{{PAGE_TITLE}}">
+    <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
+    <meta property="og:url" content="{{CANONICAL_URL}}">
+    <meta property="og:updated_time" content="{{POLICY_MODIFICATION_DATE}}">
+    <meta property="og:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:secure_url" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{PAGE_TITLE}}">
+    <meta name="twitter:description" content="{{PAGE_DESCRIPTION}}">
+    <meta name="twitter:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta name="twitter:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <script type="application/ld+json">{{PAGE_JSON_LD}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Merriweather:wght@700;900&amp;display=swap"
+    >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <script src="/js/theme.js" defer></script>
+    <script src="/js/header.js" defer></script>
+    <script src="/js/search.js" defer></script>
+    <script src="/js/consent.js" defer></script>
+    <script src="/js/analytics-config.js" defer></script>
+    <script src="/js/analytics.js" defer></script>
+    <script src="/js/back-to-top.js" defer></script>
+    <script src="/js/scroll-reveal.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header" data-site-header>
+      <div class="site-header__inner container">
+        <a
+          class="site-header__logo"
+          id="page-top"
+          href="/"
+          aria-label="Lawscope home"
+          data-page-top-focus
+        >Lawscope</a>
+
+        <nav
+          class="site-header__navigation"
+          id="primary-navigation"
+          aria-label="Primary navigation"
+          data-primary-navigation
+        >
+          <div class="site-header__navigation-heading">
+            <span>Main menu</span>
+            <button
+              class="site-header__navigation-close"
+              type="button"
+              aria-label="Close main menu"
+              data-menu-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span>Close</span>
+            </button>
+          </div>
+          <ul class="site-header__navigation-list" role="list">
+            <li>
+              <a class="site-header__navigation-link" href="/">Home</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/articles/">Articles</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/categories/">Categories</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/about/">About</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/contact/">Contact</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="site-header__controls" role="group" aria-label="Site controls">
+          <button
+            class="site-header__control site-header__search-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="site-search-panel"
+            aria-label="Open site search"
+            data-search-toggle
+          >
+            <i
+              class="site-header__control-icon fa-solid fa-magnifying-glass"
+              aria-hidden="true"
+            ></i>
+            <span class="site-header__control-label">Search</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__theme-toggle"
+            type="button"
+            aria-pressed="false"
+            aria-label="Switch to dark mode"
+            data-theme-toggle
+          >
+            <i
+              class="site-header__control-icon fa-regular fa-moon"
+              aria-hidden="true"
+              data-theme-icon
+            ></i>
+            <span class="site-header__control-label" data-theme-label>Dark mode</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open main menu"
+            data-menu-toggle
+          >
+            <i class="site-header__control-icon fa-solid fa-bars" aria-hidden="true"></i>
+            <span class="site-header__control-label">Menu</span>
+          </button>
+        </div>
+      </div>
+
+      <section
+        class="site-search"
+        id="site-search-panel"
+        aria-label="Search Lawscope"
+        data-search-panel
+        hidden
+      >
+        <div class="site-search__inner container">
+          <form
+            class="site-search__form"
+            role="search"
+            action="/articles/"
+            method="get"
+            data-search-form
+          >
+            <label class="site-search__label" for="site-search-input">Search Lawscope</label>
+            <div class="site-search__field-wrap">
+              <i
+                class="site-search__field-icon fa-solid fa-magnifying-glass"
+                aria-hidden="true"
+              ></i>
+              <input
+                class="site-search__field"
+                id="site-search-input"
+                name="q"
+                type="search"
+                placeholder="Search articles by topic or phrase"
+                autocomplete="off"
+                enterkeyhint="search"
+                maxlength="120"
+                aria-controls="site-search-results"
+                aria-describedby="site-search-help site-search-status"
+                data-search-field
+              >
+              <button
+                class="site-search__clear"
+                type="button"
+                aria-label="Clear search"
+                data-search-clear
+                hidden
+              >
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </div>
+            <button class="site-search__submit" type="submit">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <span>Search</span>
+            </button>
+            <button
+              class="site-search__close"
+              type="button"
+              aria-label="Close search"
+              data-search-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span class="visually-hidden">Close search</span>
+            </button>
+            <p class="site-search__hint" id="site-search-help">
+              Matches published article titles, categories, tags, and summaries. Use the Up and
+              Down arrow keys to move through results.
+            </p>
+            <div
+              class="site-search__results"
+              id="site-search-results"
+              data-search-results
+              data-search-index-url="/data/search-index.json"
+              data-search-limit="6"
+              data-search-state="idle"
+              aria-busy="false"
+            >
+              <p
+                class="site-search__status"
+                id="site-search-status"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                data-search-status
+              >
+                Enter a legal topic or phrase to search published Lawscope guides.
+              </p>
+              <ul
+                class="site-search__list"
+                aria-label="Search results"
+                data-search-list
+                hidden
+              ></ul>
+              <nav
+                class="site-search__fallback"
+                aria-label="Search alternatives"
+                data-search-fallback
+                hidden
+              >
+                <a href="/articles/">Browse all articles</a>
+                <a href="/categories/">Browse categories</a>
+              </nav>
+            </div>
+            <noscript>
+              <p class="site-search__noscript">
+                Interactive search requires JavaScript. You can still browse
+                <a href="/articles/">Articles</a> or <a href="/categories/">Categories</a>.
+              </p>
+            </noscript>
+          </form>
+        </div>
+      </section>
+    </header>
+
+    <main class="policy-page" id="main-content" tabindex="-1">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol class="breadcrumb__list" role="list">
+            <li class="breadcrumb__item"><a href="/">Home</a></li>
+            <li class="breadcrumb__item" aria-current="page">Editorial Policy</li>
+          </ol>
+        </nav>
+
+        <article class="policy-document">
+          <header class="policy-document__header">
+            <p class="eyebrow">How Lawscope publishes</p>
+            <h1>Editorial Policy</h1>
+            <p class="policy-document__lead">
+              Lawscope’s editorial process is designed to make legal information clearer while
+              preserving the limits, exceptions, and jurisdictional context that affect its meaning.
+            </p>
+            <dl class="policy-document__dates" aria-label="Editorial Policy dates">
+              <div><dt>Effective</dt><dd><time datetime="{{POLICY_PUBLICATION_DATE}}">{{POLICY_PUBLICATION_DATE_DISPLAY}}</time></dd></div>
+              <div><dt>Last updated</dt><dd><time datetime="{{POLICY_MODIFICATION_DATE}}">{{POLICY_MODIFICATION_DATE_DISPLAY}}</time></dd></div>
+            </dl>
+          </header>
+
+          <aside class="policy-summary" aria-labelledby="policy-summary-title">
+            <span class="policy-summary__icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+            <div>
+              <h2 id="policy-summary-title">Our commitment in brief</h2>
+              <p>
+                We publish educational information—not legal advice. We prioritize authoritative
+                sources, identify jurisdiction and dates, separate verified facts from commentary,
+                correct material errors, and keep editorial decisions independent from advertising.
+              </p>
+            </div>
+          </aside>
+
+          <nav class="policy-toc" aria-labelledby="policy-toc-title">
+            <h2 id="policy-toc-title">On this page</h2>
+            <ol class="policy-toc__list">
+              <li><a href="#mission-scope">Mission, audience, and scope</a></li>
+              <li><a href="#article-selection">Article selection</a></li>
+              <li><a href="#sources-citations">Sources and citations</a></li>
+              <li><a href="#writing-jurisdiction">Writing and jurisdiction</a></li>
+              <li><a href="#authorship-reviewers">Authorship and reviewers</a></li>
+              <li><a href="#legal-review">Legal review</a></li>
+              <li><a href="#fact-checking-dates">Fact-checking, dates, and updates</a></li>
+              <li><a href="#corrections">Corrections</a></li>
+              <li><a href="#legal-news">Legal-news standards</a></li>
+              <li><a href="#conflicts-independence">Conflicts and independence</a></li>
+              <li><a href="#ai-assisted-work">AI-assisted work</a></li>
+              <li><a href="#submissions-privacy">User submissions and privacy</a></li>
+              <li><a href="#accessibility-language">Accessibility and inclusive language</a></li>
+              <li><a href="#contact-changes">Contact and policy changes</a></li>
+            </ol>
+          </nav>
+
+          <div class="policy-document__body">
+            <section id="mission-scope" aria-labelledby="mission-scope-title">
+              <h2 id="mission-scope-title">Mission, Audience, and Scope</h2>
+              <p>
+                Lawscope serves people seeking a clearer starting point for understanding U.S. law.
+                Our guides explain legal vocabulary, rights, responsibilities, institutions, and
+                common processes for a general audience. The publication does not provide legal
+                advice, predict outcomes, create attorney-client relationships, or evaluate a
+                reader’s individual facts, strategy, or deadlines.
+              </p>
+            </section>
+
+            <section id="article-selection" aria-labelledby="article-selection-title">
+              <h2 id="article-selection-title">Article Selection and Public Interest</h2>
+              <p>
+                We select subjects that address recurring public questions, explain significant
+                legal processes, or add useful context to material legal developments. Search
+                interest may help us understand reader needs, but no page is published solely to
+                target a keyword or manufacture authority. We do not promise comprehensive coverage
+                of every jurisdiction or legal issue.
+              </p>
+            </section>
+
+            <section id="sources-citations" aria-labelledby="sources-citations-title">
+              <h2 id="sources-citations-title">Primary Sources and Citation Standards</h2>
+              <p>
+                Whenever practical, research begins with primary legal materials and official public
+                guidance: constitutions, statutes, regulations, court opinions and orders, rules,
+                agency materials, and government publications. Reliable secondary sources may help
+                explain context or identify primary authority, but they do not replace controlling
+                law where controlling law is available.
+              </p>
+              <p>
+                Published guides identify sources that support material statements. Citations use a
+                descriptive label and destination, and include publisher, publication date, or access
+                date when relevant. Editors check that a cited source supports the statement made and
+                that links resolve at the time of review. A link is not an endorsement, and external
+                materials can move or change after publication.
+              </p>
+            </section>
+
+            <section id="writing-jurisdiction" aria-labelledby="writing-jurisdiction-title">
+              <h2 id="writing-jurisdiction-title">Plain-English Writing and Jurisdiction</h2>
+              <p>
+                We define necessary legal terms, favor direct language, and organize material for
+                scanning and careful reading. Plain-English editing must not erase exceptions,
+                procedural posture, uncertainty, or limits that affect meaning. Headlines and
+                summaries must accurately reflect the article and must not promise a result.
+              </p>
+              <p>
+                Guides identify whether they concern federal, state, local, tribal, or territorial
+                law. We state when rules vary by jurisdiction and avoid presenting one state’s rule
+                as nationally applicable. State-specific coverage is published only when it can be
+                accurately researched and maintained. Readers are reminded that law and official
+                guidance can change.
+              </p>
+            </section>
+
+            <section id="authorship-reviewers" aria-labelledby="authorship-reviewers-title">
+              <h2 id="authorship-reviewers-title">Authorship, Contributors, and Reviewer Identification</h2>
+              <p>
+                Launch articles are published under the organizational byline <strong>Lawscope Editorial</strong>.
+                We do not invent people, biographies, credentials, or review claims. If an individual
+                contributor or reviewer is introduced, Lawscope will verify the person’s identity and
+                relevant credentials before publication and will clearly identify the role performed.
+                A reviewer credit will not imply authorship or endorsement beyond the disclosed scope.
+              </p>
+            </section>
+
+            <section id="legal-review" aria-labelledby="legal-review-title">
+              <h2 id="legal-review-title">Legal Review</h2>
+              <p>
+                Lawscope does not represent launch articles as attorney-reviewed. If qualified legal
+                review is commissioned in the future, the page will identify the reviewer, relevant
+                jurisdiction, review date, and scope of review only after those facts are verified.
+                Legal review supports editorial quality; it does not turn general information into
+                advice to a reader and does not create an attorney-client relationship.
+              </p>
+            </section>
+
+            <section id="fact-checking-dates" aria-labelledby="fact-checking-dates-title">
+              <h2 id="fact-checking-dates-title">Fact-Checking, Dates, and Updates</h2>
+              <p>
+                Before publication, editors check the article’s claims against its sources, citation
+                destinations, jurisdiction labels, dates, names of institutions, procedural posture,
+                and required disclaimer. Publication dates show when an article first became public.
+                A “last updated” date appears only after a substantive change or documented review,
+                not for routine formatting changes.
+              </p>
+              <p>
+                Time-sensitive guides are reviewed as practical when a cited authority changes or a
+                reliable report raises a material question. Updates preserve important qualifications
+                and replace or annotate outdated sources. The most recent review cannot guarantee that
+                every later legal development has already been incorporated.
+              </p>
+            </section>
+
+            <section id="corrections" aria-labelledby="corrections-title">
+              <h2 id="corrections-title">Corrections Process</h2>
+              <p>
+                Readers may report a possible factual error, outdated authority, broken citation, or
+                misleading passage through the <a href="/contact/">Contact page</a>. Please include the
+                article URL, the statement at issue, and an authoritative source when available.
+              </p>
+              <ol>
+                <li>We record the report without treating it as a request for personal legal analysis.</li>
+                <li>An editor checks the published statement and the most relevant available sources.</li>
+                <li>We correct verified errors as promptly as practical and update affected metadata.</li>
+                <li>Material corrections receive a visible note explaining what changed; minor spelling or formatting fixes may be corrected without a note.</li>
+              </ol>
+            </section>
+
+            <section id="legal-news" aria-labelledby="legal-news-title">
+              <h2 id="legal-news-title">Legal-News Standards</h2>
+              <p>
+                Legal-news coverage is clearly dated and distinguishes allegations from proven facts,
+                interim orders from final judgments, procedural steps from merits decisions, and a
+                court’s holding from separate concurrence, dissent, party argument, or commentary.
+                Headlines avoid declaring guilt, liability, or finality that the underlying record
+                does not establish. Developing coverage is updated when the legal posture materially
+                changes and identifies what remains unresolved.
+              </p>
+            </section>
+
+            <section id="conflicts-independence" aria-labelledby="conflicts-independence-title">
+              <h2 id="conflicts-independence-title">Conflicts, Commercial Relationships, and Editorial Independence</h2>
+              <p>
+                Editors and contributors must disclose interests that could reasonably affect their
+                work. Gifts, affiliate relationships, sponsorships, and paid placements may not be
+                concealed. Sponsored content, if ever accepted, must be distinctly labeled and must
+                not imitate independent editorial coverage.
+              </p>
+              <p>
+                Advertisers do not select, assign, write, edit, review, approve, or suppress Lawscope
+                editorial content. Advertising status does not affect corrections or conclusions.
+                This Editorial Policy and other trust and legal pages remain free of advertising.
+              </p>
+            </section>
+
+            <section id="ai-assisted-work" aria-labelledby="ai-assisted-work-title">
+              <h2 id="ai-assisted-work-title">AI-Assisted Work</h2>
+              <p>
+                AI tools may assist approved back-office tasks such as organizing notes, suggesting
+                non-substantive edits, or checking consistent formatting. A responsible human editor
+                must verify all sources, citations, claims, dates, jurisdictions, and final wording
+                before publication. AI output is never presented as legal advice, and fabricated or
+                unverified citations are prohibited.
+              </p>
+              <p>
+                Confidential user material, private personal facts, unpublished contact submissions,
+                and secrets are not entered into public AI tools. AI assistance does not replace the
+                human accountability attached to the published organizational byline.
+              </p>
+            </section>
+
+            <section id="submissions-privacy" aria-labelledby="submissions-privacy-title">
+              <h2 id="submissions-privacy-title">User Submissions and Privacy</h2>
+              <p>
+                Suggestions and correction reports may inform coverage, but submission does not
+                create an attorney-client relationship or promise publication, individual advice, or
+                a response. Users should not send confidential legal facts, secrets, court deadlines,
+                or emergency requests. Contact information and message content are handled according
+                to the <a href="/privacy-policy/">Privacy Policy</a> and are not committed to the
+                public content repository.
+              </p>
+            </section>
+
+            <section id="accessibility-language" aria-labelledby="accessibility-language-title">
+              <h2 id="accessibility-language-title">Accessibility and Inclusive Language</h2>
+              <p>
+                Lawscope aims to make content perceivable, operable, understandable, and robust. We
+                use semantic structure, descriptive alternatives for meaningful images, keyboard
+                access, visible focus, readable contrast, and plain instructions. Inclusive language
+                should be accurate, respectful, and consistent with the terminology people and legal
+                sources use, while quotations and official titles are preserved when context requires.
+                Accessibility concerns are welcomed through the Contact page.
+              </p>
+            </section>
+
+            <section id="contact-changes" aria-labelledby="contact-changes-title">
+              <h2 id="contact-changes-title">Contact and Policy Changes</h2>
+              <p>
+                Questions about this policy, corrections, accessibility, or editorial practice may
+                be sent through the <a href="/contact/">Contact page</a>. Lawscope cannot use that
+                channel to provide legal advice or evaluate a personal matter.
+              </p>
+              <p>
+                The effective and last-updated dates above identify the current version. Material
+                revisions will be recorded below with a date and a plain-language description; small
+                typographical or formatting changes may not receive a separate entry.
+              </p>
+              <div class="policy-change-log" aria-labelledby="policy-change-log-title">
+                <h3 id="policy-change-log-title">Material revision record</h3>
+                <dl>
+                  <div>
+                    <dt><time datetime="{{POLICY_PUBLICATION_DATE}}">{{POLICY_PUBLICATION_DATE_DISPLAY}}</time></dt>
+                    <dd>Initial publication of Lawscope’s Editorial Policy.</dd>
+                  </div>
+                </dl>
+              </div>
+            </section>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    {{SITE_FOOTER}}
+    {{CONSENT_MANAGER}}
+    {{BACK_TO_TOP}}
+  </body>
+</html>

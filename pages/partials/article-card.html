@@ -1,0 +1,51 @@
+<article class="article-card"
+  data-article-slug="{{ARTICLE_SLUG}}"
+  data-article-category="{{CATEGORY_SLUG}}"
+  data-article-tags="{{ARTICLE_TAGS}}"
+  data-article-published="{{PUBLISH_DATE_ISO}}"
+  data-article-updated="{{UPDATED_DATE_ISO}}"
+>
+  <a
+    class="article-card__image-link"
+    href="/articles/{{ARTICLE_SLUG}}/"
+    aria-label="Read {{ARTICLE_TITLE}}"
+  >
+    <img
+      class="article-card__image"
+      src="{{IMAGE_SOURCE}}"
+      width="{{IMAGE_WIDTH}}"
+      height="{{IMAGE_HEIGHT}}"
+      alt="{{IMAGE_ALT}}"
+      loading="lazy"
+      decoding="async"
+    >
+  </a>
+
+  <div class="article-card__content">
+    <a class="category-badge article-card__category" href="/categories/{{CATEGORY_SLUG}}/">
+      {{CATEGORY_NAME}}
+    </a>
+    <h3 class="article-card__title" id="article-card-title-{{ARTICLE_SLUG}}">
+      <a href="/articles/{{ARTICLE_SLUG}}/">{{ARTICLE_TITLE}}</a>
+    </h3>
+    <p class="article-card__excerpt">{{ARTICLE_EXCERPT}}</p>
+    <p class="article-card__meta">
+      <span class="article-card__meta-item">
+        <i class="fa-regular fa-user" aria-hidden="true"></i>
+        By {{AUTHOR}}
+      </span>
+      <span class="article-card__meta-separator" aria-hidden="true">·</span>
+      <span class="article-card__meta-item">
+        <i class="fa-regular fa-clock" aria-hidden="true"></i>
+        {{READING_TIME}} min read
+      </span>
+      <span class="article-card__meta-separator" aria-hidden="true">·</span>
+      <time datetime="{{PUBLISH_DATE_ISO}}">{{PUBLISH_DATE_DISPLAY}}</time>
+    </p>
+    <a class="article-card__read-more" href="/articles/{{ARTICLE_SLUG}}/">
+      <span>Read more</span>
+      <span class="visually-hidden"> about {{ARTICLE_TITLE}}</span>
+      <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+    </a>
+  </div>
+</article>

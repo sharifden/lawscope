@@ -1,0 +1,80 @@
+{
+  "effective_date": "2026-08-16",
+  "last_updated": "2026-08-16",
+  "review_status": "pending",
+  "operator": {
+    "public_name": "Lawscope",
+    "legal_name": "",
+    "legal_identity_confirmed": false,
+    "postal_address": ""
+  },
+  "privacy_request": {
+    "route": "/contact/#contact-subject",
+    "monitored_channel_confirmed": false
+  },
+  "service_inventory": [
+    {
+      "key": "hosting",
+      "name": "Vercel",
+      "purpose": "Public-site hosting, delivery, reliability, and security logging",
+      "status": "configured",
+      "privacy_url": "https://vercel.com/legal/privacy-policy",
+      "retention": "No repository-defined period; confirm the production account and provider settings before launch.",
+      "details_confirmed": false
+    },
+    {
+      "key": "fonts",
+      "name": "Google Fonts",
+      "purpose": "Delivery of the Inter and Merriweather font files used by the public interface",
+      "status": "configured",
+      "privacy_url": "https://policies.google.com/privacy",
+      "retention": "Controlled by the provider under its terms; Lawscope does not receive a font-request profile.",
+      "details_confirmed": false
+    },
+    {
+      "key": "icons",
+      "name": "Cloudflare cdnjs",
+      "purpose": "Delivery of the Font Awesome 6 icon stylesheet",
+      "status": "configured",
+      "privacy_url": "https://www.cloudflare.com/privacypolicy/",
+      "retention": "Controlled by the provider under its terms; Lawscope does not receive a CDN-request profile.",
+      "details_confirmed": false
+    },
+    {
+      "key": "contact-delivery",
+      "name": "Not selected",
+      "purpose": "Forwarding Contact form messages to a monitored Lawscope support destination",
+      "status": "inactive",
+      "privacy_url": "",
+      "retention": "No downstream period can be stated until the monitored delivery provider is selected.",
+      "details_confirmed": true
+    },
+    {
+      "key": "analytics",
+      "name": "Google Analytics 4",
+      "purpose": "Consent-based audience measurement using a deliberately limited event set",
+      "status": "inactive",
+      "privacy_url": "https://policies.google.com/privacy",
+      "retention": "The production GA4 property must be confirmed at the two-month event-data retention setting before activation; aggregated reports may persist until deleted under the account policy.",
+      "details_confirmed": false
+    },
+    {
+      "key": "advertising",
+      "name": "Google AdSense",
+      "purpose": "Consent-based responsive advertising, delivery measurement, frequency controls, and invalid-traffic protection after separate approval",
+      "status": "inactive",
+      "privacy_url": "https://policies.google.com/privacy",
+      "retention": "No AdSense request is made while inactive. Before activation, the owner must confirm Google’s current account controls, partner disclosures, consent configuration, retention practices, and applicable opt-out routes.",
+      "details_confirmed": false
+    },
+    {
+      "key": "newsletter",
+      "name": "Not selected",
+      "purpose": "Optional double-opt-in newsletter delivery",
+      "status": "inactive",
+      "privacy_url": "",
+      "retention": "No subscriber email is collected while the feature remains inactive.",
+      "details_confirmed": true
+    }
+  ]
+}

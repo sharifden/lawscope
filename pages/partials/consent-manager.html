@@ -1,0 +1,121 @@
+<section
+  class="consent-banner"
+  data-consent-banner
+  data-consent-mode="{{CONSENT_MODE}}"
+  data-consent-provider="{{CONSENT_PROVIDER}}"
+  data-consent-revision="{{CONSENT_REVISION}}"
+  data-consent-certified-cmp="{{CONSENT_GOOGLE_CERTIFIED_CMP}}"
+  aria-labelledby="consent-banner-title"
+  hidden
+>
+  <div class="consent-banner__inner container">
+    <div class="consent-banner__copy">
+      <h2 class="consent-banner__title" id="consent-banner-title">Your privacy choices</h2>
+      <p class="consent-banner__description">
+        Essential storage keeps Lawscope working and saves choices you request. With your permission, analytics may help improve the site and advertising may support publication. Optional technologies stay off unless you allow them.
+        <a href="/privacy-policy/">Read the Privacy Policy</a>.
+      </p>
+      <p class="consent-feedback" role="alert" data-consent-storage-error hidden></p>
+    </div>
+    <div class="consent-banner__actions" role="group" aria-label="Privacy consent actions">
+      <button class="consent-button" type="button" data-consent-reject>Reject Non-Essential</button>
+      <button class="consent-button" type="button" data-consent-manage>Manage Choices</button>
+      <button class="consent-button" type="button" data-consent-accept>Accept All</button>
+    </div>
+  </div>
+</section>
+
+<dialog
+  class="consent-dialog"
+  data-consent-dialog
+  aria-labelledby="consent-dialog-title"
+  aria-describedby="consent-dialog-description"
+>
+  <div class="consent-dialog__surface">
+    <header class="consent-dialog__header">
+      <div>
+        <p class="consent-dialog__eyebrow">Privacy preference center</p>
+        <h2 class="consent-dialog__title" id="consent-dialog-title">Manage your choices</h2>
+      </div>
+      <button class="consent-dialog__close" type="button" data-consent-close>
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        <span class="visually-hidden">Close privacy preference center</span>
+      </button>
+    </header>
+
+    <p class="consent-dialog__description" id="consent-dialog-description">
+      Choose which optional technologies Lawscope may use. You can withdraw or change permission at any time through “Privacy choices” in the footer.
+    </p>
+
+    <p class="consent-dialog__gpc" id="consent-gpc-notice" data-consent-gpc-notice hidden>
+      Your browser is sending a Global Privacy Control signal. Lawscope will keep advertising technologies off while this signal is active.
+    </p>
+
+    <p class="consent-feedback" role="alert" data-consent-storage-error hidden></p>
+
+    <form class="consent-dialog__form" data-consent-form>
+      <fieldset class="consent-dialog__categories">
+        <legend class="visually-hidden">Storage and technology categories</legend>
+
+        <section class="consent-category consent-category--essential" aria-labelledby="consent-essential-title">
+          <div class="consent-category__heading">
+            <div>
+              <h3 class="consent-category__title" id="consent-essential-title">Essential storage</h3>
+              <p class="consent-category__state">Always active</p>
+            </div>
+            <i class="fa-solid fa-lock consent-category__icon" aria-hidden="true"></i>
+          </div>
+          <p class="consent-category__description">
+            Saves your privacy and theme choices and supports basic site security and operation. Essential storage does not authorize analytics or advertising.
+          </p>
+        </section>
+
+        <label class="consent-category" for="consent-analytics">
+          <span class="consent-category__heading">
+            <span>
+              <span class="consent-category__title">Analytics</span>
+              <span class="consent-category__state" data-consent-analytics-state>Off</span>
+            </span>
+            <span class="consent-switch">
+              <input class="consent-switch__input" id="consent-analytics" type="checkbox" data-consent-analytics>
+              <span class="consent-switch__control" aria-hidden="true"></span>
+            </span>
+          </span>
+          <span class="consent-category__description">
+            Allows eligible measurement tools to understand visits and improve site usefulness. This choice does not activate a service by itself.
+          </span>
+        </label>
+
+        <label class="consent-category" for="consent-advertising">
+          <span class="consent-category__heading">
+            <span>
+              <span class="consent-category__title">Advertising</span>
+              <span class="consent-category__state" data-consent-advertising-state>Off</span>
+            </span>
+            <span class="consent-switch">
+              <input
+                class="consent-switch__input"
+                id="consent-advertising"
+                type="checkbox"
+                data-consent-advertising
+                aria-describedby="consent-gpc-notice"
+              >
+              <span class="consent-switch__control" aria-hidden="true"></span>
+            </span>
+          </span>
+          <span class="consent-category__description">
+            Allows eligible advertising tools to select, deliver, and measure ads. Advertising remains subject to separate launch, provider, and regional compliance gates.
+          </span>
+        </label>
+      </fieldset>
+
+      <div class="consent-dialog__actions" role="group" aria-label="Save privacy choices">
+        <button class="consent-button" type="button" data-consent-dialog-reject>Reject Non-Essential</button>
+        <button class="consent-button" type="button" data-consent-dialog-accept>Accept All</button>
+        <button class="consent-button" type="submit">Save Choices</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<p class="visually-hidden" role="status" aria-live="polite" aria-atomic="true" data-consent-status></p>

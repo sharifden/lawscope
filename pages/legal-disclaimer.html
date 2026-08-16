@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en-US" data-deployment-environment="{{DEPLOYMENT_ENV}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script data-theme-initializer>
+      (() => {
+        const storageKey = 'lawscope-theme';
+        let storedTheme = null;
+
+        try {
+          storedTheme = window.localStorage.getItem(storageKey);
+        } catch {
+          storedTheme = null;
+        }
+
+        const hasStoredChoice = storedTheme === 'light' || storedTheme === 'dark';
+        const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+        const resolvedTheme = hasStoredChoice
+          ? storedTheme
+          : systemPrefersDark
+            ? 'dark'
+            : 'light';
+
+        document.documentElement.dataset.theme = resolvedTheme;
+      })();
+    </script>
+    <meta name="robots" content="{{ROBOTS_DIRECTIVE}}">
+    <meta name="description" content="{{PAGE_DESCRIPTION}}">
+    <meta name="date" content="{{POLICY_PUBLICATION_DATE}}">
+    <meta name="last-modified" content="{{POLICY_MODIFICATION_DATE}}">
+    <title>{{PAGE_TITLE}}</title>
+    <link rel="canonical" href="{{CANONICAL_URL}}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lawscope">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="{{PAGE_TITLE}}">
+    <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
+    <meta property="og:url" content="{{CANONICAL_URL}}">
+    <meta property="og:updated_time" content="{{POLICY_MODIFICATION_DATE}}">
+    <meta property="og:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:secure_url" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{PAGE_TITLE}}">
+    <meta name="twitter:description" content="{{PAGE_DESCRIPTION}}">
+    <meta name="twitter:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta name="twitter:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <script type="application/ld+json">{{PAGE_JSON_LD}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Merriweather:wght@700;900&amp;display=swap"
+    >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <script src="/js/theme.js" defer></script>
+    <script src="/js/header.js" defer></script>
+    <script src="/js/search.js" defer></script>
+    <script src="/js/consent.js" defer></script>
+    <script src="/js/analytics-config.js" defer></script>
+    <script src="/js/analytics.js" defer></script>
+    <script src="/js/back-to-top.js" defer></script>
+    <script src="/js/scroll-reveal.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header" data-site-header>
+      <div class="site-header__inner container">
+        <a
+          class="site-header__logo"
+          id="page-top"
+          href="/"
+          aria-label="Lawscope home"
+          data-page-top-focus
+        >Lawscope</a>
+
+        <nav
+          class="site-header__navigation"
+          id="primary-navigation"
+          aria-label="Primary navigation"
+          data-primary-navigation
+        >
+          <div class="site-header__navigation-heading">
+            <span>Main menu</span>
+            <button
+              class="site-header__navigation-close"
+              type="button"
+              aria-label="Close main menu"
+              data-menu-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span>Close</span>
+            </button>
+          </div>
+          <ul class="site-header__navigation-list" role="list">
+            <li>
+              <a class="site-header__navigation-link" href="/">Home</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/articles/">Articles</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/categories/">Categories</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/about/">About</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/contact/">Contact</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="site-header__controls" role="group" aria-label="Site controls">
+          <button
+            class="site-header__control site-header__search-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="site-search-panel"
+            aria-label="Open site search"
+            data-search-toggle
+          >
+            <i
+              class="site-header__control-icon fa-solid fa-magnifying-glass"
+              aria-hidden="true"
+            ></i>
+            <span class="site-header__control-label">Search</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__theme-toggle"
+            type="button"
+            aria-pressed="false"
+            aria-label="Switch to dark mode"
+            data-theme-toggle
+          >
+            <i
+              class="site-header__control-icon fa-regular fa-moon"
+              aria-hidden="true"
+              data-theme-icon
+            ></i>
+            <span class="site-header__control-label" data-theme-label>Dark mode</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open main menu"
+            data-menu-toggle
+          >
+            <i class="site-header__control-icon fa-solid fa-bars" aria-hidden="true"></i>
+            <span class="site-header__control-label">Menu</span>
+          </button>
+        </div>
+      </div>
+
+      <section
+        class="site-search"
+        id="site-search-panel"
+        aria-label="Search Lawscope"
+        data-search-panel
+        hidden
+      >
+        <div class="site-search__inner container">
+          <form
+            class="site-search__form"
+            role="search"
+            action="/articles/"
+            method="get"
+            data-search-form
+          >
+            <label class="site-search__label" for="site-search-input">Search Lawscope</label>
+            <div class="site-search__field-wrap">
+              <i
+                class="site-search__field-icon fa-solid fa-magnifying-glass"
+                aria-hidden="true"
+              ></i>
+              <input
+                class="site-search__field"
+                id="site-search-input"
+                name="q"
+                type="search"
+                placeholder="Search articles by topic or phrase"
+                autocomplete="off"
+                enterkeyhint="search"
+                maxlength="120"
+                aria-controls="site-search-results"
+                aria-describedby="site-search-help site-search-status"
+                data-search-field
+              >
+              <button
+                class="site-search__clear"
+                type="button"
+                aria-label="Clear search"
+                data-search-clear
+                hidden
+              >
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </div>
+            <button class="site-search__submit" type="submit">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <span>Search</span>
+            </button>
+            <button
+              class="site-search__close"
+              type="button"
+              aria-label="Close search"
+              data-search-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span class="visually-hidden">Close search</span>
+            </button>
+            <p class="site-search__hint" id="site-search-help">
+              Matches published article titles, categories, tags, and summaries. Use the Up and
+              Down arrow keys to move through results.
+            </p>
+            <div
+              class="site-search__results"
+              id="site-search-results"
+              data-search-results
+              data-search-index-url="/data/search-index.json"
+              data-search-limit="6"
+              data-search-state="idle"
+              aria-busy="false"
+            >
+              <p
+                class="site-search__status"
+                id="site-search-status"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                data-search-status
+              >
+                Enter a legal topic or phrase to search published Lawscope guides.
+              </p>
+              <ul
+                class="site-search__list"
+                aria-label="Search results"
+                data-search-list
+                hidden
+              ></ul>
+              <nav
+                class="site-search__fallback"
+                aria-label="Search alternatives"
+                data-search-fallback
+                hidden
+              >
+                <a href="/articles/">Browse all articles</a>
+                <a href="/categories/">Browse categories</a>
+              </nav>
+            </div>
+            <noscript>
+              <p class="site-search__noscript">
+                Interactive search requires JavaScript. You can still browse
+                <a href="/articles/">Articles</a> or <a href="/categories/">Categories</a>.
+              </p>
+            </noscript>
+          </form>
+        </div>
+      </section>
+    </header>
+
+    <main class="policy-page legal-disclaimer-page" id="main-content" tabindex="-1">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol class="breadcrumb__list" role="list">
+            <li class="breadcrumb__item"><a href="/">Home</a></li>
+            <li class="breadcrumb__item" aria-current="page">Legal Disclaimer</li>
+          </ol>
+        </nav>
+
+        <article class="policy-document legal-disclaimer-document" aria-labelledby="legal-disclaimer-title">
+          <header class="policy-document__header">
+            <p class="eyebrow">Limits of educational information</p>
+            <h1 id="legal-disclaimer-title">Legal Disclaimer</h1>
+            <p class="policy-document__lead">
+              Lawscope provides general educational information about U.S. law. This page explains
+              important limits on that information and when readers should seek qualified professional help.
+            </p>
+            <dl class="policy-document__dates" aria-label="Legal Disclaimer dates">
+              <div>
+                <dt>Effective</dt>
+                <dd><time datetime="{{POLICY_PUBLICATION_DATE}}">{{POLICY_PUBLICATION_DATE_DISPLAY}}</time></dd>
+              </div>
+              <div>
+                <dt>Last updated</dt>
+                <dd><time datetime="{{POLICY_MODIFICATION_DATE}}">{{POLICY_MODIFICATION_DATE_DISPLAY}}</time></dd>
+              </div>
+            </dl>
+          </header>
+
+          {{LEGAL_REVIEW_NOTICE}}
+
+          <aside class="legal-disclaimer-highlight" aria-labelledby="required-notice-title">
+            <span class="legal-disclaimer-highlight__icon" aria-hidden="true">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </span>
+            <div>
+              <h2 id="required-notice-title">Required article notice</h2>
+              <p>{{ARTICLE_DISCLAIMER_TEXT}}</p>
+              <p class="legal-disclaimer-highlight__note">
+                This exact notice is added automatically to every Lawscope article and cannot be removed through article content fields.
+              </p>
+            </div>
+          </aside>
+
+          <nav class="legal-disclaimer-toc" aria-label="Legal Disclaimer contents">
+            <details class="policy-toc" open>
+              <summary>
+                <span id="legal-disclaimer-toc-title">On this page</span>
+                <span class="legal-disclaimer-toc__hint">Show or hide sections</span>
+              </summary>
+              <ol class="policy-toc__list" aria-labelledby="legal-disclaimer-toc-title">
+                <li><a href="#general-information">General information only</a></li>
+                <li><a href="#no-legal-advice">No legal advice</a></li>
+                <li><a href="#no-attorney-client">No attorney-client relationship</a></li>
+                <li><a href="#jurisdiction-changes">Jurisdiction and legal changes</a></li>
+                <li><a href="#no-guarantees">No guarantees</a></li>
+                <li><a href="#deadlines-emergencies">Deadlines and emergencies</a></li>
+                <li><a href="#external-sources">External sources and links</a></li>
+                <li><a href="#professional-help">Professional help</a></li>
+                <li><a href="#contact-boundary">Contact and corrections boundary</a></li>
+                <li><a href="#use-limitations">Use and limitations</a></li>
+              </ol>
+            </details>
+          </nav>
+
+          <div class="policy-document__body">
+            <section id="general-information" aria-labelledby="general-information-title">
+              <h2 id="general-information-title">1. General information only</h2>
+              <p>
+                Lawscope publishes plain-English information about U.S. legal topics for general
+                educational purposes. Articles may summarize statutes, regulations, court decisions,
+                agency materials, procedures, or commonly used legal concepts. They are written for a
+                broad audience and cannot account for every fact, exception, local rule, later authority,
+                or procedural requirement that may matter in an individual situation.
+              </p>
+              <p>
+                Content is not a legal service, case evaluation, referral, official government notice,
+                court instruction, or substitute for reviewing current primary authority. A reader remains
+                responsible for confirming the rules and requirements that apply to the reader’s location,
+                facts, legal status, and deadline.
+              </p>
+            </section>
+
+            <section id="no-legal-advice" aria-labelledby="no-legal-advice-title">
+              <h2 id="no-legal-advice-title">2. No legal advice</h2>
+              <p>
+                Lawscope content does not advise any person to take or avoid a particular action. It does
+                not apply law to a reader’s complete facts, predict how a judge, agency, opposing party,
+                prosecutor, insurer, employer, or other decision-maker will respond, or recommend a legal
+                strategy. Examples are illustrative and do not establish what should happen in another matter.
+              </p>
+              <p>
+                Legal advice requires consideration of facts, documents, objectives, jurisdiction,
+                applicable authority, professional duties, and often information that cannot responsibly be
+                evaluated through a general publication. Readers should not act or refrain from acting solely
+                because of Lawscope content.
+              </p>
+            </section>
+
+            <section id="no-attorney-client" aria-labelledby="no-attorney-client-title">
+              <h2 id="no-attorney-client-title">3. No attorney-client relationship</h2>
+              <p>
+                Reading, searching, subscribing to, quoting, linking to, or sharing Lawscope content does
+                not create an attorney-client, fiduciary, advisory, or other professional relationship.
+                Sending a Contact message, correction report, accessibility report, or privacy request also
+                does not create such a relationship and does not make Lawscope or its editors the reader’s lawyer.
+              </p>
+              <p>
+                No communication through the public website should be treated as confidential or privileged
+                legal communication. Visitors should not send legal secrets, litigation strategy, evidence,
+                government identifiers, complete financial information, health records, passwords, or facts
+                they expect a lawyer to protect as confidential.
+              </p>
+            </section>
+
+            <section id="jurisdiction-changes" aria-labelledby="jurisdiction-changes-title">
+              <h2 id="jurisdiction-changes-title">4. Jurisdiction and legal changes</h2>
+              <p>
+                Federal, state, local, tribal, and territorial law can differ, overlap, or conflict. Rules
+                can also vary by court, agency, district, municipality, procedural posture, immigration or
+                licensing status, contract, and other circumstances. A discussion of one jurisdiction must
+                not be assumed to describe another.
+              </p>
+              <p>
+                Statutes, rules, cases, forms, fees, agency guidance, filing systems, and official contact
+                details can change after an article is published or reviewed. A publication or update date
+                identifies Lawscope’s content history; it is not a representation that no later legal or
+                factual development exists.
+              </p>
+            </section>
+
+            <section id="no-guarantees" aria-labelledby="no-guarantees-title">
+              <h2 id="no-guarantees-title">5. No guarantees</h2>
+              <p>
+                Lawscope aims to use careful research, plain language, visible sources, jurisdictional
+                context, publication dates, and corrections. Even with those practices, Lawscope does not
+                promise that content is complete, error-free, current for every jurisdiction, suitable for
+                a particular purpose, or available without interruption.
+              </p>
+              <p>
+                Nothing on the site guarantees eligibility, a settlement, dismissal, acquittal, benefit,
+                immigration outcome, license, deadline extension, court ruling, agency decision, financial
+                recovery, or any other result. Past events, examples, or general descriptions do not predict
+                the outcome of another matter.
+              </p>
+            </section>
+
+            <section id="deadlines-emergencies" aria-labelledby="deadlines-emergencies-title">
+              <h2 id="deadlines-emergencies-title">6. Deadlines and emergencies</h2>
+              <div class="legal-disclaimer-urgent" aria-labelledby="urgent-boundary-title">
+                <span aria-hidden="true"><i class="fa-solid fa-clock"></i></span>
+                <div>
+                  <h3 id="urgent-boundary-title">Do not rely on Lawscope for a deadline or emergency</h3>
+                  <p>
+                    Lawscope does not calculate statutes of limitation, notice periods, filing dates,
+                    appeal deadlines, hearing dates, response dates, immigration deadlines, court dates,
+                    benefit deadlines, or emergency steps.
+                  </p>
+                </div>
+              </div>
+              <p>
+                Missing a deadline can permanently affect rights. Court orders, official notices, dockets,
+                statutes, rules, and advice from a qualified professional should be checked promptly. For
+                immediate danger or an emergency, contact the appropriate emergency service or authority.
+                For arrest, removal, eviction, protective-order, custody, or other urgent legal concerns,
+                seek a licensed attorney or authorized local service without waiting for a Lawscope response.
+              </p>
+            </section>
+
+            <section id="external-sources" aria-labelledby="external-sources-title">
+              <h2 id="external-sources-title">7. External sources and links</h2>
+              <p>
+                Lawscope links to courts, legislatures, agencies, source documents, and other third-party
+                materials to help readers verify context. A link does not mean that Lawscope controls,
+                sponsors, recommends, or guarantees the destination, and it does not endorse every statement,
+                service, or privacy practice found there.
+              </p>
+              <p>
+                External pages and files can be amended, moved, removed, become inaccessible, or contain
+                errors. Readers should confirm that a source is authentic, current, complete, and applicable
+                before relying on it. Third-party terms, accessibility, security, and privacy practices apply
+                at the destination.
+              </p>
+            </section>
+
+            <section id="professional-help" aria-labelledby="professional-help-title">
+              <h2 id="professional-help-title">8. Professional help</h2>
+              <p>
+                A reader with a legal question should consult an attorney who is licensed and qualified in
+                the relevant jurisdiction and practice area. Depending on the issue, an authorized
+                immigration representative, tax professional, accountant, mediator, court self-help center,
+                legal-aid organization, regulator, union representative, or other qualified professional may
+                also be appropriate.
+              </p>
+              <p>
+                Lawscope does not select a professional for the reader, verify a professional’s continuing
+                qualifications, or guarantee availability, cost, scope, or outcome. Readers should independently
+                evaluate credentials, conflicts, engagement terms, fees, and deadlines.
+              </p>
+            </section>
+
+            <section id="contact-boundary" aria-labelledby="contact-boundary-title">
+              <h2 id="contact-boundary-title">9. Contact and corrections boundary</h2>
+              <p>
+                Lawscope welcomes reports of factual errors, outdated sources, broken links, accessibility
+                barriers, and unclear passages. A useful correction report identifies the article URL,
+                statement at issue, and an authoritative source when available. Editors may investigate and
+                correct publication content under the <a href="/editorial-policy/">Editorial Policy</a>.
+              </p>
+              <p>
+                The Contact channel does not provide legal analysis, interpret documents, assess a case,
+                calculate a deadline, answer a personal legal question, or match a visitor with counsel.
+                Submitting personal facts does not create a duty to respond and should not be used for urgent,
+                confidential, or privileged information.
+              </p>
+              <aside class="legal-disclaimer-contact" aria-labelledby="correction-contact-title">
+                <div>
+                  <h3 id="correction-contact-title">Report a content correction</h3>
+                  <p>Open the Contact page, choose “Report a correction,” and include the article URL and supporting source.</p>
+                </div>
+                <a class="button button--secondary" href="/contact/#contact-subject">
+                  <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                  <span>Go to Contact</span>
+                </a>
+              </aside>
+            </section>
+
+            <section id="use-limitations" aria-labelledby="use-limitations-title">
+              <h2 id="use-limitations-title">10. Use and limitations</h2>
+              <p>
+                To the extent permitted by applicable law, visitors use Lawscope and make decisions based
+                on general site content at their own risk. Readers are responsible for obtaining advice,
+                checking primary authority, preserving documents, and meeting requirements that apply to them.
+                Nothing in this disclaimer excludes a right, remedy, duty, or responsibility that cannot
+                lawfully be excluded or limited.
+              </p>
+              <p>
+                If any part of this disclaimer is found unenforceable, that determination should not affect
+                the remaining parts to the extent they can continue to operate under applicable law. The
+                effective and last-updated dates above identify this version. Material changes will be
+                described in the revision record.
+              </p>
+              <div class="policy-change-log" aria-labelledby="legal-change-log-title">
+                <h3 id="legal-change-log-title">Material revision record</h3>
+                <dl>
+                  <div>
+                    <dt><time datetime="{{POLICY_PUBLICATION_DATE}}">{{POLICY_PUBLICATION_DATE_DISPLAY}}</time></dt>
+                    <dd>Initial pre-launch draft based on Lawscope’s approved disclaimer section directions.</dd>
+                  </div>
+                </dl>
+              </div>
+            </section>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    {{SITE_FOOTER}}
+    {{CONSENT_MANAGER}}
+    {{BACK_TO_TOP}}
+  </body>
+</html>

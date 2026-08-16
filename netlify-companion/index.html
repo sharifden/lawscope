@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="referrer" content="no-referrer">
+    <meta name="color-scheme" content="light">
+    <title>Lawscope CMS Authentication Service</title>
+    <link rel="stylesheet" href="/companion.css">
+    <script src="/identity-callback.js" defer></script>
+  </head>
+  <body>
+    <main class="companion" aria-labelledby="companion-title">
+      <section class="companion__panel">
+        <span class="companion__mark" aria-hidden="true">LS</span>
+        <p class="companion__eyebrow">Restricted service</p>
+        <h1 class="companion__title" id="companion-title">Lawscope CMS authentication</h1>
+        <p class="companion__copy">
+          This Netlify companion supplies invite-only Identity and the repository-scoped Git Gateway. The public Lawscope website remains on Vercel.
+        </p>
+        <p class="companion__status" data-callback-status role="status" aria-live="polite">
+          No authentication action is waiting. Editors should open the protected CMS from the Lawscope admin address.
+        </p>
+        <p class="companion__support">
+          If an invitation or recovery link brought you here and does not continue, stop and contact the Lawscope account owner. Never forward the link or its token.
+        </p>
+        <a class="companion__link" href="https://getlawscope.com/admin/" rel="noreferrer">
+          Open Lawscope Editorial CMS
+        </a>
+      </section>
+    </main>
+    <noscript>
+      <p class="companion__noscript">
+        JavaScript is required only to transfer a one-time Identity invitation or recovery token to the Lawscope CMS. Contact the account owner instead of sharing the link.
+      </p>
+    </noscript>
+  </body>
+</html>

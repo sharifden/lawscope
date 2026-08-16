@@ -1,0 +1,51 @@
+<footer class="site-footer" data-site-footer>
+  <div class="site-footer__main container" data-scroll-reveal>
+    <div class="site-footer__brand">
+      <a class="site-footer__logo" href="/" aria-label="{{SITE_TITLE}} home">{{SITE_TITLE}}</a>
+      <p class="site-footer__tagline">{{SITE_TAGLINE}}</p>
+      <p class="site-footer__description">
+        Lawscope publishes general legal information for educational purposes. It is not a law firm and does not provide legal advice.
+      </p>
+      {{FOOTER_SOCIAL_SECTION}}
+    </div>
+
+    <nav class="site-footer__group" aria-labelledby="footer-navigation-title">
+      <h2 class="site-footer__heading" id="footer-navigation-title">Explore</h2>
+      <ul class="site-footer__links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/articles/">Articles</a></li>
+        <li><a href="/categories/">Categories</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+      </ul>
+    </nav>
+
+    <nav class="site-footer__group site-footer__group--categories" aria-labelledby="footer-categories-title">
+      <h2 class="site-footer__heading" id="footer-categories-title">Legal topics</h2>
+      <ul class="site-footer__links site-footer__category-links" role="list" data-footer-categories>
+        {{FOOTER_CATEGORY_LINKS}}
+      </ul>
+    </nav>
+
+    <nav class="site-footer__group" aria-labelledby="footer-policies-title">
+      <h2 class="site-footer__heading" id="footer-policies-title">Policies</h2>
+      <ul class="site-footer__links" role="list">
+        <li><a href="/privacy-policy/">Privacy Policy</a></li>
+        <li>
+          <button class="site-footer__privacy-button" type="button" data-open-consent-preferences hidden>
+            Privacy choices
+          </button>
+        </li>
+        <li><a href="/legal-disclaimer/">Legal Disclaimer</a></li>
+        <li><a href="/editorial-policy/">Editorial Policy</a></li>
+        <li><a href="/contact/">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="site-footer__bottom">
+    <div class="site-footer__bottom-inner container">
+      <p>&copy; {{CURRENT_YEAR}} {{SITE_TITLE}}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

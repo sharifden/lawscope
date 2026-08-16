@@ -1,0 +1,46 @@
+{
+  "site_title": "Lawscope",
+  "site_tagline": "U.S. law, explained with clarity and care.",
+  "social_profiles": {
+    "x": "",
+    "facebook": "",
+    "linkedin": ""
+  },
+  "newsletter": {
+    "enabled": false,
+    "endpoint": "",
+    "provider": "generic-form",
+    "double_opt_in": true
+  },
+  "contact": {
+    "enabled": false,
+    "endpoint": "/api/contact/",
+    "provider": "lawscope-serverless"
+  },
+  "consent": {
+    "mode": "strict-opt-in",
+    "provider": "local-preference-center",
+    "revision": 1,
+    "google_certified_cmp": false
+  },
+  "analytics": {
+    "enabled": false,
+    "measurement_id": "G-XXXXXXXXXX"
+  },
+  "advertising": {
+    "enabled": false,
+    "account_approved": false,
+    "policy_reviewed": false,
+    "certified_cmp_ready": false,
+    "publisher_id": "ca-pub-0000000000000000",
+    "slots": {
+      "home_below_featured": "0000000000",
+      "articles_in_feed": "0000000000",
+      "categories_overview": "0000000000",
+      "category_in_feed": "0000000000",
+      "article_mid": "0000000000",
+      "article_sidebar": "0000000000",
+      "article_end": "0000000000"
+    }
+  }
+}

@@ -1,0 +1,92 @@
+/**
+ * Lawscope theme mappings and palette-change transitions.
+ * The pre-paint initializer and deferred controller are implemented in Module 12.
+ */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-background: var(--palette-dark-page);
+  --color-background-alternate: var(--palette-dark-alternate);
+  --color-surface: var(--palette-dark-surface);
+  --color-surface-muted: var(--palette-dark-alternate);
+  --color-surface-raised: var(--palette-dark-raised);
+  --color-text-primary: var(--palette-dark-primary-text);
+  --color-text-secondary: var(--palette-dark-secondary-text);
+  --color-text-muted: var(--palette-dark-muted-text);
+  --color-brand: var(--palette-dark-brand);
+  --color-brand-hover: var(--palette-dark-brand-hover);
+  --color-on-brand: var(--palette-dark-on-brand);
+  --color-link: var(--palette-dark-link);
+  --color-link-hover: var(--palette-dark-link-hover);
+  --color-focus: var(--palette-dark-focus);
+  --color-border: var(--palette-dark-border);
+  --color-border-strong: var(--palette-dark-border-strong);
+  --color-success: var(--palette-dark-success);
+  --color-success-surface: var(--palette-dark-success-surface);
+  --color-error: var(--palette-dark-error);
+  --color-error-surface: var(--palette-dark-error-surface);
+  --color-disclaimer-border: var(--palette-dark-disclaimer-border);
+  --color-disclaimer-surface: var(--palette-dark-disclaimer-surface);
+  --color-disclaimer-text: var(--palette-dark-disclaimer-text);
+  --color-ad-surface: var(--palette-dark-ad-surface);
+  --color-overlay: var(--palette-dark-overlay);
+  --shadow-color: var(--palette-dark-shadow);
+  --shadow-color-strong: var(--palette-dark-shadow-strong);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-background: var(--palette-dark-page);
+    --color-background-alternate: var(--palette-dark-alternate);
+    --color-surface: var(--palette-dark-surface);
+    --color-surface-muted: var(--palette-dark-alternate);
+    --color-surface-raised: var(--palette-dark-raised);
+    --color-text-primary: var(--palette-dark-primary-text);
+    --color-text-secondary: var(--palette-dark-secondary-text);
+    --color-text-muted: var(--palette-dark-muted-text);
+    --color-brand: var(--palette-dark-brand);
+    --color-brand-hover: var(--palette-dark-brand-hover);
+    --color-on-brand: var(--palette-dark-on-brand);
+    --color-link: var(--palette-dark-link);
+    --color-link-hover: var(--palette-dark-link-hover);
+    --color-focus: var(--palette-dark-focus);
+    --color-border: var(--palette-dark-border);
+    --color-border-strong: var(--palette-dark-border-strong);
+    --color-success: var(--palette-dark-success);
+    --color-success-surface: var(--palette-dark-success-surface);
+    --color-error: var(--palette-dark-error);
+    --color-error-surface: var(--palette-dark-error-surface);
+    --color-disclaimer-border: var(--palette-dark-disclaimer-border);
+    --color-disclaimer-surface: var(--palette-dark-disclaimer-surface);
+    --color-disclaimer-text: var(--palette-dark-disclaimer-text);
+    --color-ad-surface: var(--palette-dark-ad-surface);
+    --color-overlay: var(--palette-dark-overlay);
+    --shadow-color: var(--palette-dark-shadow);
+    --shadow-color-strong: var(--palette-dark-shadow-strong);
+  }
+}
+
+:root.theme-transition,
+:root.theme-transition body,
+:root.theme-transition body *,
+:root.theme-transition body *::before,
+:root.theme-transition body *::after {
+  transition-property: background-color, border-color, box-shadow, color, fill, stroke;
+  transition-duration: var(--duration-standard);
+  transition-timing-function: var(--easing-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root.theme-transition,
+  :root.theme-transition body,
+  :root.theme-transition body *,
+  :root.theme-transition body *::before,
+  :root.theme-transition body *::after {
+    transition: none !important;
+  }
+}

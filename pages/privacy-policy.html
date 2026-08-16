@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="en-US" data-deployment-environment="{{DEPLOYMENT_ENV}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script data-theme-initializer>
+      (() => {
+        const storageKey = 'lawscope-theme';
+        let storedTheme = null;
+
+        try {
+          storedTheme = window.localStorage.getItem(storageKey);
+        } catch {
+          storedTheme = null;
+        }
+
+        const hasStoredChoice = storedTheme === 'light' || storedTheme === 'dark';
+        const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+        const resolvedTheme = hasStoredChoice
+          ? storedTheme
+          : systemPrefersDark
+            ? 'dark'
+            : 'light';
+
+        document.documentElement.dataset.theme = resolvedTheme;
+      })();
+    </script>
+    <meta name="robots" content="{{ROBOTS_DIRECTIVE}}">
+    <meta name="description" content="{{PAGE_DESCRIPTION}}">
+    <meta name="date" content="{{POLICY_PUBLICATION_DATE}}">
+    <meta name="last-modified" content="{{POLICY_MODIFICATION_DATE}}">
+    <title>{{PAGE_TITLE}}</title>
+    <link rel="canonical" href="{{CANONICAL_URL}}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lawscope">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="{{PAGE_TITLE}}">
+    <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
+    <meta property="og:url" content="{{CANONICAL_URL}}">
+    <meta property="og:updated_time" content="{{POLICY_MODIFICATION_DATE}}">
+    <meta property="og:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:secure_url" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{PAGE_TITLE}}">
+    <meta name="twitter:description" content="{{PAGE_DESCRIPTION}}">
+    <meta name="twitter:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta name="twitter:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <script type="application/ld+json">{{PAGE_JSON_LD}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Merriweather:wght@700;900&amp;display=swap"
+    >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <script src="/js/theme.js" defer></script>
+    <script src="/js/header.js" defer></script>
+    <script src="/js/search.js" defer></script>
+    <script src="/js/consent.js" defer></script>
+    <script src="/js/analytics-config.js" defer></script>
+    <script src="/js/analytics.js" defer></script>
+    <script src="/js/back-to-top.js" defer></script>
+    <script src="/js/scroll-reveal.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header" data-site-header>
+      <div class="site-header__inner container">
+        <a
+          class="site-header__logo"
+          id="page-top"
+          href="/"
+          aria-label="Lawscope home"
+          data-page-top-focus
+        >Lawscope</a>
+
+        <nav
+          class="site-header__navigation"
+          id="primary-navigation"
+          aria-label="Primary navigation"
+          data-primary-navigation
+        >
+          <div class="site-header__navigation-heading">
+            <span>Main menu</span>
+            <button
+              class="site-header__navigation-close"
+              type="button"
+              aria-label="Close main menu"
+              data-menu-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span>Close</span>
+            </button>
+          </div>
+          <ul class="site-header__navigation-list" role="list">
+            <li>
+              <a class="site-header__navigation-link" href="/">Home</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/articles/">Articles</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/categories/">Categories</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/about/">About</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/contact/">Contact</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="site-header__controls" role="group" aria-label="Site controls">
+          <button
+            class="site-header__control site-header__search-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="site-search-panel"
+            aria-label="Open site search"
+            data-search-toggle
+          >
+            <i
+              class="site-header__control-icon fa-solid fa-magnifying-glass"
+              aria-hidden="true"
+            ></i>
+            <span class="site-header__control-label">Search</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__theme-toggle"
+            type="button"
+            aria-pressed="false"
+            aria-label="Switch to dark mode"
+            data-theme-toggle
+          >
+            <i
+              class="site-header__control-icon fa-regular fa-moon"
+              aria-hidden="true"
+              data-theme-icon
+            ></i>
+            <span class="site-header__control-label" data-theme-label>Dark mode</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open main menu"
+            data-menu-toggle
+          >
+            <i class="site-header__control-icon fa-solid fa-bars" aria-hidden="true"></i>
+            <span class="site-header__control-label">Menu</span>
+          </button>
+        </div>
+      </div>
+
+      <section
+        class="site-search"
+        id="site-search-panel"
+        aria-label="Search Lawscope"
+        data-search-panel
+        hidden
+      >
+        <div class="site-search__inner container">
+          <form
+            class="site-search__form"
+            role="search"
+            action="/articles/"
+            method="get"
+            data-search-form
+          >
+            <label class="site-search__label" for="site-search-input">Search Lawscope</label>
+            <div class="site-search__field-wrap">
+              <i
+                class="site-search__field-icon fa-solid fa-magnifying-glass"
+                aria-hidden="true"
+              ></i>
+              <input
+                class="site-search__field"
+                id="site-search-input"
+                name="q"
+                type="search"
+                placeholder="Search articles by topic or phrase"
+                autocomplete="off"
+                enterkeyhint="search"
+                maxlength="120"
+                aria-controls="site-search-results"
+                aria-describedby="site-search-help site-search-status"
+                data-search-field
+              >
+              <button
+                class="site-search__clear"
+                type="button"
+                aria-label="Clear search"
+                data-search-clear
+                hidden
+              >
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </div>
+            <button class="site-search__submit" type="submit">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <span>Search</span>
+            </button>
+            <button
+              class="site-search__close"
+              type="button"
+              aria-label="Close search"
+              data-search-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span class="visually-hidden">Close search</span>
+            </button>
+            <p class="site-search__hint" id="site-search-help">
+              Matches published article titles, categories, tags, and summaries. Use the Up and
+              Down arrow keys to move through results.
+            </p>
+            <div
+              class="site-search__results"
+              id="site-search-results"
+              data-search-results
+              data-search-index-url="/data/search-index.json"
+              data-search-limit="6"
+              data-search-state="idle"
+              aria-busy="false"
+            >
+              <p
+                class="site-search__status"
+                id="site-search-status"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                data-search-status
+              >
+                Enter a legal topic or phrase to search published Lawscope guides.
+              </p>
+              <ul
+                class="site-search__list"
+                aria-label="Search results"
+                data-search-list
+                hidden
+              ></ul>
+              <nav
+                class="site-search__fallback"
+                aria-label="Search alternatives"
+                data-search-fallback
+                hidden
+              >
+                <a href="/articles/">Browse all articles</a>
+                <a href="/categories/">Browse categories</a>
+              </nav>
+            </div>
+            <noscript>
+              <p class="site-search__noscript">
+                Interactive search requires JavaScript. You can still browse
+                <a href="/articles/">Articles</a> or <a href="/categories/">Categories</a>.
+              </p>
+            </noscript>
+          </form>
+        </div>
+      </section>
+    </header>
+
+    <main class="policy-page privacy-page" id="main-content" tabindex="-1">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol class="breadcrumb__list" role="list">
+            <li class="breadcrumb__item"><a href="/">Home</a></li>
+            <li class="breadcrumb__item" aria-current="page">Privacy Policy</li>
+          </ol>
+        </nav>
+
+        <article class="policy-document privacy-document" aria-labelledby="privacy-policy-title">
+          <header class="policy-document__header">
+            <p class="eyebrow">Privacy and visitor choices</p>
+            <h1 id="privacy-policy-title">Privacy Policy</h1>
+            <p class="policy-document__lead">
+              This policy describes Lawscope’s current public-site data practices, including what
+              visitors provide, what the site receives automatically, why information is used, and
+              how visitors can exercise available choices.
+            </p>
+            <dl class="policy-document__dates" aria-label="Privacy Policy dates">
+              <div>
+                <dt>Effective</dt>
+                <dd><time datetime="{{POLICY_PUBLICATION_DATE}}">{{POLICY_PUBLICATION_DATE_DISPLAY}}</time></dd>
+              </div>
+              <div>
+                <dt>Last updated</dt>
+                <dd><time datetime="{{POLICY_MODIFICATION_DATE}}">{{POLICY_MODIFICATION_DATE_DISPLAY}}</time></dd>
+              </div>
+            </dl>
+          </header>
+
+          {{PRIVACY_REVIEW_NOTICE}}
+
+          <aside class="policy-summary" aria-labelledby="privacy-summary-title">
+            <span class="policy-summary__icon" aria-hidden="true">
+              <i class="fa-solid fa-shield-halved"></i>
+            </span>
+            <div>
+              <h2 id="privacy-summary-title">Plain-language summary</h2>
+              <p>
+                This policy explains what Lawscope collects, why it is collected, how advertising
+                and analytics may use data, and the choices available to visitors.
+              </p>
+              <p>
+                Optional analytics is blocked unless a production build is deliberately enabled and a
+                visitor opts in; the status for this build appears in Section 7. Advertising remains
+                separately gated by approval, canonical-host, certified-CMP, and opt-in controls, while newsletter collection remains inactive in the baseline. Theme and consent choices stay
+                in this browser, and Contact submissions require monitored delivery.
+              </p>
+            </div>
+          </aside>
+
+          <nav class="privacy-toc" aria-label="Privacy Policy contents">
+            <details class="policy-toc" open>
+              <summary>
+                <span id="privacy-toc-title">On this page</span>
+                <span class="privacy-toc__summary-hint">Show or hide sections</span>
+              </summary>
+              <ol class="policy-toc__list" aria-labelledby="privacy-toc-title">
+                <li><a href="#scope-responsible-entity">Scope and responsible entity</a></li>
+                <li><a href="#information-provided">Information visitors provide</a></li>
+                <li><a href="#information-automatic">Information collected automatically</a></li>
+                <li><a href="#purposes-legal-bases">Purposes and legal bases</a></li>
+                <li><a href="#cookies-storage">Cookies and similar technologies</a></li>
+                <li><a href="#advertising">Advertising and partners</a></li>
+                <li><a href="#analytics">Analytics</a></li>
+                <li><a href="#newsletter-contact-providers">Newsletter and contact providers</a></li>
+                <li><a href="#disclosure">Disclosure of information</a></li>
+                <li><a href="#state-rights">U.S. state privacy rights</a></li>
+                <li><a href="#california-notice">California notice at collection</a></li>
+                <li><a href="#international-rights">EEA, UK, and Swiss rights</a></li>
+                <li><a href="#retention">Data retention</a></li>
+                <li><a href="#security">Data security</a></li>
+                <li><a href="#children">Children’s privacy</a></li>
+                <li><a href="#browser-signals">Do Not Track and Global Privacy Control</a></li>
+                <li><a href="#international-transfers">International transfers</a></li>
+                <li><a href="#external-links">External links</a></li>
+                <li><a href="#policy-changes">Policy changes</a></li>
+                <li><a href="#contact-rights">Contact and rights requests</a></li>
+              </ol>
+            </details>
+          </nav>
+
+          <div class="policy-document__body">
+            <section id="scope-responsible-entity" aria-labelledby="scope-responsible-entity-title">
+              <h2 id="scope-responsible-entity-title">1. Scope and responsible entity</h2>
+              <p>
+                This notice applies to the public pages at <a href="https://getlawscope.com/">getlawscope.com</a>,
+                including articles, category pages, search, preferences, and the Contact page. It does
+                not govern a third-party site reached through an external link or an administrator’s
+                separate account with a hosting or content-management provider.
+              </p>
+              {{OPERATOR_DISCLOSURE}}
+              <p>
+                Lawscope publishes general U.S. legal information and does not provide legal advice.
+                Sending a privacy or contact request does not create an attorney-client relationship.
+              </p>
+            </section>
+
+            <section id="information-provided" aria-labelledby="information-provided-title">
+              <h2 id="information-provided-title">2. Information visitors provide</h2>
+              <p>Lawscope may receive information only when a visitor chooses to provide it:</p>
+              <ul class="privacy-list">
+                <li><strong>Contact and correction requests:</strong> name, email address, subject, message, and an optional article URL.</li>
+                <li><strong>Privacy requests:</strong> contact details, the right requested, residence or jurisdiction information needed to assess the request, and limited verification information.</li>
+                <li><strong>Newsletter signup:</strong> an email address and confirmation status if that feature is activated.</li>
+                <li><strong>Other voluntary details:</strong> information a visitor includes in a message. Visitors should not send legal secrets, government identifiers, financial details, health records, passwords, or time-sensitive case facts.</li>
+              </ul>
+              <p>
+                The current Contact form and newsletter controls do not transmit or store information
+                while their monitored providers are unconfigured. The interface explains when a form
+                is unavailable rather than silently collecting a submission.
+              </p>
+            </section>
+
+            <section id="information-automatic" aria-labelledby="information-automatic-title">
+              <h2 id="information-automatic-title">3. Information collected automatically</h2>
+              <p>
+                When a browser requests a Lawscope page, normal internet delivery can expose the IP
+                address, date and time, requested URL, referring page, browser and device information,
+                approximate location inferred from an IP address, response status, and security or
+                reliability events to the hosting and network providers. These facts may appear in
+                infrastructure logs even when optional analytics and advertising are off.
+              </p>
+              <p>
+                The site’s search index is a static file fetched by the browser. Search matching runs
+                locally: Lawscope does not intentionally transmit or retain the search phrase as an
+                analytics event. A click on a third-party link causes a separate request to that third
+                party under its own practices.
+              </p>
+            </section>
+
+            <section id="purposes-legal-bases" aria-labelledby="purposes-legal-bases-title">
+              <h2 id="purposes-legal-bases-title">4. Purposes and legal bases</h2>
+              <p>Information is used, as applicable, to:</p>
+              <ul class="privacy-list">
+                <li>deliver pages, remember requested settings, maintain availability, diagnose errors, and protect the site;</li>
+                <li>respond to contact, correction, accessibility, and privacy requests;</li>
+                <li>send a requested newsletter and manage unsubscribe or suppression records after activation;</li>
+                <li>measure use or fund the publication with advertising only after the relevant consent and provider approvals; and</li>
+                <li>comply with law, enforce terms, protect people and systems, and establish or defend legal claims.</li>
+              </ul>
+              <p>
+                Depending on the visitor and jurisdiction, a purpose may rely on consent, performance
+                of a requested service, legitimate interests in operating and protecting a publication,
+                or a legal obligation. Optional analytics and advertising remain blocked by default and
+                require affirmative consent. Where consent applies, it can be withdrawn for future use.
+              </p>
+            </section>
+
+            <section id="cookies-storage" aria-labelledby="cookies-storage-title">
+              <h2 id="cookies-storage-title">5. Cookies and similar technologies</h2>
+              <p>
+                Lawscope’s current first-party controls use browser local storage rather than a
+                first-party tracking cookie. The key <code>lawscope-theme</code> stores only an explicit
+                light or dark choice. The key <code>lawscope:consent</code> stores a revision number and
+                essential, analytics, and advertising booleans. It contains no name, email, visitor ID,
+                timestamp, IP address, page history, or search phrase.
+              </p>
+              <p>
+                Theme information remains until the visitor changes it, clears browser storage, or the
+                browser removes it. Consent information remains until it is changed, cleared, or made
+                obsolete by a policy revision. If storage is unavailable, the site uses conservative
+                session defaults and does not treat optional categories as approved.
+              </p>
+              <div class="privacy-preferences" aria-labelledby="privacy-preferences-title">
+                <div>
+                  <h3 id="privacy-preferences-title">Manage privacy choices</h3>
+                  <p>Review or withdraw optional analytics and advertising choices at any time on this device.</p>
+                </div>
+                <button class="button button--secondary" type="button" data-open-consent-preferences hidden>
+                  <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+                  <span>Privacy choices</span>
+                </button>
+                <noscript><p>JavaScript is off, so optional analytics and advertising integrations are not activated by Lawscope’s preference controller.</p></noscript>
+              </div>
+            </section>
+
+            <section id="advertising" aria-labelledby="advertising-title">
+              <h2 id="advertising-title">6. Advertising and partners</h2>
+              {{ADVERTISING_DISCLOSURE}}
+              <p>
+                The planned provider is <strong>Google AdSense</strong>. Depending on the visitor’s
+                choices, location, Google’s account controls, and applicable law, Google may serve
+                personalized, non-personalized, or limited ads and may use cookies or similar storage
+                for delivery, frequency control, measurement, security, and invalid-traffic prevention.
+                Review <a href="https://policies.google.com/technologies/ads">Google’s advertising
+                technologies notice</a>, <a href="https://policies.google.com/privacy">Google’s Privacy
+                Policy</a>, and <a href="https://myadcenter.google.com/">My Ad Center</a>. Lawscope also
+                requires a Google-certified CMP where Google requires one. Advertising will not load
+                unless the production, approval, identifier, policy, canonical-host, CMP-readiness, and
+                visitor-consent gates are all satisfied.
+              </p>
+            </section>
+
+            <section id="analytics" aria-labelledby="analytics-title">
+              <h2 id="analytics-title">7. Analytics</h2>
+              {{ANALYTICS_DISCLOSURE}}
+              <p>
+                The provider is Google Analytics 4. Lawscope’s strict opt-in implementation makes no
+                Google Analytics request, sets no GA4 cookie, and sends no consent-mode ping before
+                analytics permission is granted. Development and Preview builds cannot activate the
+                production measurement ID. Advertising storage and signals remain denied, and Google
+                Signals and advertising personalization are disabled.
+              </p>
+              <p>
+                After permission, the limited measurement set is: one page view; confirmed newsletter
+                signup and Contact-form success events with no form values; category-link activation
+                with a controlled category slug; and an article-read event after 30 foreground seconds
+                and 75% of the article prose. Page locations and referrers omit query strings and
+                fragments. Lawscope does not send names, email addresses, message or search text,
+                contact subjects, form content, or other direct identifiers in event parameters.
+              </p>
+              <p>
+                The GA4 property must use a two-month event-data retention period, keep enhanced
+                measurement features off unless separately reviewed, apply tested internal- and
+                developer-traffic filters, and enable data redaction as defense in depth before routine
+                production collection. Withdrawing analytics permission stops future collection on
+                that browser; it does not erase information already processed by Google. See
+                <a href="https://policies.google.com/privacy">Google’s Privacy Policy</a> and
+                <a href="https://tools.google.com/dlpage/gaoptout">Google’s browser opt-out add-on</a>.
+              </p>
+            </section>
+
+            <section id="newsletter-contact-providers" aria-labelledby="newsletter-contact-providers-title">
+              <h2 id="newsletter-contact-providers-title">8. Newsletter and contact providers</h2>
+              {{NEWSLETTER_CONTACT_DISCLOSURE}}
+              <p>
+                When newsletter delivery is activated, signup will use double opt-in. A subscriber can
+                unsubscribe using the link in each message. Lawscope will identify the sender and state
+                how active subscriptions, unsubscribes, and suppression records are retained before
+                collecting addresses.
+              </p>
+              <p>
+                The Contact endpoint validates fields again on the server, uses a hidden trap and
+                request throttling, does not write messages to Git, and forwards an accepted message only
+                to a configured server-side HTTPS destination. Delivery credentials never appear in
+                browser code. Downstream provider retention must be confirmed before the form is enabled.
+              </p>
+            </section>
+
+            <section id="disclosure" aria-labelledby="disclosure-title">
+              <h2 id="disclosure-title">9. Disclosure of information</h2>
+              <p>Lawscope may disclose limited information:</p>
+              <ul class="privacy-list">
+                <li>to infrastructure and other processors that provide hosting, content delivery, security, communications, or a visitor-requested feature;</li>
+                <li>when reasonably necessary to comply with law or valid process, protect rights and safety, investigate abuse, or defend a legal claim;</li>
+                <li>as part of a merger, financing, reorganization, or transfer of the publication, subject to applicable notice and safeguards; or</li>
+                <li>with the visitor’s direction or consent.</li>
+              </ul>
+              <p>
+                Lawscope does not sell personal information. If this build’s Section 6 status says
+                advertising is available, consented Google AdSense processing may constitute targeted
+                advertising, sharing, or another regulated practice in some jurisdictions. Visitors can
+                deny or withdraw Lawscope’s advertising permission through Privacy Choices and can use
+                the provider controls linked in Section 6. Google Analytics 4 is available only under
+                the production and consent conditions in Section 7, with this build’s status shown there.
+                Lawscope will add any further legally required notice or opt-out method before a covered
+                practice begins.
+              </p>
+
+              <div class="privacy-inventory" aria-labelledby="privacy-inventory-title">
+                <h3 id="privacy-inventory-title">Current service inventory</h3>
+                <p>The statuses below are generated from the versioned privacy configuration used for this build.</p>
+                {{SERVICE_INVENTORY}}
+              </div>
+            </section>
+
+            <section id="state-rights" aria-labelledby="state-rights-title">
+              <h2 id="state-rights-title">10. U.S. state privacy rights</h2>
+              <p>
+                Depending on residence, the type and amount of processing, and whether a law applies to
+                Lawscope, a visitor may have rights to know or access information, correct inaccuracies,
+                delete information, receive a portable copy, opt out of sale, sharing, or targeted
+                advertising, limit certain sensitive-data uses, and appeal a denied request. Some laws
+                also protect visitors from discriminatory treatment for exercising a right.
+              </p>
+              <p>
+                This list does not claim that every state right applies in every situation. Lawscope will
+                evaluate a request under the law that applies, explain a material denial where required,
+                and provide an appeal route where available. An authorized agent may submit a request if
+                legally permitted and if authority can be verified.
+              </p>
+            </section>
+
+            <section id="california-notice" aria-labelledby="california-notice-title">
+              <h2 id="california-notice-title">11. California notice at collection</h2>
+              <div class="privacy-facts" role="list" aria-label="California collection categories">
+                <article class="privacy-fact" role="listitem">
+                  <h3>Identifiers</h3>
+                  <p>IP address and, only when submitted, name and email address. Used for site delivery, security, responses, and activated subscriptions.</p>
+                </article>
+                <article class="privacy-fact" role="listitem">
+                  <h3>Internet or network activity</h3>
+                  <p>Requested page, referrer, browser/device facts, service logs, and local preference state. Used for delivery, security, reliability, and consented measurement if activated.</p>
+                </article>
+                <article class="privacy-fact" role="listitem">
+                  <h3>Approximate geolocation</h3>
+                  <p>A coarse area may be inferred by infrastructure providers from an IP address for delivery, security, or regional behavior. Lawscope does not request precise location.</p>
+                </article>
+                <article class="privacy-fact" role="listitem">
+                  <h3>Submission contents</h3>
+                  <p>A message and optional article URL submitted through Contact. Used to respond to the selected inquiry and maintain necessary request records.</p>
+                </article>
+              </div>
+              <p>
+                Lawscope does not intend to collect sensitive personal information through public forms
+                and asks visitors not to submit it. Current sale and sharing status is “none active.”
+                Retention follows the criteria in Section 13. Requests use the process in Section 20.
+              </p>
+            </section>
+
+            <section id="international-rights" aria-labelledby="international-rights-title">
+              <h2 id="international-rights-title">12. EEA, UK, and Swiss rights</h2>
+              <p>
+                If data-protection law in the European Economic Area, United Kingdom, or Switzerland
+                applies, a visitor may have rights of access, correction, erasure, restriction,
+                objection, and portability, and may withdraw consent for future processing. A visitor
+                may also complain to the competent supervisory authority. Rights can be limited by
+                exemptions and the circumstances of a request.
+              </p>
+              <p>
+                The controller is the responsible Lawscope operator identified in Section 1. The
+                purposes and possible legal bases are described in Section 4. Lawscope does not use
+                solely automated decisions that produce legal or similarly significant effects in the
+                current public-site configuration.
+              </p>
+            </section>
+
+            <section id="retention" aria-labelledby="retention-title">
+              <h2 id="retention-title">13. Data retention</h2>
+              <p>
+                Lawscope keeps information only for the period reasonably needed for the disclosed
+                purpose, security, legal obligations, dispute handling, and request records. Where the
+                final period depends on an account or provider that has not been selected, this policy
+                states that limit rather than inventing a duration.
+              </p>
+              <ul class="privacy-retention-list">
+                <li><strong>Theme and consent state:</strong> on the visitor’s device until changed, cleared, browser-removed, or invalidated by a revision.</li>
+                <li><strong>Contact request in the endpoint:</strong> processed in memory for validation and forwarding; not written by the endpoint to Git or an application database.</li>
+                <li><strong>Abuse-control key:</strong> a pseudonymous HMAC-derived rate-limit key held only in server memory for a ten-minute window; it is not exposed in a response.</li>
+                <li><strong>Forwarded messages:</strong> provider and owner-approved period must be configured before monitored delivery is enabled.</li>
+                <li><strong>Hosting and security logs:</strong> governed by confirmed production provider/account settings; the repository does not set a custom period.</li>
+                <li><strong>Analytics:</strong> none is collected while inactive; after consent-based activation, the GA4 property must use a two-month event-data retention setting.</li>
+                <li><strong>Advertising and newsletter data:</strong> no newsletter data is collected while that feature is inactive. AdSense makes no request while advertising is inactive; after a fully gated, consented activation, Google’s current provider terms and configured account controls govern its advertising-data retention.</li>
+              </ul>
+            </section>
+
+            <section id="security" aria-labelledby="security-title">
+              <h2 id="security-title">14. Data security</h2>
+              <p>
+                Lawscope uses reasonable administrative, technical, and organizational measures suited
+                to the site, including HTTPS deployment, server-side form validation, bounded requests,
+                same-origin endpoints, abuse controls, environment-only secrets, limited data flows,
+                dependency review, and separation of public content from submitted personal information.
+              </p>
+              <p>
+                No internet transmission, storage system, or security control is guaranteed to be
+                completely secure. Visitors should avoid sending confidential legal facts or urgent
+                information through public forms and should use an appropriate qualified professional or
+                authority for legal and emergency matters.
+              </p>
+            </section>
+
+            <section id="children" aria-labelledby="children-title">
+              <h2 id="children-title">15. Children’s privacy</h2>
+              <p>
+                Lawscope is a general-audience legal information publication and is not directed to
+                children under 13. Lawscope does not knowingly collect personal information from a child
+                under 13. A parent or guardian who believes a child supplied information may use the
+                privacy-request process in Section 20 so Lawscope can investigate and delete information
+                where appropriate.
+              </p>
+            </section>
+
+            <section id="browser-signals" aria-labelledby="browser-signals-title">
+              <h2 id="browser-signals-title">16. Do Not Track and Global Privacy Control</h2>
+              <p>
+                Browser Do Not Track signals are not consistently defined, so the current preference
+                controller does not assign them a separate state. Global Privacy Control is treated as a
+                direction to keep advertising permission off on that device; the advertising control is
+                disabled while the signal is active. Optional technologies also remain off until the
+                visitor affirmatively chooses them.
+              </p>
+            </section>
+
+            <section id="international-transfers" aria-labelledby="international-transfers-title">
+              <h2 id="international-transfers-title">17. International transfers</h2>
+              <p>
+                Lawscope is a U.S.-focused publication. Public-site information may be processed in the
+                United States or other locations where hosting, network, font, icon, and future approved
+                communications providers operate. Those locations may have data-protection rules that
+                differ from a visitor’s jurisdiction.
+              </p>
+              <p>
+                Where law requires a transfer mechanism, the responsible operator will use an available
+                safeguard such as an adequacy decision, contractual protection, or another lawful basis.
+                Provider locations and safeguards must be confirmed before a data-collecting optional
+                service is activated.
+              </p>
+            </section>
+
+            <section id="external-links" aria-labelledby="external-links-title">
+              <h2 id="external-links-title">18. External links</h2>
+              <p>
+                Articles and site controls may link to courts, agencies, source documents, social-sharing
+                services, or other third parties. Lawscope does not control those destinations. A third
+                party may receive a normal browser request when a visitor follows its link, and its own
+                terms and privacy notice apply. A link does not mean Lawscope endorses that party’s data
+                practices.
+              </p>
+            </section>
+
+            <section id="policy-changes" aria-labelledby="policy-changes-title">
+              <h2 id="policy-changes-title">19. Policy changes</h2>
+              <p>
+                Lawscope will update the “Last updated” date when this notice materially changes. If a
+                change materially expands collection or use, Lawscope will provide notice appropriate to
+                the change and obtain consent where required before applying it. Prior versions and the
+                reason for material revisions should be retained in publication records.
+              </p>
+              <div class="policy-change-log" aria-labelledby="policy-change-log-title">
+                <h3 id="policy-change-log-title">Material revision record</h3>
+                <dl>
+                  <div>
+                    <dt><time datetime="{{POLICY_PUBLICATION_DATE}}">{{POLICY_PUBLICATION_DATE_DISPLAY}}</time></dt>
+                    <dd>Initial pre-launch publication describing Lawscope’s implemented default data flows and activation safeguards.</dd>
+                  </div>
+                </dl>
+              </div>
+            </section>
+
+            <section id="contact-rights" aria-labelledby="contact-rights-title">
+              <h2 id="contact-rights-title">20. Contact and rights requests</h2>
+              <p>
+                To ask a privacy question or request access, correction, deletion, portability, an
+                applicable opt-out, or an appeal, use the Lawscope Contact page and choose
+                <strong>Privacy request</strong>. Do not include passwords, government identifiers,
+                complete financial account details, or confidential legal facts.
+              </p>
+              <p>
+                Lawscope may ask for information reasonably necessary to match a request with available
+                records, confirm identity, protect against fraud, or verify an authorized agent. Any
+                verification information will be limited to the request and handled under this policy.
+                Lawscope will respond within the period required by applicable law or explain if an
+                extension is permitted and needed.
+              </p>
+              {{RIGHTS_REQUEST_CALLOUT}}
+            </section>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    {{SITE_FOOTER}}
+    {{CONSENT_MANAGER}}
+    {{BACK_TO_TOP}}
+  </body>
+</html>

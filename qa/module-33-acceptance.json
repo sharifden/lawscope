@@ -1,0 +1,87 @@
+{
+  "module": 33,
+  "assessmentDate": "2026-08-16",
+  "productionOrigin": "https://getlawscope.com",
+  "launchDecision": "blocked-pending-owner-live-acceptance",
+  "repositoryAutomation": {
+    "status": "passed",
+    "command": "npm run check",
+    "criticalDefects": 0,
+    "highDefects": 0,
+    "scope": "deterministic build, source, generated-route, accessibility-contract, performance-budget, security, CMS, SEO, privacy, advertising, analytics, and served-output validation"
+  },
+  "representativeTemplates": [
+    "/",
+    "/articles/",
+    "/categories/consumer-law/",
+    "/articles/what-happens-after-an-arrest/",
+    "/contact/",
+    "/privacy-policy/",
+    "/admin/",
+    "/404.html"
+  ],
+  "liveAcceptance": [
+    {
+      "id": "lighthouse-production",
+      "status": "pending-live-browser",
+      "requiredEvidence": "Lighthouse reports for Home, Articles, category, article, and Contact with 90 or higher targets for Performance, Accessibility, Best Practices, and SEO, or an owner-approved documented exception."
+    },
+    {
+      "id": "core-web-vitals-field-data",
+      "status": "pending-post-launch-field-data",
+      "requiredEvidence": "75th-percentile LCP at or below 2.5 seconds, INP at or below 200 milliseconds, and CLS at or below 0.1 when sufficient production field data exists."
+    },
+    {
+      "id": "keyboard-and-screen-reader",
+      "status": "pending-owner-device-test",
+      "requiredEvidence": "Complete keyboard paths and representative VoiceOver, NVDA, or equivalent landmark, heading, form, status, dialog, and error announcements."
+    },
+    {
+      "id": "cross-browser-responsive",
+      "status": "pending-owner-device-test",
+      "requiredEvidence": "Latest and previous Chrome, Firefox, Safari, and Edge plus current iOS Safari and Android Chrome at 320, 375, 768, 1024, 1440, and 1920 CSS pixels."
+    },
+    {
+      "id": "zoom-reflow-and-forced-preferences",
+      "status": "pending-owner-device-test",
+      "requiredEvidence": "200 percent zoom, 320 CSS-pixel reflow, text resizing, light and dark themes, reduced motion, touch, keyboard, and slow-connection checks."
+    },
+    {
+      "id": "external-link-live-check",
+      "status": "pending-launch-window",
+      "requiredEvidence": "All external legal sources, policy links, CDN resources, and social share destinations checked from the production network near launch."
+    },
+    {
+      "id": "cms-auth-publish-recovery",
+      "status": "pending-service-provisioning",
+      "requiredEvidence": "Module 32 invitation, sign-in, logout, recovery, expiry, revocation, Editorial Workflow, GitHub to Vercel publish, rollback, and recovery evidence."
+    },
+    {
+      "id": "forms-provider-delivery",
+      "status": "pending-provider-approval",
+      "requiredEvidence": "Monitored Contact and newsletter providers, successful and failure paths, rate limits, retention, privacy handling, and no-PII analytics evidence."
+    },
+    {
+      "id": "analytics-production",
+      "status": "pending-provider-approval",
+      "requiredEvidence": "Approved GA4 property, consent behavior, DebugView, internal-traffic filtering, retention, Signals setting, and production-versus-Preview separation."
+    },
+    {
+      "id": "advertising-cmp-production",
+      "status": "pending-provider-approval",
+      "requiredEvidence": "AdSense and certified CMP approval, regional consent, mobile density, no-fill, layout stability, policy, and before-versus-after performance review."
+    },
+    {
+      "id": "domain-organization-legal-rights",
+      "status": "pending-owner-approval",
+      "requiredEvidence": "Domain ownership and TLS, organization/contact identity, source and image rights, production content quantity, and qualified legal/privacy review confirmations."
+    }
+  ],
+  "ownerSignOff": {
+    "status": "pending",
+    "ownerName": null,
+    "decision": null,
+    "signedAt": null,
+    "notes": null
+  }
+}

@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en-US" data-deployment-environment="{{DEPLOYMENT_ENV}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script data-theme-initializer>
+      (() => {
+        const storageKey = 'lawscope-theme';
+        let storedTheme = null;
+
+        try {
+          storedTheme = window.localStorage.getItem(storageKey);
+        } catch {
+          storedTheme = null;
+        }
+
+        const hasStoredChoice = storedTheme === 'light' || storedTheme === 'dark';
+        const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+        const resolvedTheme = hasStoredChoice
+          ? storedTheme
+          : systemPrefersDark
+            ? 'dark'
+            : 'light';
+
+        document.documentElement.dataset.theme = resolvedTheme;
+      })();
+    </script>
+    <meta name="robots" content="{{ROBOTS_DIRECTIVE}}">
+    <meta name="description" content="{{PAGE_DESCRIPTION}}">
+    <title>{{PAGE_TITLE}}</title>
+    <link rel="canonical" href="{{CANONICAL_URL}}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lawscope">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="{{PAGE_TITLE}}">
+    <meta property="og:description" content="{{PAGE_DESCRIPTION}}">
+    <meta property="og:url" content="{{CANONICAL_URL}}">
+    <meta property="og:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:secure_url" content="{{SOCIAL_IMAGE_URL}}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{PAGE_TITLE}}">
+    <meta name="twitter:description" content="{{PAGE_DESCRIPTION}}">
+    <meta name="twitter:image" content="{{SOCIAL_IMAGE_URL}}">
+    <meta name="twitter:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
+    <script type="application/ld+json">{{PAGE_JSON_LD}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Merriweather:wght@700;900&amp;display=swap"
+    >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <script src="/js/theme.js" defer></script>
+    <script src="/js/header.js" defer></script>
+    <script src="/js/search.js" defer></script>
+    <script src="/js/consent.js" defer></script>
+    <script src="/js/analytics-config.js" defer></script>
+    <script src="/js/analytics.js" defer></script>
+    <script type="module" src="/js/contact-form.js"></script>
+    <script src="/js/back-to-top.js" defer></script>
+    <script src="/js/scroll-reveal.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header" data-site-header>
+      <div class="site-header__inner container">
+        <a
+          class="site-header__logo"
+          id="page-top"
+          href="/"
+          aria-label="Lawscope home"
+          data-page-top-focus
+        >Lawscope</a>
+
+        <nav
+          class="site-header__navigation"
+          id="primary-navigation"
+          aria-label="Primary navigation"
+          data-primary-navigation
+        >
+          <div class="site-header__navigation-heading">
+            <span>Main menu</span>
+            <button
+              class="site-header__navigation-close"
+              type="button"
+              aria-label="Close main menu"
+              data-menu-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span>Close</span>
+            </button>
+          </div>
+          <ul class="site-header__navigation-list" role="list">
+            <li>
+              <a class="site-header__navigation-link" href="/">Home</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/articles/">Articles</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/categories/">Categories</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/about/">About</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/contact/" aria-current="page">Contact</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="site-header__controls" role="group" aria-label="Site controls">
+          <button
+            class="site-header__control site-header__search-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="site-search-panel"
+            aria-label="Open site search"
+            data-search-toggle
+          >
+            <i
+              class="site-header__control-icon fa-solid fa-magnifying-glass"
+              aria-hidden="true"
+            ></i>
+            <span class="site-header__control-label">Search</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__theme-toggle"
+            type="button"
+            aria-pressed="false"
+            aria-label="Switch to dark mode"
+            data-theme-toggle
+          >
+            <i
+              class="site-header__control-icon fa-regular fa-moon"
+              aria-hidden="true"
+              data-theme-icon
+            ></i>
+            <span class="site-header__control-label" data-theme-label>Dark mode</span>
+          </button>
+
+          <button
+            class="site-header__control site-header__menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open main menu"
+            data-menu-toggle
+          >
+            <i class="site-header__control-icon fa-solid fa-bars" aria-hidden="true"></i>
+            <span class="site-header__control-label">Menu</span>
+          </button>
+        </div>
+      </div>
+
+      <section
+        class="site-search"
+        id="site-search-panel"
+        aria-label="Search Lawscope"
+        data-search-panel
+        hidden
+      >
+        <div class="site-search__inner container">
+          <form
+            class="site-search__form"
+            role="search"
+            action="/articles/"
+            method="get"
+            data-search-form
+          >
+            <label class="site-search__label" for="site-search-input">Search Lawscope</label>
+            <div class="site-search__field-wrap">
+              <i
+                class="site-search__field-icon fa-solid fa-magnifying-glass"
+                aria-hidden="true"
+              ></i>
+              <input
+                class="site-search__field"
+                id="site-search-input"
+                name="q"
+                type="search"
+                placeholder="Search articles by topic or phrase"
+                autocomplete="off"
+                enterkeyhint="search"
+                maxlength="120"
+                aria-controls="site-search-results"
+                aria-describedby="site-search-help site-search-status"
+                data-search-field
+              >
+              <button
+                class="site-search__clear"
+                type="button"
+                aria-label="Clear search"
+                data-search-clear
+                hidden
+              >
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </div>
+            <button class="site-search__submit" type="submit">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <span>Search</span>
+            </button>
+            <button
+              class="site-search__close"
+              type="button"
+              aria-label="Close search"
+              data-search-close
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <span class="visually-hidden">Close search</span>
+            </button>
+            <p class="site-search__hint" id="site-search-help">
+              Matches published article titles, categories, tags, and summaries. Use the Up and
+              Down arrow keys to move through results.
+            </p>
+            <div
+              class="site-search__results"
+              id="site-search-results"
+              data-search-results
+              data-search-index-url="/data/search-index.json"
+              data-search-limit="6"
+              data-search-state="idle"
+              aria-busy="false"
+            >
+              <p
+                class="site-search__status"
+                id="site-search-status"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                data-search-status
+              >
+                Enter a legal topic or phrase to search published Lawscope guides.
+              </p>
+              <ul
+                class="site-search__list"
+                aria-label="Search results"
+                data-search-list
+                hidden
+              ></ul>
+              <nav
+                class="site-search__fallback"
+                aria-label="Search alternatives"
+                data-search-fallback
+                hidden
+              >
+                <a href="/articles/">Browse all articles</a>
+                <a href="/categories/">Browse categories</a>
+              </nav>
+            </div>
+            <noscript>
+              <p class="site-search__noscript">
+                Interactive search requires JavaScript. You can still browse
+                <a href="/articles/">Articles</a> or <a href="/categories/">Categories</a>.
+              </p>
+            </noscript>
+          </form>
+        </div>
+      </section>
+    </header>
+
+    <main class="contact-page" id="main-content" tabindex="-1">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol class="breadcrumb__list" role="list">
+            <li class="breadcrumb__item"><a href="/">Home</a></li>
+            <li class="breadcrumb__item" aria-current="page">Contact</li>
+          </ol>
+        </nav>
+
+        <header class="contact-hero">
+          <p class="eyebrow">Editorial and website inquiries</p>
+          <h1>Contact Lawscope</h1>
+          <p class="contact-hero__lead">
+            Contact us about corrections, source updates, accessibility, privacy, advertising, or general website questions. Lawscope cannot provide legal advice, assess a case, or match you with an attorney.
+          </p>
+        </header>
+
+        <div class="contact-layout">
+          <section
+            class="contact-form-section"
+            aria-labelledby="contact-form-title"
+            data-contact-section
+            data-contact-state="{{CONTACT_INITIAL_STATE}}"
+          >
+            <div class="contact-form-section__heading">
+              <p class="eyebrow">Send an inquiry</p>
+              <h2 id="contact-form-title">How Can We Help?</h2>
+              <p>Fields marked <span aria-hidden="true">*</span><span class="visually-hidden">required</span> are required.</p>
+            </div>
+
+            {{CONTACT_UNAVAILABLE_NOTICE}}
+
+            <form
+              class="contact-form"
+              action="{{CONTACT_FORM_ENDPOINT}}"
+              method="post"
+              accept-charset="UTF-8"
+              data-contact-form
+              data-contact-enabled="{{CONTACT_FORM_ENABLED}}"
+              data-contact-provider="{{CONTACT_FORM_PROVIDER}}"
+            >
+              <div
+                class="contact-form__error-summary"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+                tabindex="-1"
+                data-contact-error-summary
+                hidden
+              >
+                <h3>There is a problem</h3>
+                <p>Check the following fields and try again:</p>
+                <ul data-contact-error-list></ul>
+              </div>
+
+              <fieldset class="contact-form__fields" data-contact-fields {{CONTACT_FORM_DISABLED}}>
+                <legend class="visually-hidden">Your contact details and inquiry</legend>
+
+                <div class="contact-form__field">
+                  <label for="contact-name">Name <span aria-hidden="true">*</span></label>
+                  <input
+                    id="contact-name"
+                    name="name"
+                    type="text"
+                    autocomplete="name"
+                    minlength="2"
+                    maxlength="100"
+                    aria-describedby="contact-name-error"
+                    required
+                  >
+                  <span class="contact-form__field-error" id="contact-name-error" data-contact-error="name"></span>
+                </div>
+
+                <div class="contact-form__field">
+                  <label for="contact-email">Email <span aria-hidden="true">*</span></label>
+                  <input
+                    id="contact-email"
+                    name="email"
+                    type="email"
+                    inputmode="email"
+                    autocomplete="email"
+                    maxlength="254"
+                    aria-describedby="contact-email-error"
+                    required
+                  >
+                  <span class="contact-form__field-error" id="contact-email-error" data-contact-error="email"></span>
+                </div>
+
+                <div class="contact-form__field">
+                  <label for="contact-subject">Subject/type <span aria-hidden="true">*</span></label>
+                  <select
+                    id="contact-subject"
+                    name="subject"
+                    aria-describedby="contact-subject-error"
+                    required
+                  >
+                    <option value="">Choose an inquiry type</option>
+                    {{CONTACT_SUBJECT_OPTIONS}}
+                  </select>
+                  <span class="contact-form__field-error" id="contact-subject-error" data-contact-error="subject"></span>
+                </div>
+
+                <div class="contact-form__field">
+                  <label for="contact-message">Message <span aria-hidden="true">*</span></label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    rows="8"
+                    minlength="20"
+                    maxlength="5000"
+                    aria-describedby="contact-message-help contact-message-count contact-message-error"
+                    required
+                  ></textarea>
+                  <p class="contact-form__help" id="contact-message-help">
+                    Include the article URL, the statement you are asking us to review, and an authoritative source when reporting a correction.
+                  </p>
+                  <p class="contact-form__count" id="contact-message-count" data-contact-message-count>0 of 5,000 characters</p>
+                  <span class="contact-form__field-error" id="contact-message-error" data-contact-error="message"></span>
+                </div>
+
+                <div class="contact-form__field">
+                  <label for="contact-article-url">Article URL <span class="contact-form__optional">Optional</span></label>
+                  <input
+                    id="contact-article-url"
+                    name="article_url"
+                    type="url"
+                    inputmode="url"
+                    autocomplete="url"
+                    maxlength="2048"
+                    placeholder="https://getlawscope.com/articles/article-name/"
+                    aria-describedby="contact-article-url-help contact-article-url-error"
+                  >
+                  <p class="contact-form__help" id="contact-article-url-help">Use the full Lawscope URL if your inquiry concerns a published article.</p>
+                  <span class="contact-form__field-error" id="contact-article-url-error" data-contact-error="article_url"></span>
+                </div>
+
+                <div class="contact-form__honeypot" aria-hidden="true">
+                  <label for="contact-website">Leave this field blank</label>
+                  <input
+                    id="contact-website"
+                    name="website"
+                    type="text"
+                    tabindex="-1"
+                    autocomplete="off"
+                  >
+                </div>
+                <input name="started_at" type="hidden" value="">
+
+                <div class="contact-form__consent">
+                  <input
+                    id="contact-privacy-consent"
+                    name="privacy_consent"
+                    type="checkbox"
+                    value="true"
+                    aria-describedby="contact-privacy-note contact-privacy-consent-error"
+                    required
+                  >
+                  <label for="contact-privacy-consent">
+                    I understand that Lawscope will use my information to respond to this inquiry as described in the <a href="/privacy-policy/">Privacy Policy</a>. <span aria-hidden="true">*</span>
+                  </label>
+                  <span class="contact-form__field-error" id="contact-privacy-consent-error" data-contact-error="privacy_consent"></span>
+                </div>
+
+                <p class="contact-form__privacy" id="contact-privacy-note">
+                  Please do not include confidential legal facts. Your submission is used to review and respond to this inquiry; see the <a href="/privacy-policy/">Privacy Policy</a> for more information.
+                </p>
+              </fieldset>
+
+              <p class="contact-form__status" role="status" aria-live="polite" data-contact-status hidden></p>
+
+              <button
+                class="button button--primary contact-form__submit"
+                type="submit"
+                data-contact-submit
+                {{CONTACT_FORM_DISABLED}}
+              >
+                <i class="fa-regular fa-paper-plane" aria-hidden="true"></i>
+                <i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true" data-contact-loading-icon hidden></i>
+                <span data-contact-submit-label>Send message</span>
+              </button>
+
+              <section
+                class="contact-form__result"
+                aria-labelledby="contact-result-title"
+                tabindex="-1"
+                data-contact-result
+                hidden
+              >
+                <span class="contact-form__result-icon" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                <div>
+                  <h3 id="contact-result-title">Message received</h3>
+                  <p data-contact-result-message>Thank you. Your message has been received. Keep a copy of any reference number shown here.</p>
+                  <p class="contact-form__reference" data-contact-reference-wrap hidden>
+                    Reference: <strong data-contact-reference></strong>
+                  </p>
+                  <p>We will review your inquiry and respond when appropriate. Editorial and website inquiries are normally reviewed within five business days.</p>
+                  <button class="button button--secondary" type="button" data-contact-reset>Send another message</button>
+                </div>
+              </section>
+            </form>
+          </section>
+
+          <aside class="contact-guidance" aria-labelledby="contact-guidance-title">
+            <div class="contact-guidance__section">
+              <span class="contact-guidance__icon" aria-hidden="true"><i class="fa-regular fa-clock"></i></span>
+              <div>
+                <h2 id="contact-guidance-title">Before You Send a Message</h2>
+                <p>We aim to review editorial and website inquiries within five business days. Complex correction requests may take longer while sources are checked.</p>
+              </div>
+            </div>
+
+            <section class="contact-guidance__section" aria-labelledby="correction-workflow-title">
+              <span class="contact-guidance__icon" aria-hidden="true"><i class="fa-solid fa-list-check"></i></span>
+              <div>
+                <h3 id="correction-workflow-title">Reporting a Correction</h3>
+                <ol class="contact-guidance__steps">
+                  <li><span>1</span><p>Choose <strong>Report a correction</strong> as the inquiry type.</p></li>
+                  <li><span>2</span><p>Paste the full Lawscope article URL into the optional URL field.</p></li>
+                  <li><span>3</span><p>Identify the statement to review and include an authoritative source when possible.</p></li>
+                </ol>
+                <p>Our editors check the article and cited materials before deciding whether an update or correction is needed.</p>
+              </div>
+            </section>
+
+            <section class="contact-guidance__urgent" aria-labelledby="contact-urgent-title">
+              <span class="contact-guidance__urgent-icon" aria-hidden="true"><i class="fa-solid fa-triangle-exclamation"></i></span>
+              <div>
+                <h2 id="contact-urgent-title">Not for Urgent or Legal Help</h2>
+                <p><strong>Do not use this form for emergencies, court deadlines, arrest assistance, immigration deadlines, or confidential legal facts.</strong> Contact emergency services, the relevant court or agency, or a qualified attorney as appropriate.</p>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    {{SITE_FOOTER}}
+    {{CONSENT_MANAGER}}
+    {{BACK_TO_TOP}}
+  </body>
+</html>

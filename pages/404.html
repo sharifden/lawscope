@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-environment="{{DEPLOYMENT_ENV}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="{{ROBOTS_DIRECTIVE}}">
+  <meta name="description" content="{{PAGE_DESCRIPTION}}">
+  <meta name="theme-color" content="#12355b">
+  <title>{{PAGE_TITLE}}</title>
+  <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@700;900&display=swap"
+    rel="stylesheet"
+  >
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  >
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/dark-mode.css">
+  <script>
+    (() => {
+      try {
+        const savedTheme = localStorage.getItem('lawscope-theme');
+        const theme = savedTheme === 'light' || savedTheme === 'dark'
+          ? savedTheme
+          : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch {
+        document.documentElement.dataset.theme = 'light';
+        document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+  <script src="/js/theme.js" defer></script>
+  <script src="/js/header.js" defer></script>
+  <script src="/js/search.js" defer></script>
+  <script src="/js/consent.js" defer></script>
+    <script src="/js/analytics-config.js" defer></script>
+    <script src="/js/analytics.js" defer></script>
+  <script src="/js/back-to-top.js" defer></script>
+  <script src="/js/scroll-reveal.js" defer></script>
+</head>
+<body class="page page--not-found">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header" data-site-header>
+    <div class="site-header__inner container">
+      <a class="site-header__logo" href="/" aria-label="Lawscope home">Lawscope</a>
+
+      <button
+        class="site-header__menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-navigation"
+        data-menu-toggle
+      >
+        <span class="site-header__menu-icon" aria-hidden="true">
+          <i class="fa-solid fa-bars"></i>
+        </span>
+        <span>Menu</span>
+      </button>
+
+      <nav class="site-header__navigation" id="site-navigation" aria-label="Primary navigation" data-site-navigation>
+        <ul class="site-header__nav-list" role="list">
+          <li><a class="site-header__nav-link" href="/">Home</a></li>
+          <li><a class="site-header__nav-link" href="/articles/">Articles</a></li>
+          <li><a class="site-header__nav-link" href="/categories/">Categories</a></li>
+          <li><a class="site-header__nav-link" href="/about/">About</a></li>
+          <li><a class="site-header__nav-link" href="/contact/">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <button
+          class="site-header__control"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-search-panel"
+          data-search-toggle
+        >
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <span class="site-header__control-label">Search</span>
+        </button>
+
+        <button
+          class="site-header__control"
+          type="button"
+          aria-pressed="false"
+          aria-label="Switch to dark theme"
+          data-theme-toggle
+        >
+          <i class="fa-solid fa-moon" aria-hidden="true" data-theme-icon></i>
+          <span class="site-header__control-label" data-theme-label>Dark</span>
+        </button>
+      </div>
+    </div>
+
+    <section class="site-search" id="site-search-panel" aria-labelledby="site-search-title" data-site-search hidden>
+      <div class="site-search__inner container">
+        <div class="site-search__header">
+          <div>
+            <h2 class="site-search__title" id="site-search-title">Search Lawscope</h2>
+            <p class="site-search__description" id="site-search-description">
+              Search published legal education articles by title, topic, category, or tag.
+            </p>
+          </div>
+          <button class="site-search__close" type="button" aria-label="Close search" data-search-close>
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <form class="site-search__form" role="search" data-search-form novalidate>
+          <label class="visually-hidden" for="site-search-input">Search Lawscope articles</label>
+          <div class="site-search__input-wrap">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input
+              class="site-search__input"
+              id="site-search-input"
+              type="search"
+              name="q"
+              placeholder="Search legal topics"
+              autocomplete="off"
+              aria-describedby="site-search-description site-search-status"
+              data-search-input
+            >
+          </div>
+        </form>
+
+        <p class="site-search__status" id="site-search-status" role="status" aria-live="polite" data-search-status>
+          Start typing to search published articles.
+        </p>
+        <div class="site-search__results" data-search-results hidden></div>
+        <noscript>
+          <p class="site-search__noscript">
+            Site search needs JavaScript. You can still <a href="/articles/">browse all articles</a> or use the inline search form on this page.
+          </p>
+        </noscript>
+      </div>
+    </section>
+  </header>
+
+  <main class="not-found-page" id="main-content" tabindex="-1" data-page-top-focus>
+    <section class="not-found" aria-labelledby="not-found-title">
+      <div class="not-found__container container">
+        <div class="not-found__panel" data-scroll-reveal>
+          <p class="not-found__eyebrow">{{ERROR_EYEBROW}}</p>
+          <p class="not-found__code" aria-hidden="true">404</p>
+          <h1 class="not-found__title" id="not-found-title">{{ERROR_HEADING}}</h1>
+          <p class="not-found__copy" id="not-found-description">{{ERROR_COPY}}</p>
+
+          <div class="not-found__actions" aria-label="Page not found actions">
+            <a class="button button--primary" href="{{PRIMARY_ACTION_ROUTE}}">
+              <i class="fa-solid fa-house" aria-hidden="true"></i>
+              <span>{{PRIMARY_ACTION_LABEL}}</span>
+            </a>
+            <a class="button button--secondary" href="{{SECONDARY_ACTION_ROUTE}}">
+              <i class="fa-regular fa-newspaper" aria-hidden="true"></i>
+              <span>{{SECONDARY_ACTION_LABEL}}</span>
+            </a>
+          </div>
+
+          <form
+            class="not-found__search"
+            role="search"
+            action="{{SEARCH_ACTION}}"
+            method="{{SEARCH_METHOD}}"
+            aria-label="Search Lawscope articles"
+          >
+            <label class="visually-hidden" for="not-found-search">{{SEARCH_PLACEHOLDER}}</label>
+            <div class="not-found__search-field">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <input
+                class="not-found__search-input"
+                id="not-found-search"
+                type="search"
+                name="{{SEARCH_PARAMETER}}"
+                placeholder="{{SEARCH_PLACEHOLDER}}"
+                inputmode="search"
+                enterkeyhint="search"
+                autocomplete="off"
+              >
+            </div>
+            <button class="button button--primary" type="submit">Search</button>
+          </form>
+
+          <nav class="not-found__popular" aria-labelledby="not-found-popular-title">
+            <h2 id="not-found-popular-title">{{POPULAR_HEADING}}</h2>
+            <ul class="not-found__category-list" role="list">
+              {{POPULAR_CATEGORY_LINKS}}
+            </ul>
+          </nav>
+
+          <p class="not-found__report">
+            Found this link on Lawscope? Please report it through our
+            <a href="{{CONTACT_ROUTE}}">Contact page</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {{SITE_FOOTER}}
+  {{BACK_TO_TOP}}
+  {{CONSENT_MANAGER}}
+</body>
+</html>

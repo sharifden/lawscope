@@ -1,0 +1,487 @@
+# Lawscope Decap CMS configuration.
+# Committed endpoints remain non-routable. The build injects only an owner-approved
+# public companion origin, and admin/cms.js derives both service URLs at runtime.
+# Identity registration, the single named user, and the lawscope-editor Gateway role
+# are enforced in the owner-controlled Netlify account rather than stored in Git.
+backend:
+  name: git-gateway
+  branch: main
+  identity_url: https://lawscope-cms-companion.invalid/.netlify/identity
+  gateway_url: https://lawscope-cms-companion.invalid/.netlify/git/github
+  commit_messages:
+    create: 'cms: create {{collection}} “{{slug}}”'
+    update: 'cms: update {{collection}} “{{slug}}”'
+    delete: 'cms: delete {{collection}} “{{slug}}”'
+    uploadMedia: 'cms: upload media “{{path}}”'
+    deleteMedia: 'cms: delete media “{{path}}”'
+
+publish_mode: editorial_workflow
+site_url: https://getlawscope.com
+display_url: https://getlawscope.com
+locale: en
+show_preview_links: true
+media_folder: assets/images
+public_folder: /assets/images
+
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  - name: articles
+    label: Articles
+    label_singular: Article
+    description: Draft, review, and publish build-compatible Lawscope legal-information articles.
+    folder: content/articles
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{fields.slug}}"
+    identifier_field: title
+    summary: "{{title}} — {{category}} — {{status}}"
+    preview_path: "articles/{{fields.slug}}/"
+    sortable_fields:
+      fields: [title, publish_date, updated_date, status, category]
+      default:
+        field: publish_date
+        direction: Descending
+    view_filters:
+      - label: Drafts
+        field: status
+        pattern: draft
+      - label: Published
+        field: status
+        pattern: published
+      - label: Featured
+        field: featured
+        pattern: "true"
+    fields:
+      - name: title
+        label: Article title
+        widget: string
+        required: true
+        hint: Use a clear, neutral title that accurately describes the legal-information topic.
+        pattern: ['^.{8,100}$', 'Use 8–100 characters.']
+      - name: slug
+        label: URL slug
+        widget: string
+        required: true
+        hint: Lowercase ASCII words separated by hyphens. After publication, changing this value also requires a permanent redirect.
+        pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Use lowercase letters, numbers, and single hyphens only.']
+      - name: publish_date
+        label: Publication date and time
+        widget: datetime
+        required: true
+        picker_utc: true
+        format: "YYYY-MM-DDTHH:mm:ss[Z]"
+        date_format: "MMM D, YYYY"
+        time_format: "h:mm A"
+        hint: Stored in UTC. Do not use a future date when status is Published.
+      - name: updated_date
+        label: Last substantive update
+        widget: datetime
+        required: false
+        picker_utc: true
+        format: "YYYY-MM-DDTHH:mm:ss[Z]"
+        date_format: "MMM D, YYYY"
+        time_format: "h:mm A"
+        hint: Leave empty unless the article received a substantive update. It cannot precede publication or be in the future.
+      - name: author
+        label: Author name
+        widget: string
+        required: true
+        default: Lawscope Editorial
+        hint: Use the truthful organization byline until verified contributor profiles are launched.
+      - name: category
+        label: Primary category
+        widget: relation
+        required: true
+        collection: categories
+        search_fields: [name, slug]
+        display_fields: [name]
+        value_field: slug
+        hint: Choose one controlled category. The stored value is its build-compatible slug.
+      - name: tags
+        label: Topic tags
+        widget: list
+        required: true
+        min: 1
+        allow_add: true
+        collapsed: false
+        field:
+          name: tag
+          label: Tag
+          widget: string
+          pattern: ['^\S(?:.*\S)?$', 'Tags cannot be blank or begin/end with spaces.']
+        hint: Add distinct reader-facing topic phrases; duplicate tags are rejected by the build.
+      - name: featured
+        label: Eligible for featured placement
+        widget: boolean
+        required: true
+        default: false
+        hint: This is an eligibility signal, not a guarantee of homepage placement.
+      - name: status
+        label: Publication status
+        widget: select
+        required: true
+        default: draft
+        options:
+          - label: Draft — excluded from public output
+            value: draft
+          - label: Published — must pass every build check
+            value: published
+        hint: Editorial Workflow controls review state; this field separately controls eligibility for generated public pages.
+      - name: featured_image
+        label: Featured image
+        widget: image
+        required: true
+        choose_url: false
+        allow_multiple: false
+        media_folder: /assets/images
+        public_folder: /assets/images
+        pattern: ['^/assets/images/[a-zA-Z0-9/_-]+\.jpg$', 'Choose a local JPEG under /assets/images/.']
+        hint: Use an approved, licensed JPEG. Add a separate 1200 × 630 social image below.
+      - name: featured_image_alt
+        label: Featured image alternative text
+        widget: text
+        required: true
+        hint: Describe meaningful visual content in context. Do not begin with “image of.” Minimum build length is 12 characters.
+        pattern: ['^.{12,300}$', 'Use 12–300 characters of meaningful alternative text.']
+      - name: social_image
+        label: Social share image
+        widget: image
+        required: true
+        choose_url: false
+        allow_multiple: false
+        media_folder: /assets/images/social
+        public_folder: /assets/images/social
+        pattern: ['^/assets/images/social/[a-zA-Z0-9/_-]+\.jpg$', 'Choose a 1200 × 630 JPEG under /assets/images/social/.']
+        hint: The build verifies exact 1200 × 630 JPEG dimensions.
+      - name: excerpt
+        label: Article excerpt
+        widget: character-counted
+        required: true
+        max: 160
+        rows: 3
+        hint: A plain-text summary for cards and the article deck. Line breaks are removed; maximum 160 characters.
+      - name: seo_title
+        label: Custom search title
+        widget: string
+        required: false
+        hint: Optional. Leave empty to use the article title; avoid misleading or promotional language.
+        pattern: ['^.{0,70}$', 'Use no more than 70 characters.']
+      - name: meta_description
+        label: Search description
+        widget: character-counted
+        required: true
+        max: 155
+        rows: 3
+        hint: A specific plain-text search summary. Line breaks are removed; maximum 155 characters.
+      - name: sources
+        label: Source citations
+        label_singular: Source
+        widget: list
+        required: false
+        min: 1
+        collapsed: false
+        summary: "{{fields.label}}"
+        hint: Drafts may omit sources, but Published entries require at least one directly relevant authoritative HTTPS citation.
+        fields:
+          - name: label
+            label: Citation label
+            widget: string
+            required: true
+            pattern: ['^\S(?:.*\S)?$', 'Enter a non-empty source label.']
+          - name: url
+            label: Source URL
+            widget: string
+            required: true
+            pattern: ['^https://[^\s]+$', 'Use a complete HTTPS URL.']
+          - name: publisher
+            label: Publisher
+            widget: string
+            required: false
+          - name: publication_date
+            label: Publication date
+            widget: datetime
+            required: false
+            picker_utc: true
+            format: "YYYY-MM-DD"
+            date_format: "MMM D, YYYY"
+            time_format: false
+          - name: access_date
+            label: Access date
+            widget: datetime
+            required: false
+            picker_utc: true
+            format: "YYYY-MM-DD"
+            date_format: "MMM D, YYYY"
+            time_format: false
+      - name: body
+        label: Article body
+        widget: richtext
+        required: true
+        sanitize_preview: true
+        modes: [rich_text]
+        buttons:
+          - bold
+          - italic
+          - link
+          - heading-two
+          - heading-three
+          - heading-four
+          - quote
+          - bulleted-list
+          - numbered-list
+        editor_components: []
+        hint: Begin section headings at H2. H1 is intentionally unavailable because the page title supplies the only H1. The exact legal disclaimer and reading time are build-controlled.
+
+  - name: categories
+    label: Categories
+    label_singular: Category
+    description: Edit descriptions and exactly three related topics for the ten approved categories; identity fields are locked.
+    folder: content/categories
+    create: false
+    delete: false
+    extension: md
+    format: frontmatter
+    slug: "{{fields.slug}}"
+    identifier_field: name
+    summary: "{{name}} — order {{order}}"
+    preview_path: "categories/{{fields.slug}}/"
+    sortable_fields:
+      fields: [order, name]
+      default:
+        field: order
+        direction: Ascending
+    fields:
+      - name: name
+        label: Category name
+        widget: locked
+        required: true
+        hint: Controlled by the approved category taxonomy.
+      - name: slug
+        label: Category slug
+        widget: locked
+        required: true
+        hint: Locked because category routes, relations, and filenames depend on this value.
+      - name: description
+        label: Category description
+        widget: character-counted
+        required: true
+        min: 100
+        max: 260
+        rows: 4
+        hint: Use approximately 140–240 characters; hard build bounds are 100–260.
+      - name: icon
+        label: Approved icon class
+        widget: locked
+        required: true
+        hint: Locked to the approved Font Awesome icon for this category.
+      - name: order
+        label: Navigation order
+        widget: locked
+        required: true
+        hint: Locked to the approved unique order from 1 through 10.
+      - name: related_categories
+        label: Related categories
+        widget: relation
+        required: true
+        collection: categories
+        search_fields: [name, slug]
+        display_fields: [name]
+        value_field: slug
+        multiple: true
+        min: 3
+        max: 3
+        hint: Select exactly three distinct approved categories other than this category.
+
+  - name: settings
+    label: Settings
+    description: Guarded site-wide settings. Legal-policy review files are intentionally excluded.
+    delete: false
+    editor:
+      preview: true
+    files:
+      - name: site
+        label: Site settings
+        file: content/settings/site.json
+        format: json
+        description: General identity, social, newsletter, contact, consent, and advertising switches.
+        fields:
+          - name: site_title
+            label: Site title
+            widget: string
+            required: true
+          - name: site_tagline
+            label: Site tagline
+            widget: string
+            required: true
+          - name: social_profiles
+            label: Social profiles
+            widget: object
+            required: true
+            collapsed: false
+            hint: Leave a service empty until Lawscope has an official profile. URLs must use the approved service domain with no query or hash.
+            fields:
+              - name: x
+                label: X profile URL
+                widget: string
+                required: false
+                pattern: ['^(?:$|https://(?:[^/]+\.)?(?:x\.com|twitter\.com)/[^?#]+)$', 'Use an official HTTPS x.com or twitter.com profile URL, or leave empty.']
+              - name: facebook
+                label: Facebook profile URL
+                widget: string
+                required: false
+                pattern: ['^(?:$|https://(?:[^/]+\.)?facebook\.com/[^?#]+)$', 'Use an official HTTPS facebook.com profile URL, or leave empty.']
+              - name: linkedin
+                label: LinkedIn profile URL
+                widget: string
+                required: false
+                pattern: ['^(?:$|https://(?:[^/]+\.)?linkedin\.com/[^?#]+)$', 'Use an official HTTPS linkedin.com profile URL, or leave empty.']
+          - name: newsletter
+            label: Newsletter
+            widget: object
+            required: true
+            collapsed: false
+            hint: Enabling requires an approved endpoint and the existing double-opt-in workflow.
+            fields:
+              - name: enabled
+                label: Request newsletter activation
+                widget: boolean
+                required: true
+                hint: Keep off until the approved provider endpoint and privacy flow are ready.
+              - name: endpoint
+                label: Newsletter endpoint
+                widget: string
+                required: false
+                pattern: ['^(?:$|/(?!/)[^#]*|https://[^#]+)$', 'Use a root-relative route or a complete HTTPS URL with no fragment.']
+              - name: provider
+                label: Newsletter adapter
+                widget: select
+                required: true
+                options:
+                  - label: Generic form
+                    value: generic-form
+                  - label: Generic JSON
+                    value: generic-json
+              - name: double_opt_in
+                label: Double opt-in
+                widget: locked
+                required: true
+                hint: Locked on by the publication privacy contract.
+          - name: contact
+            label: Contact form
+            widget: object
+            required: true
+            collapsed: false
+            hint: The public form activates only when its secure delivery credentials also exist outside Git.
+            fields:
+              - name: enabled
+                label: Request contact-form activation
+                widget: boolean
+                required: true
+              - name: endpoint
+                label: Same-origin API endpoint
+                widget: string
+                required: true
+                pattern: ['^/api/[^?#]+$', 'Use a root-relative /api/ route without query or hash values.']
+              - name: provider
+                label: Contact adapter
+                widget: locked
+                required: true
+                hint: Locked to lawscope-serverless; delivery credentials must never be committed.
+          - name: consent
+            label: Consent management
+            widget: object
+            required: true
+            collapsed: false
+            hint: Provider and mode are locked. Increase the revision only for a real consent-schema change.
+            fields:
+              - name: mode
+                label: Consent mode
+                widget: locked
+                required: true
+              - name: provider
+                label: Consent provider
+                widget: locked
+                required: true
+              - name: revision
+                label: Consent revision
+                widget: number
+                required: true
+                value_type: int
+                min: 1
+                step: 1
+              - name: google_certified_cmp
+                label: Google-certified CMP
+                widget: locked
+                required: true
+                hint: The local preference center must not be represented as a Google-certified CMP.
+          - name: analytics
+            label: Google Analytics 4
+            widget: object
+            required: true
+            collapsed: false
+            hint: Strict opt-in and production gates still apply. Keep disabled and retain the placeholder until the approved GA4 property is ready.
+            fields:
+              - name: enabled
+                label: Request analytics activation
+                widget: boolean
+                required: true
+                hint: Enable only after the production property, two-month retention, stream safeguards, and internal/developer filters are confirmed.
+              - name: measurement_id
+                label: GA4 measurement ID
+                widget: string
+                required: true
+                pattern: ['^G-[A-Z0-9]{10}$', 'Use a GA4 ID in G-XXXXXXXXXX format. The all-X value is an inert placeholder.']
+                hint: This is a public identifier, not a secret. Preview and development output always receive the inert placeholder.
+          - name: advertising
+            label: Google AdSense
+            widget: object
+            required: true
+            collapsed: false
+            hint: Public identifiers only. Activation still requires production, canonical-host, account, policy, certified-CMP, and visitor-consent gates.
+            fields:
+              - name: enabled
+                label: Request AdSense activation
+                widget: boolean
+                required: true
+                hint: Set this last, only after every readiness field below is true and all approved IDs have replaced the inert placeholders.
+              - name: account_approved
+                label: AdSense account and site approved
+                widget: boolean
+                required: true
+                hint: Owner attestation that Google approved the account and getlawscope.com site.
+              - name: policy_reviewed
+                label: Current policy review complete
+                widget: boolean
+                required: true
+                hint: Owner attestation covering content, placement, mobile density, invalid traffic, and current AdSense policies immediately before activation.
+              - name: certified_cmp_ready
+                label: Google-certified CMP ready
+                widget: boolean
+                required: true
+                hint: Confirm the certified CMP and current IAB TCF requirements in the AdSense account. The local preference center alone is not a certified CMP.
+              - name: publisher_id
+                label: AdSense publisher ID
+                widget: string
+                required: true
+                pattern: ['^ca-pub-[0-9]{16}$', 'Use ca-pub- followed by 16 digits. Keep the all-zero placeholder until approval.']
+                hint: Public publisher ID, not a secret. Nonproduction output is forced back to the all-zero placeholder.
+              - name: slots
+                label: Approved responsive ad-unit IDs
+                widget: object
+                required: true
+                collapsed: false
+                hint: Each public AdSense ad-unit ID is exactly 10 digits. Keep all-zero placeholders until the units are approved.
+                fields:
+                  - { name: home_below_featured, label: Home — below Featured Articles, widget: string, required: true, pattern: ['^[0-9]{10}$', 'Use exactly 10 digits.'] }
+                  - { name: articles_in_feed, label: Articles — in feed, widget: string, required: true, pattern: ['^[0-9]{10}$', 'Use exactly 10 digits.'] }
+                  - { name: categories_overview, label: Categories — below overview grid, widget: string, required: true, pattern: ['^[0-9]{10}$', 'Use exactly 10 digits.'] }
+                  - { name: category_in_feed, label: Category — in feed, widget: string, required: true, pattern: ['^[0-9]{10}$', 'Use exactly 10 digits.'] }
+                  - { name: article_mid, label: Article — mid-body, widget: string, required: true, pattern: ['^[0-9]{10}$', 'Use exactly 10 digits.'] }
+                  - { name: article_sidebar, label: Article — desktop sidebar, widget: string, required: true, pattern: ['^[0-9]{10}$', 'Use exactly 10 digits.'] }
+                  - { name: article_end, label: Article — end, widget: string, required: true, pattern: ['^[0-9]{10}$', 'Use exactly 10 digits.'] }

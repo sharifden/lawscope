@@ -1,0 +1,89 @@
+<section
+  class="newsletter-signup"
+  aria-labelledby="newsletter-signup-title"
+  data-newsletter-section
+  data-newsletter-state="{{NEWSLETTER_INITIAL_STATE}}"
+  data-scroll-reveal
+>
+  <div class="newsletter-signup__panel">
+    <div class="newsletter-signup__content">
+      <p class="newsletter-signup__eyebrow">Lawscope newsletter</p>
+      <h2 id="newsletter-signup-title">Understand the Law, One Clear Guide at a Time</h2>
+      <p class="newsletter-signup__intro">
+        Get new Lawscope explainers and important editorial updates in your inbox. No case advice, no daily noise, and you can unsubscribe at any time.
+      </p>
+      <p class="newsletter-signup__confirmation-note">
+        <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+        <span>After you subscribe, we’ll email a confirmation link. Your subscription starts only after you confirm.</span>
+      </p>
+    </div>
+
+    <form
+      class="newsletter-signup__form"
+      method="post"
+      accept-charset="UTF-8"
+      data-newsletter-form
+      data-newsletter-enabled="{{NEWSLETTER_ENABLED}}"
+      data-newsletter-provider="{{NEWSLETTER_PROVIDER}}"
+      data-double-opt-in="true"
+      {{NEWSLETTER_ACTION_ATTRIBUTE}}
+    >
+      <div class="newsletter-signup__field">
+        <label class="newsletter-signup__label" for="newsletter-email">Email address</label>
+        <input
+          class="newsletter-signup__input"
+          id="newsletter-email"
+          type="email"
+          inputmode="email"
+          autocomplete="email"
+          autocapitalize="none"
+          spellcheck="false"
+          maxlength="254"
+          placeholder="you@example.com"
+          aria-describedby="newsletter-email-help newsletter-email-error"
+          data-newsletter-email
+          {{NEWSLETTER_NAME_ATTRIBUTE}}
+          {{NEWSLETTER_DISABLED_ATTRIBUTE}}
+        >
+        <p class="newsletter-signup__help" id="newsletter-email-help">
+          We will ask you to confirm this address before your subscription starts.
+        </p>
+        <p
+          class="newsletter-signup__field-error"
+          id="newsletter-email-error"
+          aria-live="polite"
+          data-newsletter-error
+        ></p>
+      </div>
+
+      <button
+        class="button button--primary newsletter-signup__submit"
+        type="submit"
+        data-newsletter-submit
+        {{NEWSLETTER_DISABLED_ATTRIBUTE}}
+      >
+        <span data-newsletter-submit-label>Subscribe</span>
+        <i
+          class="fa-solid fa-circle-notch newsletter-signup__loading-icon"
+          aria-hidden="true"
+          data-newsletter-loading-icon
+          hidden
+        ></i>
+      </button>
+
+      <p class="newsletter-signup__privacy">
+        By subscribing, you request Lawscope email updates and can unsubscribe at any time.
+        We use your email only to send Lawscope updates and manage your subscription.
+        Read our <a href="/privacy-policy/">Privacy Policy</a>.
+      </p>
+      <p
+        class="newsletter-signup__status"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-newsletter-status
+        {{NEWSLETTER_STATUS_HIDDEN_ATTRIBUTE}}
+      >{{NEWSLETTER_INITIAL_STATUS}}</p>
+    </form>
+  </div>
+</section>
