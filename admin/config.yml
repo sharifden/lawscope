@@ -43,10 +43,11 @@ collections:
     summary: "{{title}} — {{category}} — {{status}}"
     preview_path: "articles/{{fields.slug}}/"
     sortable_fields:
-      fields: [title, publish_date, updated_date, status, category]
-      default:
-        field: publish_date
-        direction: Descending
+      - title
+      - { field: publish_date, default_sort: desc }
+      - updated_date
+      - status
+      - category
     view_filters:
       - label: Drafts
         field: status
@@ -252,10 +253,8 @@ collections:
     summary: "{{name}} — order {{order}}"
     preview_path: "categories/{{fields.slug}}/"
     sortable_fields:
-      fields: [order, name]
-      default:
-        field: order
-        direction: Ascending
+      - { field: order, default_sort: asc }
+      - name
     fields:
       - name: name
         label: Category name
