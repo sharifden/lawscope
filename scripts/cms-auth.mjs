@@ -44,7 +44,7 @@ export function createCmsAdminCsp(companionOrigin) {
   const connectSource = companionOrigin || CMS_COMPANION_PLACEHOLDER;
   return [
     "default-src 'none'",
-    "script-src 'self' https://cdn.jsdelivr.net",
+    "script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self' data:",
