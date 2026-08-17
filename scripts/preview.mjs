@@ -87,6 +87,16 @@ export function createPreviewServer({
     } catch {
       // Invalid requests resolve to the permanent noindex 404 response below.
     }
+
+    if (requestRoute === '/dashboard' || requestRoute === '/dashboard/') {
+      response.writeHead(302, {
+        Location: '/admin/',
+        'Cache-Control': 'no-store'
+      });
+      response.end();
+      return;
+    }
+
     const filePath = await resolveFile(requestUrl, rootDirectory);
 
     if (!filePath) {
