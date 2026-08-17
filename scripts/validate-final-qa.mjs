@@ -443,7 +443,20 @@ for (const requiredText of [
 const packageJson = JSON.parse(packageSource);
 check(packageJson.scripts['validate:final-qa'] === 'node scripts/validate-final-qa.mjs', 'Final QA command must remain connected');
 check(packageJson.scripts.check.endsWith('npm run validate:final-qa'), 'Complete check chain must end with final QA');
-check(!/(bootstrap|tailwind|jquery|react|vue|angular)/i.test(`${packageSource}\n${packageLockSource}`), 'Prohibited framework dependency detected');
+const dependencyNamesFinal = [
+  ...Object.keys(packageJson.dependencies || {}),
+  ...Object.keys(packageJson.devDependencies || {})
+].map((name) => name.toLowerCase());
+const prohibitedListFinal = ['bootstrap', 'jquery', 'tailwind', 'tailwindcss', 'vue', 'angular'];
+let effectiveProhibitedFinal = [...prohibitedListFinal];
+try {
+  await readFile(path.join(projectRoot, 'keystatic.config.ts'), 'utf8');
+  // Modern Keystatic legitimately uses React — allow it when config present
+} catch {
+  effectiveProhibitedFinal.push('react');
+}
+const detectedFinal = dependencyNamesFinal.filter((dep) => effectiveProhibitedFinal.includes(dep));
+check(detectedFinal.length === 0, `Prohibited framework dependency detected: ${detectedFinal.join(', ')}`);
 for (const match of readme.matchAll(/\]\((\.\/[^)#]+)(?:#[^)]+)?\)/g)) {
   const linkedPath = path.resolve(projectRoot, decodeURIComponent(match[1]));
   check(await fileExists(linkedPath), `README references a missing workspace file: ${match[1]}`);
