@@ -1,5 +1,6 @@
 const CMS_COMPANION_VARIABLE = 'CMS_COMPANION_ORIGIN';
 export const CMS_COMPANION_PLACEHOLDER = 'https://lawscope-cms-companion.invalid';
+export const APPROVED_CMS_COMPANION_ORIGIN = 'https://candid-choux-61d91a.netlify.app';
 
 function parseCompanionOrigin(rawValue) {
   const value = String(rawValue || '').trim();
@@ -38,6 +39,20 @@ function parseCompanionOrigin(rawValue) {
 
 export function resolveCmsCompanionOrigin(environment = process.env) {
   return parseCompanionOrigin(environment[CMS_COMPANION_VARIABLE]);
+}
+
+export function resolveBuildCmsCompanionOrigin(environment = process.env) {
+  const configuredOrigin = resolveCmsCompanionOrigin(environment);
+  if (configuredOrigin) return configuredOrigin;
+
+  // Production already has a live invite-only companion. Inject it only for
+  // Vercel production builds so local/preview stay fail-closed unless the
+  // owner sets CMS_COMPANION_ORIGIN explicitly.
+  if (environment.VERCEL_ENV === 'production') {
+    return APPROVED_CMS_COMPANION_ORIGIN;
+  }
+
+  return null;
 }
 
 export function createCmsAdminCsp(companionOrigin) {
@@ -86,6 +101,7 @@ export function createCmsAuthManifest({ deploymentEnvironment, companionOrigin }
     identityEndpoint: companionOrigin ? `${companionOrigin}/.netlify/identity` : null,
     gatewayEndpoint: companionOrigin ? `${companionOrigin}/.netlify/git/github` : null,
     productionAdmin: 'https://getlawscope.com/admin/',
+    productionDashboard: 'https://getlawscope.com/dashboard/',
     backend: 'git-gateway',
     branch: 'main',
     publishMode: 'editorial_workflow',

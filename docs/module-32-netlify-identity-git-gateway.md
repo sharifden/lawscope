@@ -1,13 +1,13 @@
 # Module 32 — Netlify Identity & Git Gateway Setup
 
-**Status: account activation pending.** The repository-side implementation, fail-closed build controls, callback bridge, security headers, role boundary, documentation, and deterministic validation are complete. The owner selected the unprovisioned path on 2026-08-16, so no Netlify project, GitHub authorization, Identity user, provider credential, or live origin has been fabricated. Dashboard-dependent tests in this runbook must be completed before launch acceptance.
+**Status: account activation pending.** The repository-side implementation, fail-closed local/preview controls, callback bridge, security headers, role boundary, documentation, and deterministic validation are complete. Production builds now inject the approved companion origin `https://candid-choux-61d91a.netlify.app` so `https://getlawscope.com/dashboard/` and `/admin/` can open invite-only Identity login. Dashboard-dependent tests in this runbook must still be completed before launch acceptance.
 
 ## Acceptance boundary
 
 | Area | Repository status | Owner-controlled status |
 | --- | --- | --- |
 | `/admin/` Decap CMS shell and schema | Complete | Live sign-in pending |
-| Exact companion-origin injection | Complete; empty is fail-closed | Public Netlify origin pending |
+| Exact companion-origin injection | Complete; empty is fail-closed locally; production injects the approved companion | Public Netlify origin live at `https://candid-choux-61d91a.netlify.app` |
 | Identity callback transfer | Complete for invite, recovery, confirmation, and email-change tokens | Email delivery and one-time-token tests pending |
 | Invite-only registration | Required and documented; no signup UI is added by Lawscope | **Invite only** setting pending |
 | Editor authorization | Client checks `lawscope-editor`; Git Gateway must enforce the same role | Exactly one named Identity user and role assignment pending |
