@@ -116,6 +116,14 @@
       "destination": "/api/cms-gateway?path=/.netlify/git/settings"
     },
     {
+      "source": "/.netlify/git/github",
+      "destination": "/api/cms-gateway?path=/.netlify/git/github"
+    },
+    {
+      "source": "/.netlify/git/github/",
+      "destination": "/api/cms-gateway?path=/.netlify/git/github"
+    },
+    {
       "source": "/.netlify/:path*",
       "destination": "/api/cms-proxy/:path*"
     }

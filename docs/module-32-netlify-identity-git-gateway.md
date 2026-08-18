@@ -39,7 +39,7 @@ A configured endpoint is not proof of account acceptance. `generated/data/cms-au
 - `admin/config.yml` targets `git-gateway`, protected `main`, and `editorial_workflow`; CMS commit messages receive an auditable `cms:` prefix.
 - `netlify-companion/identity-callback.js` transfers only one recognized Identity token fragment to the fixed production admin URL. It makes no network request, logs nothing, removes rejected fragments, and cannot act as an open redirect.
 - Netlify and Vercel headers keep the companion and `/admin/` noindex, no-store, unframed, ad-free, and analytics-free.
-- `api/cms-gateway.mjs` exposes a same-origin transparent proxy for `/.netlify/identity` and `/.netlify/git` only. The production CMS and Identity widget call native `/.netlify/*` URLs; `vercel.json` rewrites those browser paths onto the gateway, with a catch-all at `api/cms-proxy/[...path].mjs` for deep Git Gateway routes.
+- `api/cms-gateway.mjs` exposes a same-origin transparent proxy for `/.netlify/identity` and `/.netlify/git` only. The production CMS and Identity widget call native `/.netlify/*` URLs. `middleware.js` and `vercel.json` rewrite those browser paths onto the gateway, including static Identity/Git settings destinations and a catch-all at `api/cms-proxy/[...path].mjs` for deep Git Gateway routes.
 - An empty `CMS_COMPANION_ORIGIN` leaves Identity and Gateway unavailable locally and permits the public site to build safely.
 
 ## Account-level activation steps

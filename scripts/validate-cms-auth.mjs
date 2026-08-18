@@ -82,7 +82,8 @@ const [
   environmentExample,
   runbook,
   feasibility,
-  gatewaySource
+  gatewaySource,
+  middlewareSource
 ] = await Promise.all([
   readFile(relative('admin/index.html'), 'utf8'),
   readFile(relative('admin/cms.js'), 'utf8'),
@@ -97,7 +98,8 @@ const [
   readFile(relative('.env.example'), 'utf8'),
   readFile(relative('docs/module-32-netlify-identity-git-gateway.md'), 'utf8'),
   readFile(relative('docs/netlify-identity-git-gateway-feasibility.md'), 'utf8'),
-  readFile(relative('api/cms-gateway.mjs'), 'utf8')
+  readFile(relative('api/cms-gateway.mjs'), 'utf8'),
+  readFile(relative('middleware.js'), 'utf8')
 ]);
 
 assert.equal(resolveCmsCompanionOrigin({}), null);
@@ -279,6 +281,7 @@ const identityRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netli
 const identitySettingsRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/identity/settings');
 const identitySettingsSlashRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/identity/settings/');
 const gitSettingsRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/git/settings');
+const gitHubRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/git/github');
 const catchAllRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/:path*');
 check(identityRewrite?.destination === '/api/cms-gateway?path=/.netlify/identity', 'Vercel must rewrite the Identity root onto the same-origin gateway');
 check(
@@ -292,6 +295,10 @@ check(
 check(
   gitSettingsRewrite?.destination === '/api/cms-gateway?path=/.netlify/git/settings',
   'Vercel must statically rewrite the Git Gateway settings probe Decap CMS issues after login'
+);
+check(
+  gitHubRewrite?.destination === '/api/cms-gateway?path=/.netlify/git/github',
+  'Vercel must statically rewrite the Git Gateway GitHub root Decap CMS concatenates after login'
 );
 check(
   catchAllRewrite?.destination === '/api/cms-proxy/:path*',
@@ -611,6 +618,7 @@ const secretAuditSource = [
   netlifySource,
   environmentExample,
   gatewaySource,
+  middlewareSource,
   vercelSource
 ].join('\n');
 check(!/(ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|NETLIFY_AUTH_TOKEN\s*=\s*\S+)/.test(secretAuditSource), 'CMS authentication files must not contain provider secrets');
