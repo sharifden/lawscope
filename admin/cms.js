@@ -330,28 +330,21 @@
     }
   }
 
-  function resolveBrowserService(companionOrigin) {
+  function resolveBrowserServiceOrigin(companionOrigin) {
     try {
       const pageOrigin = window.location && window.location.origin;
-      if (pageOrigin === PRODUCTION_PUBLIC_ORIGIN) {
-        return { origin: pageOrigin, usesGatewayEndpoint: true };
-      }
+      if (pageOrigin === PRODUCTION_PUBLIC_ORIGIN) return pageOrigin;
       if (typeof pageOrigin === 'string' && pageOrigin.startsWith('https://')) {
-        return {
-          origin: pageOrigin,
-          usesGatewayEndpoint: pageOrigin !== companionOrigin
-        };
+        return pageOrigin;
       }
     } catch {
       // Fall back to the build-injected companion origin.
     }
-    return { origin: companionOrigin, usesGatewayEndpoint: false };
+    return companionOrigin;
   }
 
-  function browserServiceUrl(service, path) {
-    return service.usesGatewayEndpoint
-      ? `${service.origin}/api/cms-gateway?path=${path}`
-      : `${service.origin}${path}`;
+  function browserServiceUrl(origin, path) {
+    return `${origin}${path}`;
   }
 
   function markAuthenticationState(isProvisioned) {
@@ -415,9 +408,9 @@
   markAuthenticationState(Boolean(companionOrigin));
 
   if (companionOrigin) {
-    const service = resolveBrowserService(companionOrigin);
-    const identityUrl = browserServiceUrl(service, '/.netlify/identity');
-    const gatewayUrl = browserServiceUrl(service, '/.netlify/git/github');
+    const serviceOrigin = resolveBrowserServiceOrigin(companionOrigin);
+    const identityUrl = browserServiceUrl(serviceOrigin, '/.netlify/identity');
+    const gatewayUrl = browserServiceUrl(serviceOrigin, '/.netlify/git/github');
     const identity = window.netlifyIdentity;
     if (!identity || typeof identity.init !== 'function') {
       showFatal('The pinned authentication client did not load. Access remains disabled.');

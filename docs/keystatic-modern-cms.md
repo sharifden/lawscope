@@ -75,4 +75,4 @@ npm run check             # full Lawscope pipeline + keystatic:check
 ## Troubleshooting
 - `http://localhost:4321/keystatic` 404? → Run `npm run keystatic:dev`, not `npm run preview`
 - Lawscope public site 404? → That’s on `http://localhost:4173` via `npm run preview`, not Astro
-- Production `/dashboard` login uses the same-origin `/api/cms-gateway` function for Identity and Git Gateway requests to the Decap companion. Local `npm run build` still says “fail-closed until CMS_COMPANION_ORIGIN is provisioned” unless you set that variable or `VERCEL_ENV=production`. Keystatic does not need the companion.
+- Production `/dashboard` login uses same-origin `/.netlify/identity` and `/.netlify/git` routes, rewritten to the `/api/cms-gateway` function, for Identity and Git Gateway requests to the Decap companion. Local `npm run build` still says “fail-closed until CMS_COMPANION_ORIGIN is provisioned” unless you set that variable or `VERCEL_ENV=production`. Keystatic does not need the companion.

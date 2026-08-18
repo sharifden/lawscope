@@ -36,8 +36,68 @@
       "destination": "/api/cms-gateway?path=/.netlify/identity"
     },
     {
-      "source": "/.netlify/identity/:path*",
-      "destination": "/api/cms-gateway?path=/.netlify/identity/:path*"
+      "source": "/.netlify/identity/settings",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/settings"
+    },
+    {
+      "source": "/.netlify/identity/settings/",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/settings"
+    },
+    {
+      "source": "/.netlify/identity/token",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/token"
+    },
+    {
+      "source": "/.netlify/identity/token/",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/token"
+    },
+    {
+      "source": "/.netlify/identity/user",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/user"
+    },
+    {
+      "source": "/.netlify/identity/user/",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/user"
+    },
+    {
+      "source": "/.netlify/identity/logout",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/logout"
+    },
+    {
+      "source": "/.netlify/identity/logout/",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/logout"
+    },
+    {
+      "source": "/.netlify/identity/recover",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/recover"
+    },
+    {
+      "source": "/.netlify/identity/recover/",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/recover"
+    },
+    {
+      "source": "/.netlify/identity/verify",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/verify"
+    },
+    {
+      "source": "/.netlify/identity/verify/",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/verify"
+    },
+    {
+      "source": "/.netlify/identity/signup",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/signup"
+    },
+    {
+      "source": "/.netlify/identity/signup/",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/signup"
+    },
+    {
+      "source": "/.netlify/identity/confirm",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/confirm"
+    },
+    {
+      "source": "/.netlify/identity/confirm/",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/confirm"
     },
     {
       "source": "/.netlify/git",
@@ -48,8 +108,24 @@
       "destination": "/api/cms-gateway?path=/.netlify/git"
     },
     {
-      "source": "/.netlify/git/:path*",
-      "destination": "/api/cms-gateway?path=/.netlify/git/:path*"
+      "source": "/.netlify/git/settings",
+      "destination": "/api/cms-gateway?path=/.netlify/git/settings"
+    },
+    {
+      "source": "/.netlify/git/settings/",
+      "destination": "/api/cms-gateway?path=/.netlify/git/settings"
+    },
+    {
+      "source": "/.netlify/git/github",
+      "destination": "/api/cms-gateway?path=/.netlify/git/github"
+    },
+    {
+      "source": "/.netlify/git/github/",
+      "destination": "/api/cms-gateway?path=/.netlify/git/github"
+    },
+    {
+      "source": "/.netlify/:path*",
+      "destination": "/api/cms-proxy/:path*"
     }
   ],
   "headers": [

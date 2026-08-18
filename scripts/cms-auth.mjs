@@ -113,9 +113,7 @@ export function createCmsAuthManifest({
   const sameOriginProxy = Boolean(
     browserOrigin && upstreamOrigin && browserOrigin !== upstreamOrigin
   );
-  const browserServiceEndpoint = (path) => sameOriginProxy
-    ? `${browserOrigin}/api/cms-gateway?path=${path}`
-    : `${browserOrigin}${path}`;
+  const browserServiceEndpoint = (path) => `${browserOrigin}${path}`;
 
   return {
     module: 32,

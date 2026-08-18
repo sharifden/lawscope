@@ -403,6 +403,9 @@ async function validateAdminShell() {
   check(/<script src="\/admin\/cms-manual-init\.js" defer><\/script>/.test(html), 'Admin must load the local manual-initialization guard');
   check(/window\.CMS_MANUAL_INIT\s*=\s*true/.test(manualInit), 'Manual CMS initialization must be enabled externally');
   check(html.indexOf('cms-manual-init.js') < html.indexOf('decap-cms@3.15.1'), 'Manual initialization guard must precede the CMS bundle');
+  check(/<script src="\/admin\/cms-identity-init\.js" defer><\/script>/.test(html), 'Admin must initialize Identity before Decap CMS loads');
+  check(html.indexOf('netlify-identity-widget@2.0.3') < html.indexOf('cms-identity-init.js'), 'Identity init must run after the pinned widget');
+  check(html.indexOf('cms-identity-init.js') < html.indexOf('decap-cms@3.15.1'), 'Identity must be initialized before Decap can call init() without an APIUrl');
   check(/netlify-identity-widget@2\.0\.3/.test(html), 'Identity widget must be pinned to 2.0.3');
   check(/decap-cms@3\.15\.1/.test(html), 'Decap CMS must be pinned to 3.15.1');
   check(
@@ -501,15 +504,15 @@ async function validateAdminShell() {
   );
   assert.equal(
     production.identityCalls[0].APIUrl,
-    'https://getlawscope.com/api/cms-gateway?path=/.netlify/identity'
+    'https://getlawscope.com/.netlify/identity'
   );
   assert.equal(
     production.initCalls[0].config.backend.identity_url,
-    'https://getlawscope.com/api/cms-gateway?path=/.netlify/identity'
+    'https://getlawscope.com/.netlify/identity'
   );
   assert.equal(
     production.initCalls[0].config.backend.gateway_url,
-    'https://getlawscope.com/api/cms-gateway?path=/.netlify/git/github'
+    'https://getlawscope.com/.netlify/git/github'
   );
 
   const unauthorized = executeCmsClient(client, 'https://example.com', {
