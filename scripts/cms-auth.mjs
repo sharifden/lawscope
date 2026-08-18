@@ -110,17 +110,22 @@ export function createCmsAuthManifest({
 }) {
   const browserOrigin = companionOrigin || null;
   const upstreamOrigin = upstreamCompanionOrigin || null;
+  const sameOriginProxy = Boolean(
+    browserOrigin && upstreamOrigin && browserOrigin !== upstreamOrigin
+  );
+  const browserServiceEndpoint = (path) => sameOriginProxy
+    ? `${browserOrigin}/api/cms-gateway?path=${path}`
+    : `${browserOrigin}${path}`;
+
   return {
     module: 32,
     deploymentEnvironment,
     state: browserOrigin ? 'endpoint-configured-account-tests-required' : 'fail-closed-unprovisioned',
     companionOrigin: browserOrigin,
-    identityEndpoint: browserOrigin ? `${browserOrigin}/.netlify/identity` : null,
-    gatewayEndpoint: browserOrigin ? `${browserOrigin}/.netlify/git/github` : null,
+    identityEndpoint: browserOrigin ? browserServiceEndpoint('/.netlify/identity') : null,
+    gatewayEndpoint: browserOrigin ? browserServiceEndpoint('/.netlify/git/github') : null,
     upstreamCompanionOrigin: upstreamOrigin,
-    sameOriginProxy: Boolean(
-      browserOrigin && upstreamOrigin && browserOrigin !== upstreamOrigin
-    ),
+    sameOriginProxy,
     productionAdmin: 'https://getlawscope.com/admin/',
     productionDashboard: 'https://getlawscope.com/dashboard/',
     backend: 'git-gateway',

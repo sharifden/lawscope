@@ -100,7 +100,7 @@ Editors must confirm image rights, avoid sensitive personal data, write meaningf
 
 Committed `admin/config.yml` still uses explicit HTTPS endpoints on the reserved `.invalid` top-level domain. This avoids fabricating a live companion host and makes sign-in/publishing safely unavailable by default.
 
-Module 32 replaced the manually edited meta value with build-controlled tokens. `CMS_COMPANION_ORIGIN` accepts only an exact, non-local HTTPS origin with no path, query, fragment, credentials, or trailing slash. When empty, generated `/admin/` receives an empty meta value and a `.invalid` CSP connection source. Production builds inject `https://getlawscope.com` and proxy `/.netlify/identity` plus `/.netlify/git` same-origin; `admin/cms.js` derives both service URLs before manual initialization.
+Module 32 replaced the manually edited meta value with build-controlled tokens. `CMS_COMPANION_ORIGIN` accepts only an exact, non-local HTTPS origin with no path, query, fragment, credentials, or trailing slash. When empty, generated `/admin/` receives an empty meta value and a `.invalid` CSP connection source. Production builds inject `https://getlawscope.com`; `admin/cms.js` derives explicit same-origin `/api/cms-gateway` URLs for Identity and Git Gateway before manual initialization.
 
 The owner must now follow `docs/module-32-netlify-identity-git-gateway.md` to:
 
