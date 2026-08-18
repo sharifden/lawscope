@@ -4,10 +4,12 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import {
+  APPROVED_CMS_COMPANION_ORIGIN,
   CMS_COMPANION_PLACEHOLDER,
   createCmsAdminCsp,
   createCmsAuthManifest,
   renderCmsAdminShell,
+  resolveBuildCmsCompanionOrigin,
   resolveCmsCompanionOrigin
 } from './cms-auth.mjs';
 
@@ -87,6 +89,20 @@ const [
 ]);
 
 assert.equal(resolveCmsCompanionOrigin({}), null);
+assert.equal(resolveBuildCmsCompanionOrigin({}), null);
+assert.equal(resolveBuildCmsCompanionOrigin({ VERCEL_ENV: 'preview' }), null);
+assert.equal(resolveBuildCmsCompanionOrigin({ VERCEL_ENV: 'development' }), null);
+assert.equal(
+  resolveBuildCmsCompanionOrigin({ VERCEL_ENV: 'production' }),
+  APPROVED_CMS_COMPANION_ORIGIN
+);
+assert.equal(
+  resolveBuildCmsCompanionOrigin({
+    VERCEL_ENV: 'production',
+    CMS_COMPANION_ORIGIN: 'https://cms-fixture.example'
+  }),
+  'https://cms-fixture.example'
+);
 assert.equal(
   resolveCmsCompanionOrigin({ CMS_COMPANION_ORIGIN: 'https://cms-fixture.example' }),
   'https://cms-fixture.example'
@@ -106,7 +122,7 @@ for (const invalidOrigin of [
     /CMS_COMPANION_ORIGIN/
   );
 }
-record('Exact HTTPS companion-origin resolver with fail-closed empty and malformed states');
+record('Exact HTTPS companion-origin resolver with fail-closed empty/malformed states and production companion default');
 
 const provisionedOrigin = 'https://cms-fixture.example';
 const renderedProvisioned = renderCmsAdminShell(adminSource, provisionedOrigin);

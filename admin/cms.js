@@ -400,9 +400,20 @@
     identity.init({ APIUrl: identityUrl });
     if (!installEditorRoleBoundary(identity)) return;
 
+    const signedInUser = typeof identity.currentUser === 'function' ? identity.currentUser() : null;
+    const authHash = String((window.location && window.location.hash) || '');
+    const hasPendingAuthToken = /(invite_token|recovery_token|confirmation_token|email_change_token)=/.test(
+      authHash
+    );
+    if (!signedInUser && !hasPendingAuthToken && typeof identity.open === 'function') {
+      identity.open('login');
+    }
+
     window.initCMS({
       config: {
         backend: {
+          name: 'git-gateway',
+          branch: 'main',
           identity_url: identityUrl,
           gateway_url: `${companionOrigin}/.netlify/git/github`
         }

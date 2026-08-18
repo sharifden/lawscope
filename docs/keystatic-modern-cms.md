@@ -6,7 +6,7 @@ Lawscope now has **two** editorial UIs that write to the **same** Markdown files
 
 | UI | Path | Auth | Hosting |
 |---|---|---|---|
-| **Legacy Decap** | `https://getlawscope.com/admin/` | Netlify Identity + Git Gateway via `candid-choux-61d91a.netlify.app` | Needs `CMS_COMPANION_ORIGIN` in Vercel |
+| **Legacy Decap** | `https://getlawscope.com/dashboard/` and `/admin/` | Netlify Identity + Git Gateway via `candid-choux-61d91a.netlify.app` | Production injects this companion automatically |
 | **Modern Keystatic** | `http://localhost:4321/keystatic` (dev) | Local file system (dev) → GitHub API (prod) | No companion, no Identity |
 
 Both enforce the same Lawscope schema (10 articles, 10 locked categories, singleton site.json) and are validated by `npm run check`.
@@ -75,4 +75,4 @@ npm run check             # full Lawscope pipeline + keystatic:check
 ## Troubleshooting
 - `http://localhost:4321/keystatic` 404? → Run `npm run keystatic:dev`, not `npm run preview`
 - Lawscope public site 404? → That’s on `http://localhost:4173` via `npm run preview`, not Astro
-- `npm run build` still says “fail-closed until CMS_COMPANION_ORIGIN is provisioned” → That’s Decap’s message; Keystatic doesn’t need it. Set `CMS_COMPANION_ORIGIN` in Vercel only if you keep using `/admin`.
+- Production `/dashboard` login uses the Decap companion automatically. Local `npm run build` still says “fail-closed until CMS_COMPANION_ORIGIN is provisioned” unless you set that variable or `VERCEL_ENV=production`. Keystatic does not need the companion.

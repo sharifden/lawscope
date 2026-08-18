@@ -67,7 +67,7 @@ import {
 import {
   createCmsAuthManifest,
   renderCmsAdminShell,
-  resolveCmsCompanionOrigin
+  resolveBuildCmsCompanionOrigin
 } from './cms-auth.mjs';
 import { validateArticleDisclaimerPartial } from './legal-disclaimer.mjs';
 import { CONTACT_SUBJECTS } from './contact-page.mjs';
@@ -769,7 +769,7 @@ for (const publicPath of publicPaths) {
   }
 }
 
-const cmsCompanionOrigin = resolveCmsCompanionOrigin(process.env);
+const cmsCompanionOrigin = resolveBuildCmsCompanionOrigin(process.env);
 const generatedAdminPath = path.join(outputDirectory, 'admin/index.html');
 const generatedAdminSource = await readFile(generatedAdminPath, 'utf8');
 await writeFile(
