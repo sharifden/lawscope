@@ -1,6 +1,7 @@
 const CMS_COMPANION_VARIABLE = 'CMS_COMPANION_ORIGIN';
 export const CMS_COMPANION_PLACEHOLDER = 'https://lawscope-cms-companion.invalid';
 export const APPROVED_CMS_COMPANION_ORIGIN = 'https://candid-choux-61d91a.netlify.app';
+export const PRODUCTION_CMS_PUBLIC_ORIGIN = 'https://getlawscope.com';
 
 function parseCompanionOrigin(rawValue) {
   const value = String(rawValue || '').trim();
@@ -42,12 +43,22 @@ export function resolveCmsCompanionOrigin(environment = process.env) {
 }
 
 export function resolveBuildCmsCompanionOrigin(environment = process.env) {
-  const configuredOrigin = resolveCmsCompanionOrigin(environment);
-  if (configuredOrigin) return configuredOrigin;
+  // Production browsers talk same-origin to getlawscope.com/.netlify/*; the
+  // Vercel gateway then forwards to the companion. Local and Preview stay
+  // fail-closed unless the owner sets CMS_COMPANION_ORIGIN explicitly.
+  if (environment.VERCEL_ENV === 'production') {
+    return PRODUCTION_CMS_PUBLIC_ORIGIN;
+  }
 
-  // Production already has a live invite-only companion. Inject it only for
-  // Vercel production builds so local/preview stay fail-closed unless the
-  // owner sets CMS_COMPANION_ORIGIN explicitly.
+  return resolveCmsCompanionOrigin(environment);
+}
+
+export function resolveCmsGatewayUpstreamOrigin(environment = process.env) {
+  const configuredOrigin = resolveCmsCompanionOrigin(environment);
+  if (configuredOrigin && configuredOrigin !== PRODUCTION_CMS_PUBLIC_ORIGIN) {
+    return configuredOrigin;
+  }
+
   if (environment.VERCEL_ENV === 'production') {
     return APPROVED_CMS_COMPANION_ORIGIN;
   }
@@ -92,14 +103,24 @@ export function renderCmsAdminShell(source, companionOrigin) {
     .replace(cspToken, escapedCsp);
 }
 
-export function createCmsAuthManifest({ deploymentEnvironment, companionOrigin }) {
+export function createCmsAuthManifest({
+  deploymentEnvironment,
+  companionOrigin,
+  upstreamCompanionOrigin = null
+}) {
+  const browserOrigin = companionOrigin || null;
+  const upstreamOrigin = upstreamCompanionOrigin || null;
   return {
     module: 32,
     deploymentEnvironment,
-    state: companionOrigin ? 'endpoint-configured-account-tests-required' : 'fail-closed-unprovisioned',
-    companionOrigin: companionOrigin || null,
-    identityEndpoint: companionOrigin ? `${companionOrigin}/.netlify/identity` : null,
-    gatewayEndpoint: companionOrigin ? `${companionOrigin}/.netlify/git/github` : null,
+    state: browserOrigin ? 'endpoint-configured-account-tests-required' : 'fail-closed-unprovisioned',
+    companionOrigin: browserOrigin,
+    identityEndpoint: browserOrigin ? `${browserOrigin}/.netlify/identity` : null,
+    gatewayEndpoint: browserOrigin ? `${browserOrigin}/.netlify/git/github` : null,
+    upstreamCompanionOrigin: upstreamOrigin,
+    sameOriginProxy: Boolean(
+      browserOrigin && upstreamOrigin && browserOrigin !== upstreamOrigin
+    ),
     productionAdmin: 'https://getlawscope.com/admin/',
     productionDashboard: 'https://getlawscope.com/dashboard/',
     backend: 'git-gateway',

@@ -67,7 +67,8 @@ import {
 import {
   createCmsAuthManifest,
   renderCmsAdminShell,
-  resolveBuildCmsCompanionOrigin
+  resolveBuildCmsCompanionOrigin,
+  resolveCmsGatewayUpstreamOrigin
 } from './cms-auth.mjs';
 import { validateArticleDisclaimerPartial } from './legal-disclaimer.mjs';
 import { CONTACT_SUBJECTS } from './contact-page.mjs';
@@ -770,6 +771,7 @@ for (const publicPath of publicPaths) {
 }
 
 const cmsCompanionOrigin = resolveBuildCmsCompanionOrigin(process.env);
+const cmsGatewayUpstreamOrigin = resolveCmsGatewayUpstreamOrigin(process.env);
 const generatedAdminPath = path.join(outputDirectory, 'admin/index.html');
 const generatedAdminSource = await readFile(generatedAdminPath, 'utf8');
 await writeFile(
@@ -805,7 +807,8 @@ await writeFile(
   `${JSON.stringify(
     createCmsAuthManifest({
       deploymentEnvironment,
-      companionOrigin: cmsCompanionOrigin
+      companionOrigin: cmsCompanionOrigin,
+      upstreamCompanionOrigin: cmsGatewayUpstreamOrigin
     }),
     null,
     2
@@ -2052,6 +2055,6 @@ console.log(
   `Sitemap and robots: ${sitemap.entries.length} indexable canonical URLs; ${deploymentEnvironment === 'production' ? 'production crawler guidance' : 'nonproduction crawl blocking'} emitted.`
 );
 console.log(
-  `CMS authentication: ${cmsCompanionOrigin ? 'approved companion origin injected; account acceptance still required' : 'fail-closed until CMS_COMPANION_ORIGIN is provisioned'}.`
+  `CMS authentication: ${cmsCompanionOrigin ? (cmsGatewayUpstreamOrigin && cmsGatewayUpstreamOrigin !== cmsCompanionOrigin ? 'same-origin Identity/Git Gateway proxy enabled; account acceptance still required' : 'approved companion origin injected; account acceptance still required') : 'fail-closed until CMS_COMPANION_ORIGIN is provisioned'}.`
 );
 console.log(`Output: ${path.relative(projectRoot, outputDirectory)}/`);

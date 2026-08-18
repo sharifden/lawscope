@@ -6,12 +6,18 @@ import { fileURLToPath } from 'node:url';
 import {
   APPROVED_CMS_COMPANION_ORIGIN,
   CMS_COMPANION_PLACEHOLDER,
+  PRODUCTION_CMS_PUBLIC_ORIGIN,
   createCmsAdminCsp,
   createCmsAuthManifest,
   renderCmsAdminShell,
   resolveBuildCmsCompanionOrigin,
-  resolveCmsCompanionOrigin
+  resolveCmsCompanionOrigin,
+  resolveCmsGatewayUpstreamOrigin
 } from './cms-auth.mjs';
+import {
+  handleCmsGatewayRequest,
+  normalizeCmsGatewayPath
+} from '../api/cms-gateway.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const relative = (filePath) => path.join(projectRoot, filePath);
@@ -72,7 +78,8 @@ const [
   vercelSource,
   environmentExample,
   runbook,
-  feasibility
+  feasibility,
+  gatewaySource
 ] = await Promise.all([
   readFile(relative('admin/index.html'), 'utf8'),
   readFile(relative('admin/cms.js'), 'utf8'),
@@ -85,7 +92,8 @@ const [
   readFile(relative('vercel.json'), 'utf8'),
   readFile(relative('.env.example'), 'utf8'),
   readFile(relative('docs/module-32-netlify-identity-git-gateway.md'), 'utf8'),
-  readFile(relative('docs/netlify-identity-git-gateway-feasibility.md'), 'utf8')
+  readFile(relative('docs/netlify-identity-git-gateway-feasibility.md'), 'utf8'),
+  readFile(relative('api/cms-gateway.mjs'), 'utf8')
 ]);
 
 assert.equal(resolveCmsCompanionOrigin({}), null);
@@ -94,6 +102,10 @@ assert.equal(resolveBuildCmsCompanionOrigin({ VERCEL_ENV: 'preview' }), null);
 assert.equal(resolveBuildCmsCompanionOrigin({ VERCEL_ENV: 'development' }), null);
 assert.equal(
   resolveBuildCmsCompanionOrigin({ VERCEL_ENV: 'production' }),
+  PRODUCTION_CMS_PUBLIC_ORIGIN
+);
+assert.equal(
+  resolveCmsGatewayUpstreamOrigin({ VERCEL_ENV: 'production' }),
   APPROVED_CMS_COMPANION_ORIGIN
 );
 assert.equal(
@@ -101,8 +113,16 @@ assert.equal(
     VERCEL_ENV: 'production',
     CMS_COMPANION_ORIGIN: 'https://cms-fixture.example'
   }),
+  PRODUCTION_CMS_PUBLIC_ORIGIN
+);
+assert.equal(
+  resolveCmsGatewayUpstreamOrigin({
+    VERCEL_ENV: 'production',
+    CMS_COMPANION_ORIGIN: 'https://cms-fixture.example'
+  }),
   'https://cms-fixture.example'
 );
+assert.equal(resolveCmsGatewayUpstreamOrigin({}), null);
 assert.equal(
   resolveCmsCompanionOrigin({ CMS_COMPANION_ORIGIN: 'https://cms-fixture.example' }),
   'https://cms-fixture.example'
@@ -122,7 +142,7 @@ for (const invalidOrigin of [
     /CMS_COMPANION_ORIGIN/
   );
 }
-record('Exact HTTPS companion-origin resolver with fail-closed empty/malformed states and production companion default');
+record('Exact HTTPS companion-origin resolver with fail-closed empty/malformed states and production same-origin default');
 
 const provisionedOrigin = 'https://cms-fixture.example';
 const renderedProvisioned = renderCmsAdminShell(adminSource, provisionedOrigin);
@@ -169,6 +189,16 @@ assert.equal(configuredManifest.gatewayEndpoint, `${provisionedOrigin}/.netlify/
 assert.equal(configuredManifest.requiredRole, 'lawscope-editor');
 assert.equal(configuredManifest.publicSignupAllowed, false);
 assert.equal(configuredManifest.sharedCredentialsAllowed, false);
+assert.equal(configuredManifest.sameOriginProxy, false);
+const productionManifest = createCmsAuthManifest({
+  deploymentEnvironment: 'production',
+  companionOrigin: PRODUCTION_CMS_PUBLIC_ORIGIN,
+  upstreamCompanionOrigin: APPROVED_CMS_COMPANION_ORIGIN
+});
+assert.equal(productionManifest.identityEndpoint, `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/identity`);
+assert.equal(productionManifest.gatewayEndpoint, `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/git/github`);
+assert.equal(productionManifest.upstreamCompanionOrigin, APPROVED_CMS_COMPANION_ORIGIN);
+assert.equal(productionManifest.sameOriginProxy, true);
 record('Public non-secret CMS deployment manifest with explicit account-acceptance boundary');
 
 check(/name="robots" content="noindex, nofollow, noarchive, nosnippet"/.test(companionHtml), 'Companion page must be noindex in HTML');
@@ -235,7 +265,120 @@ assert.equal(adminHeaders.get('Cache-Control'), 'private, no-store');
 assert.equal(adminHeaders.get('Referrer-Policy'), 'no-referrer');
 assert.equal(adminHeaders.get('X-Frame-Options'), 'DENY');
 check(adminHeaders.get('Content-Security-Policy').includes("frame-ancestors 'none'"), 'Vercel must prevent framing /admin/');
+const identityRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/identity');
+const gatewayRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/git/:path*');
+check(identityRewrite?.destination === '/api/cms-gateway?path=/.netlify/identity', 'Vercel must rewrite Identity onto the same-origin gateway');
+check(gatewayRewrite?.destination === '/api/cms-gateway?path=/.netlify/git/:path*', 'Vercel must rewrite Git Gateway onto the same-origin gateway');
+check(!/Access-Control-Allow-Origin\s*:\s*\*/i.test(vercelSource), 'Vercel config must not add wildcard CORS');
 record('Defense-in-depth Netlify companion and Vercel admin response policies without wildcard CORS');
+
+assert.equal(normalizeCmsGatewayPath('/.netlify/identity'), '/.netlify/identity');
+assert.equal(normalizeCmsGatewayPath('/.netlify/identity/token/'), '/.netlify/identity/token');
+assert.equal(normalizeCmsGatewayPath('/.netlify/git/github/git/trees/main'), '/.netlify/git/github/git/trees/main');
+assert.equal(normalizeCmsGatewayPath('/.netlify/identity/../secret'), null);
+assert.equal(normalizeCmsGatewayPath('/.netlify/functions'), null);
+assert.equal(normalizeCmsGatewayPath('/admin/'), null);
+
+function createGatewayRequest({
+  method = 'GET',
+  url = '/.netlify/identity',
+  origin = PRODUCTION_CMS_PUBLIC_ORIGIN,
+  headers = {},
+  body = null
+} = {}) {
+  return {
+    method,
+    url,
+    headers: {
+      origin,
+      ...headers
+    },
+    body
+  };
+}
+
+assert.equal(
+  (await handleCmsGatewayRequest(createGatewayRequest(), { environment: {} })).status,
+  503,
+  'The gateway must fail closed without a production or configured upstream'
+);
+assert.equal(
+  (await handleCmsGatewayRequest(createGatewayRequest({ url: '/.netlify/functions' }), {
+    environment: { VERCEL_ENV: 'production' }
+  })).status,
+  404
+);
+assert.equal(
+  (await handleCmsGatewayRequest(
+    createGatewayRequest({ origin: 'https://attacker.example' }),
+    { environment: { VERCEL_ENV: 'production' } }
+  )).status,
+  403
+);
+assert.equal(
+  (await handleCmsGatewayRequest(createGatewayRequest({ method: 'TRACE' }), {
+    environment: { VERCEL_ENV: 'production' }
+  })).status,
+  405
+);
+assert.equal(
+  (await handleCmsGatewayRequest(
+    createGatewayRequest({
+      method: 'POST',
+      url: '/api/cms-gateway?path=/.netlify/identity/token',
+      headers: { 'content-length': String(20 * 1024 * 1024) },
+      body: 'too-large'
+    }),
+    { environment: { VERCEL_ENV: 'production' } }
+  )).status,
+  413
+);
+
+let forwarded;
+const proxied = await handleCmsGatewayRequest(
+  createGatewayRequest({
+    method: 'POST',
+    url: '/api/cms-gateway?path=/.netlify/identity/token&grant_type=password',
+    headers: {
+      authorization: 'Bearer editor-session',
+      'content-type': 'application/json'
+    },
+    body: '{"username":"editor"}'
+  }),
+  {
+    environment: { VERCEL_ENV: 'production' },
+    fetchImplementation: async (url, options) => {
+      forwarded = { url: String(url), options };
+      return {
+        status: 200,
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          Location: `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/identity/user`
+        }),
+        arrayBuffer: async () => Buffer.from('{"ok":true}')
+      };
+    }
+  }
+);
+assert.equal(proxied.status, 200);
+assert.equal(
+  forwarded.url,
+  `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/identity/token?grant_type=password`
+);
+assert.equal(forwarded.options.headers.authorization, 'Bearer editor-session');
+assert.equal(forwarded.options.redirect, 'manual');
+assert.equal(Object.hasOwn(forwarded.options.headers, 'cookie'), false);
+assert.doesNotMatch(JSON.stringify(forwarded.options.headers), /ghp_|github_pat_|NETLIFY_AUTH_TOKEN/);
+assert.equal(proxied.headers['Content-Type'], 'application/json');
+assert.equal(proxied.headers.Location, `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/identity/user`);
+assert.equal(proxied.headers['Access-Control-Allow-Origin'], undefined);
+assert.equal(proxied.headers['X-Robots-Tag'], 'noindex, nofollow, noarchive');
+assert.equal(proxied.headers['Cache-Control'], 'no-store, max-age=0');
+check(!/Access-Control-Allow-Origin\s*:\s*\*/.test(gatewaySource), 'The gateway must not emit wildcard CORS');
+check(!/Authorization': `Bearer \$\{/.test(gatewaySource), 'The gateway must not inject a provider token');
+check(!/console\.(?:log|info|warn|error)/.test(gatewaySource), 'The gateway must not log request or token details');
+record('Path-limited same-origin Identity/Git Gateway proxy without injected credentials or wildcard CORS');
 
 check(environmentExample.includes('CMS_COMPANION_ORIGIN='), 'Environment template must expose the single public origin control');
 check(!environmentExample.includes('NETLIFY_IDENTITY_URL='), 'Identity endpoint must be derived, not independently configurable');
@@ -274,7 +417,9 @@ const secretAuditSource = [
   companionCss,
   callbackSource,
   netlifySource,
-  environmentExample
+  environmentExample,
+  gatewaySource,
+  vercelSource
 ].join('\n');
 check(!/(ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|NETLIFY_AUTH_TOKEN\s*=\s*\S+)/.test(secretAuditSource), 'CMS authentication files must not contain provider secrets');
 record('No GitHub or Netlify provider credential committed to browser or deployment configuration');

@@ -21,8 +21,9 @@ The planning document’s fallback gate still applies if availability changes, e
 
 - `getlawscope.com` remains the Vercel production origin for the public site and `/admin/`.
 - One owner-created Netlify companion project will publish only `netlify-companion/` and supply Identity/Git Gateway.
-- A single validated `CMS_COMPANION_ORIGIN` build variable controls both endpoints; no browser secret is needed.
-- `admin/cms.js` derives the Identity and Git Gateway URLs and enforces `lawscope-editor` as client-side defense in depth.
+- A single validated `CMS_COMPANION_ORIGIN` build variable still names the upstream companion; production browsers use same-origin `/.netlify/` paths instead of calling that origin directly.
+- `api/cms-gateway.mjs` is a path-limited transparent proxy. It forwards the browser `Authorization` header and never injects a provider or repository token.
+- `admin/cms.js` derives the Identity and Git Gateway URLs, prefers the production page origin, and enforces `lawscope-editor` as client-side defense in depth.
 - Account-level Invite only registration plus the same Git Gateway role remain authoritative.
 - Identity email fragments land on the noindex companion and transfer only recognized one-time actions to the fixed production admin URL.
 - Editorial Workflow writes drafts to workflow branches/pull requests. Protected `main` remains the production branch; merges trigger Vercel through GitHub.
@@ -45,7 +46,7 @@ The complete execution sequence and private evidence fields are in `docs/module-
 3. That editor alone has `lawscope-editor`; the Git Gateway role list is never blank.
 4. The GitHub integration/token is owner-controlled, limited to the Lawscope repository and necessary operations, and absent from Git/browser/Vercel variables.
 5. Protected `main` blocks force pushes/deletion and retains reviewed workflow/audit history.
-6. Production plus one explicitly approved branch-scoped Vercel preview can authenticate against the exact companion without wildcard CORS or token-bearing proxies.
+6. Production authenticates through the same-origin transparent proxy without wildcard CORS or injected provider tokens; one explicitly approved Preview may be provisioned the same way.
 7. Invitation acceptance, sign-in, logout, password recovery, token expiry, role/user revocation, and emergency Gateway disablement behave as documented.
 8. An Editorial Workflow draft stays off `main` and out of Vercel production.
 9. A reviewed publish creates an auditable GitHub change, triggers a successful Vercel production build, and becomes live only after that build.

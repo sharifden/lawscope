@@ -99,6 +99,7 @@ const requiredPaths = [
   'js/contact-form-model.js',
   'js/contact-form.js',
   'api/contact.mjs',
+  'api/cms-gateway.mjs',
   'docs/header-navigation.md',
   'docs/home-hero.md',
   'docs/featured-articles.md',

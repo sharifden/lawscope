@@ -38,6 +38,7 @@ const ALLOWED_SITEMAP_TYPES = new Set([
 const PERMANENTLY_EXCLUDED_ROUTE_PATTERNS = Object.freeze([
   /^\/admin(?:\/|$)/,
   /^\/api(?:\/|$)/,
+  /^\/\.netlify(?:\/|$)/,
   /^\/private(?:\/|$)/,
   /^\/404(?:\.html|\/|$)/
 ]);
