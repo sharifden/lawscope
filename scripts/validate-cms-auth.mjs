@@ -571,6 +571,83 @@ assert.equal(
   `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/git/github/git/trees/main?recursive=1`
 );
 
+let verifyInviteForwarded;
+const verifyInviteResponse = await handleCmsGatewayRequest(
+  createGatewayRequest({
+    method: 'POST',
+    url: '/.netlify/identity/verify',
+    headers: {
+      'content-type': 'application/json',
+      cookie: 'session=abc; nf_jwt=token123; other=xyz'
+    },
+    body: '{"token":"test-token","password":"new-password","type":"signup"}'
+  }),
+  {
+    environment: { VERCEL_ENV: 'production' },
+    fetchImplementation: async (url, options) => {
+      verifyInviteForwarded = { url: String(url), options };
+      return {
+        status: 200,
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          'Set-Cookie': 'nf_jwt=refreshed-jwt; Path=/; Secure; HttpOnly'
+        }),
+        arrayBuffer: async () => Buffer.from('{"access_token":"new-jwt","token_type":"bearer"}')
+      };
+    }
+  }
+);
+assert.equal(verifyInviteResponse.status, 200);
+assert.equal(
+  verifyInviteForwarded.url,
+  `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/identity/verify`
+);
+assert.equal(
+  verifyInviteForwarded.options.body.toString('utf8'),
+  '{"token":"test-token","password":"new-password","type":"invite"}'
+);
+assert.equal(verifyInviteForwarded.options.headers.cookie, 'nf_jwt=token123');
+assert.equal(
+  verifyInviteResponse.headers['Set-Cookie'],
+  'nf_jwt=refreshed-jwt; Path=/; Secure; HttpOnly'
+);
+
+let verifyRecoveryForwarded;
+const verifyRecoveryResponse = await handleCmsGatewayRequest(
+  createGatewayRequest({
+    method: 'POST',
+    url: '/.netlify/identity/verify',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: '{"token":"test-token","password":"new-password","type":"recovery"}'
+  }),
+  {
+    environment: { VERCEL_ENV: 'production' },
+    fetchImplementation: async (url, options) => {
+      verifyRecoveryForwarded = { url: String(url), options };
+      return {
+        status: 200,
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          'Set-Cookie': 'unrelated_cookie=blocked; Path=/'
+        }),
+        arrayBuffer: async () => Buffer.from('{"access_token":"new-jwt","token_type":"bearer"}')
+      };
+    }
+  }
+);
+assert.equal(verifyRecoveryResponse.status, 200);
+assert.equal(
+  verifyRecoveryForwarded.url,
+  `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/identity/verify`
+);
+assert.equal(
+  verifyRecoveryForwarded.options.body.toString('utf8'),
+  '{"token":"test-token","password":"new-password","type":"recovery"}'
+);
+assert.equal(verifyRecoveryResponse.headers['Set-Cookie'], undefined);
+
 check(!/Access-Control-Allow-Origin\s*:\s*\*/.test(gatewaySource), 'The gateway must not emit wildcard CORS');
 check(!/Authorization': `Bearer \$\{/.test(gatewaySource), 'The gateway must not inject a provider token');
 check(!/console\.(?:log|info|warn|error)/.test(gatewaySource), 'The gateway must not log request or token details');
