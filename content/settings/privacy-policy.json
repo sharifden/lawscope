@@ -1,6 +1,6 @@
 {
   "effective_date": "2026-08-16",
-  "last_updated": "2026-08-16",
+  "last_updated": "2026-08-18",
   "review_status": "pending",
   "operator": {
     "public_name": "Lawscope",
@@ -53,9 +53,9 @@
       "key": "analytics",
       "name": "Google Analytics 4",
       "purpose": "Consent-based audience measurement using a deliberately limited event set",
-      "status": "inactive",
+      "status": "configured",
       "privacy_url": "https://policies.google.com/privacy",
-      "retention": "The production GA4 property must be confirmed at the two-month event-data retention setting before activation; aggregated reports may persist until deleted under the account policy.",
+      "retention": "Event-level data uses the two-month event-data retention setting in the production GA4 property; aggregated reports may persist until deleted under the account policy. The owner re-confirms the property's retention, signals, and redaction settings at each quarterly review.",
       "details_confirmed": false
     },
     {

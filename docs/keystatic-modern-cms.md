@@ -51,7 +51,7 @@ Keystatic storage is `local` now, so you edit locally and `git push`. No login n
 
 ### Validation
 ```bash
-npm run keystatic:check   # tsc + node --check on keystatic.config.ts
+npm run keystatic:check   # tsc type/syntax check on keystatic.config.ts
 npm run check             # full Lawscope pipeline + keystatic:check
 ```
 

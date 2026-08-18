@@ -2,7 +2,7 @@
 
 ## Purpose and privacy baseline
 
-Lawscope has a deliberately narrow GA4 integration for aggregate audience measurement. It is **disabled by default**. The committed `G-XXXXXXXXXX` value is inert and must be replaced by the owner-approved public web-stream measurement ID only in controlled production configuration.
+Lawscope has a deliberately narrow GA4 integration for aggregate audience measurement. Activation is now requested in `content/settings/site.json` with the owner-approved public web-stream measurement ID `G-XRQT4RL4G5`, and it takes effect **only in production builds**. Every other environment still resolves to the inert `G-XXXXXXXXXX` value, and no environment can collect anything before a visitor opts in.
 
 Lawscope uses strict opt-in/basic consent behavior:
 
@@ -39,6 +39,25 @@ VERCEL_ENV=production
 
 `GA4_DEBUG_MODE` is for a short, controlled validation only. Do not leave it enabled for ordinary traffic. The measurement ID is public by design, but no secret, API credential, visitor identifier, submitted form value, or consent record belongs in the repository or generated manifest.
 
+## Activation record
+
+| Item | Value |
+|---|---|
+| Status | Active for production builds |
+| Activated on | 2026-08-18 |
+| Requested by | `content/settings/site.json` → `analytics.enabled: true` |
+| Public measurement ID | `G-XRQT4RL4G5` |
+| Web stream | `https://getlawscope.com` |
+| Debug mode | Off (`GA4_DEBUG_MODE` unset in production) |
+
+Because the flag and ID are versioned settings, a routine production deploy needs **no** GA4 environment variable in Vercel. The environment overrides remain available for two purposes:
+
+- `GA4_ENABLED=false` in Vercel production is the emergency kill switch — it disables collection on the next build without editing settings; and
+- `GA4_MEASUREMENT_ID` / `GA4_DEBUG_MODE` support a controlled release-candidate DebugView test.
+
+Owner items that remain outside the repository and must be confirmed in the GA4 property (see the setup and runbook sections below): two-month event-data retention, Google Signals off, ads personalization off, Enhanced Measurement off, data redaction on, and tested developer/internal-traffic filters. Their completion is tracked as `analytics-production` in `qa/module-33-acceptance.json`, and `content/settings/privacy-policy.json` keeps `details_confirmed: false` for the analytics service until the owner signs that evidence off.
+
+
 ## Measurement plan
 
 Every event uses the `analytics` consent category. The implementation does not set a user ID and does not send form values or raw search data.
@@ -70,7 +89,7 @@ Before adding any event:
 
 ## GA4 property and web-stream setup
 
-Before setting `GA4_ENABLED=true`, the owner must confirm in the production GA4 property:
+The measurement request is now active in production, so the owner must confirm (and keep confirming) in the production GA4 property:
 
 1. the web stream URL is `https://getlawscope.com`;
 2. event-data retention is set to **2 months**;
@@ -111,7 +130,7 @@ Filters are property-side safeguards, not a reason to send Preview traffic. Prev
 
 ## Ownership map
 
-- `content/settings/site.json` and `admin/config.yml` — versioned request flag and public placeholder/measurement ID.
+- `content/settings/site.json` and `admin/config.yml` — versioned request flag and public measurement ID (`G-XRQT4RL4G5`).
 - `.env.example` — environment override contract.
 - `scripts/analytics.mjs` — validation, production-only resolver, generated runtime configuration, and manifest schema.
 - `js/analytics-config.js` — committed inert fallback overwritten safely by the build.
