@@ -22,7 +22,7 @@ A configured endpoint is not proof of account acceptance. `generated/data/cms-au
 
 1. `https://getlawscope.com/admin/` and an explicitly approved branch-scoped Vercel preview serve the CMS UI.
 2. One small Netlify companion project, connected to the same Lawscope GitHub repository, supplies Identity and Git Gateway only.
-3. Production browsers call same-origin `https://getlawscope.com/.netlify/identity` and `https://getlawscope.com/.netlify/git/github`. A path-limited transparent proxy on Vercel forwards only those prefixes to the companion. The proxy copies the browser `Authorization` header when present and never injects a GitHub, Netlify, or repository token. Local and Preview stay fail-closed unless `CMS_COMPANION_ORIGIN` is set.
+3. Production browsers call the same-origin `/api/cms-gateway` endpoint with a path-limited `path` value for `/.netlify/identity` or `/.netlify/git/github`. Calling the function explicitly avoids Vercel’s trailing-slash handling for `/.netlify/*`; the proxy forwards only those approved upstream prefixes. It copies the browser `Authorization` header when present and never injects a GitHub, Netlify, or repository token. Local and Preview stay fail-closed unless `CMS_COMPANION_ORIGIN` is set.
 4. Identity authenticates an individually invited user. Git Gateway separately requires the `lawscope-editor` role and limits repository operations to the companion project’s connected repository.
 5. Editorial Workflow keeps drafts on workflow branches/pull requests. Only an approved merge to protected `main` triggers the validated Vercel production deployment.
 6. No GitHub token, Netlify credential, Identity token, password, editor email address, or recovery code is committed to Git or exposed through a build variable.
@@ -38,7 +38,7 @@ A configured endpoint is not proof of account acceptance. `generated/data/cms-au
 - `admin/config.yml` targets `git-gateway`, protected `main`, and `editorial_workflow`; CMS commit messages receive an auditable `cms:` prefix.
 - `netlify-companion/identity-callback.js` transfers only one recognized Identity token fragment to the fixed production admin URL. It makes no network request, logs nothing, removes rejected fragments, and cannot act as an open redirect.
 - Netlify and Vercel headers keep the companion and `/admin/` noindex, no-store, unframed, ad-free, and analytics-free.
-- `api/cms-gateway.mjs` plus `vercel.json` rewrites expose a same-origin transparent proxy for `/.netlify/identity` and `/.netlify/git` only.
+- `api/cms-gateway.mjs` exposes a same-origin transparent proxy for `/.netlify/identity` and `/.netlify/git` only. The production CMS calls `/api/cms-gateway` explicitly; `vercel.json` retains equivalent `/.netlify/*` rewrites as compatibility routes.
 - An empty `CMS_COMPANION_ORIGIN` leaves Identity and Gateway unavailable locally and permits the public site to build safely.
 
 ## Account-level activation steps
@@ -82,7 +82,7 @@ The launch user count is **exactly one** active Identity editor. Shared mailboxe
 3. Set the Git Gateway role restriction to exactly `lawscope-editor`. Never leave the role list blank, because a blank list grants Gateway access to every Identity user on the project.
 4. Prefer a provider installation limited to the one Lawscope repository. If the current connector requires a token, create it in the owner-controlled account with only the repository operations Git Gateway currently needs for contents, branches, and pull requests. Never place it in Vercel, a browser variable, this repository, a support ticket, or an editor account.
 5. Record where the credential is owned, how it is revoked, and its review/rotation date. Do not record the credential value.
-6. Verify an unauthenticated request and an authenticated user without `lawscope-editor` cannot read or write through `/.netlify/git/github`.
+6. Verify an unauthenticated request and an authenticated user without `lawscope-editor` cannot read or write through `/api/cms-gateway?path=/.netlify/git/github`.
 
 ### 5. Preserve protected `main`
 
@@ -104,7 +104,7 @@ Test the actual Decap publish path with the rule enabled. If the integration can
 3. Do not add separate Identity/Gateway URLs. Do not add `Access-Control-Allow-Origin: *` or a repository token to Vercel. The checked-in transparent proxy is path-limited and must never become token-bearing.
 4. For pre-launch proof, add the public companion origin only to one named, owner-approved Preview branch/environment and redeploy that branch. Do not expose the CMS bridge to every untrusted pull-request preview.
 5. Keep all `*.vercel.app` responses noindex. Remove the branch-scoped variable and preview deployment after acceptance unless that preview remains an approved operating surface.
-6. Verify production browser requests stay on `https://getlawscope.com/.netlify/identity` and `https://getlawscope.com/.netlify/git/github`, that the gateway forwards them to the companion, and that no token appears in query strings, referrers, logs, analytics, or error reporting.
+6. Verify production browser requests stay on `https://getlawscope.com/api/cms-gateway` with only approved Identity or Git Gateway paths in the `path` parameter, that the gateway forwards them to the companion, and that no token appears in query strings, referrers, logs, analytics, or error reporting.
 
 Same-origin production traffic does not depend on Netlify CORS. Lawscope does not add wildcard repository headers. If the proxy or companion becomes unreliable, use the Fallback decision gate.
 

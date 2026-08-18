@@ -21,8 +21,8 @@ The planning document’s fallback gate still applies if availability changes, e
 
 - `getlawscope.com` remains the Vercel production origin for the public site and `/admin/`.
 - One owner-created Netlify companion project will publish only `netlify-companion/` and supply Identity/Git Gateway.
-- A single validated `CMS_COMPANION_ORIGIN` build variable still names the upstream companion; production browsers use same-origin `/.netlify/` paths instead of calling that origin directly.
-- `api/cms-gateway.mjs` is a path-limited transparent proxy. It forwards the browser `Authorization` header and never injects a provider or repository token.
+- A single validated `CMS_COMPANION_ORIGIN` build variable still names the upstream companion; production browsers use the same-origin `/api/cms-gateway` function instead of calling that origin directly.
+- `api/cms-gateway.mjs` is a path-limited transparent proxy for Identity and Git Gateway. It forwards the browser `Authorization` header and never injects a provider or repository token.
 - `admin/cms.js` derives the Identity and Git Gateway URLs, prefers the production page origin, and enforces `lawscope-editor` as client-side defense in depth.
 - Account-level Invite only registration plus the same Git Gateway role remain authoritative.
 - Identity email fragments land on the noindex companion and transfer only recognized one-time actions to the fixed production admin URL.

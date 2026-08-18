@@ -493,6 +493,25 @@ async function validateAdminShell() {
   );
   check(provisioned.identityEvents.has('login'), 'Provisioned CMS must register a login role boundary');
 
+  const production = executeCmsClient(
+    client,
+    'https://getlawscope.com',
+    null,
+    'https://getlawscope.com'
+  );
+  assert.equal(
+    production.identityCalls[0].APIUrl,
+    'https://getlawscope.com/api/cms-gateway?path=/.netlify/identity'
+  );
+  assert.equal(
+    production.initCalls[0].config.backend.identity_url,
+    'https://getlawscope.com/api/cms-gateway?path=/.netlify/identity'
+  );
+  assert.equal(
+    production.initCalls[0].config.backend.gateway_url,
+    'https://getlawscope.com/api/cms-gateway?path=/.netlify/git/github'
+  );
+
   const unauthorized = executeCmsClient(client, 'https://example.com', {
     app_metadata: { roles: ['unrelated-role'] }
   });

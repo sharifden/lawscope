@@ -18,6 +18,7 @@ const FORWARDED_REQUEST_HEADERS = [
   'if-match',
   'if-none-match',
   'x-netlify-client',
+  'x-nf-client',
   'x-requested-with'
 ];
 const FORWARDED_RESPONSE_HEADER_NAMES = new Map([
@@ -123,6 +124,21 @@ export function normalizeCmsGatewayPath(rawPath) {
   return normalized;
 }
 
+function splitGatewayPathAndSearch(candidate) {
+  if (candidate === undefined || candidate === null) return null;
+
+  const value = String(candidate);
+  const separatorIndex = value.indexOf('?');
+  if (separatorIndex === -1) {
+    return { path: value, search: new URLSearchParams() };
+  }
+
+  return {
+    path: value.slice(0, separatorIndex),
+    search: new URLSearchParams(value.slice(separatorIndex + 1))
+  };
+}
+
 export function resolveCmsGatewayRequestPath(request) {
   let url;
   try {
@@ -140,8 +156,17 @@ export function resolveCmsGatewayRequestPath(request) {
   }
 
   for (const candidate of candidates) {
-    const normalized = normalizeCmsGatewayPath(candidate);
-    if (normalized) return { path: normalized, search: url.searchParams };
+    const split = splitGatewayPathAndSearch(candidate);
+    if (!split) continue;
+
+    const normalized = normalizeCmsGatewayPath(split.path);
+    if (!normalized) continue;
+
+    const search = new URLSearchParams(split.search);
+    for (const [key, value] of url.searchParams.entries()) {
+      if (key !== 'path') search.append(key, value);
+    }
+    return { path: normalized, search };
   }
   return null;
 }
@@ -193,7 +218,13 @@ function rewriteUpstreamLocation(location, upstreamOrigin) {
     if (url.origin !== upstreamOrigin) return null;
     const normalized = normalizeCmsGatewayPath(url.pathname.replace(/\/+$/, '') || url.pathname);
     if (!normalized) return null;
-    return `${PRODUCTION_CMS_PUBLIC_ORIGIN}${normalized}${url.search}`;
+
+    const gatewayUrl = new URL('/api/cms-gateway', PRODUCTION_CMS_PUBLIC_ORIGIN);
+    gatewayUrl.searchParams.set('path', normalized);
+    for (const [key, value] of url.searchParams.entries()) {
+      gatewayUrl.searchParams.append(key, value);
+    }
+    return gatewayUrl.href;
   } catch {
     return null;
   }

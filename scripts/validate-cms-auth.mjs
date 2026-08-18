@@ -195,8 +195,14 @@ const productionManifest = createCmsAuthManifest({
   companionOrigin: PRODUCTION_CMS_PUBLIC_ORIGIN,
   upstreamCompanionOrigin: APPROVED_CMS_COMPANION_ORIGIN
 });
-assert.equal(productionManifest.identityEndpoint, `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/identity`);
-assert.equal(productionManifest.gatewayEndpoint, `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/git/github`);
+assert.equal(
+  productionManifest.identityEndpoint,
+  `${PRODUCTION_CMS_PUBLIC_ORIGIN}/api/cms-gateway?path=/.netlify/identity`
+);
+assert.equal(
+  productionManifest.gatewayEndpoint,
+  `${PRODUCTION_CMS_PUBLIC_ORIGIN}/api/cms-gateway?path=/.netlify/git/github`
+);
 assert.equal(productionManifest.upstreamCompanionOrigin, APPROVED_CMS_COMPANION_ORIGIN);
 assert.equal(productionManifest.sameOriginProxy, true);
 record('Public non-secret CMS deployment manifest with explicit account-acceptance boundary');
@@ -371,10 +377,61 @@ assert.equal(forwarded.options.redirect, 'manual');
 assert.equal(Object.hasOwn(forwarded.options.headers, 'cookie'), false);
 assert.doesNotMatch(JSON.stringify(forwarded.options.headers), /ghp_|github_pat_|NETLIFY_AUTH_TOKEN/);
 assert.equal(proxied.headers['Content-Type'], 'application/json');
-assert.equal(proxied.headers.Location, `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/identity/user`);
+assert.equal(
+  proxied.headers.Location,
+  `${PRODUCTION_CMS_PUBLIC_ORIGIN}/api/cms-gateway?path=%2F.netlify%2Fidentity%2Fuser`
+);
 assert.equal(proxied.headers['Access-Control-Allow-Origin'], undefined);
 assert.equal(proxied.headers['X-Robots-Tag'], 'noindex, nofollow, noarchive');
 assert.equal(proxied.headers['Cache-Control'], 'no-store, max-age=0');
+
+let appendedPathForwarded;
+const appendedPathResponse = await handleCmsGatewayRequest(
+  createGatewayRequest({
+    url: '/api/cms-gateway?path=/.netlify/git/github/repos/sharifden/lawscope?ref=main&recursive=1',
+    headers: { 'x-nf-client': 'netlify-identity-widget' }
+  }),
+  {
+    environment: { VERCEL_ENV: 'production' },
+    fetchImplementation: async (url, options) => {
+      appendedPathForwarded = { url: String(url), options };
+      return {
+        status: 200,
+        headers: new Headers({ 'Content-Type': 'application/json' }),
+        arrayBuffer: async () => Buffer.from('{"ok":true}')
+      };
+    }
+  }
+);
+assert.equal(appendedPathResponse.status, 200);
+assert.equal(
+  appendedPathForwarded.url,
+  `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/git/github/repos/sharifden/lawscope?ref=main&recursive=1`
+);
+assert.equal(appendedPathForwarded.options.headers['x-nf-client'], 'netlify-identity-widget');
+
+let identitySettingsUrl;
+const identitySettingsResponse = await handleCmsGatewayRequest(
+  createGatewayRequest({
+    url: '/api/cms-gateway?path=/.netlify/identity/settings'
+  }),
+  {
+    environment: { VERCEL_ENV: 'production' },
+    fetchImplementation: async (url) => {
+      identitySettingsUrl = String(url);
+      return {
+        status: 200,
+        headers: new Headers({ 'Content-Type': 'application/json' }),
+        arrayBuffer: async () => Buffer.from('{"disable_signup":true}')
+      };
+    }
+  }
+);
+assert.equal(identitySettingsResponse.status, 200);
+assert.equal(
+  identitySettingsUrl,
+  `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/identity/settings`
+);
 check(!/Access-Control-Allow-Origin\s*:\s*\*/.test(gatewaySource), 'The gateway must not emit wildcard CORS');
 check(!/Authorization': `Bearer \$\{/.test(gatewaySource), 'The gateway must not inject a provider token');
 check(!/console\.(?:log|info|warn|error)/.test(gatewaySource), 'The gateway must not log request or token details');
