@@ -47,7 +47,8 @@ const [
   contactSource,
   articleTemplate,
   generatedConfigSource,
-  generatedManifestText
+  generatedManifestText,
+  renderPrivacySource
 ] = await Promise.all([
   readFile(path.join(projectRoot, 'js/analytics.js'), 'utf8'),
   readFile(path.join(projectRoot, 'js/analytics-config.js'), 'utf8'),
@@ -63,7 +64,8 @@ const [
   readFile(path.join(projectRoot, 'js/contact-form.js'), 'utf8'),
   readFile(path.join(projectRoot, 'pages/article.html'), 'utf8'),
   readFile(path.join(generatedRoot, 'js/analytics-config.js'), 'utf8'),
-  readFile(path.join(generatedRoot, 'data/analytics-manifest.json'), 'utf8')
+  readFile(path.join(generatedRoot, 'data/analytics-manifest.json'), 'utf8'),
+  readFile(path.join(projectRoot, 'scripts/render-privacy-policy.mjs'), 'utf8')
 ]);
 const siteSettings = JSON.parse(siteSettingsText);
 const privacySettings = JSON.parse(privacySettingsText);
@@ -265,11 +267,40 @@ async function isolatedBuild(environment, environmentOverrides) {
 
 // Settings, resolver, runtime serialization, and explicit production-only behavior.
 validateAnalyticsSettings(siteSettings);
-assert.equal(siteSettings.analytics.enabled, false);
-assert.equal(siteSettings.analytics.measurement_id, GA4_PLACEHOLDER_MEASUREMENT_ID);
+assert.equal(siteSettings.analytics.enabled, true, 'Committed settings must request GA4 activation.');
+assert.equal(
+  isRealGa4MeasurementId(siteSettings.analytics.measurement_id),
+  true,
+  'Committed settings must carry a real public measurement ID.'
+);
+assert.notEqual(siteSettings.analytics.measurement_id, GA4_PLACEHOLDER_MEASUREMENT_ID);
 assert.equal(isRealGa4MeasurementId('G-1234567890'), true);
 assert.equal(isRealGa4MeasurementId(GA4_PLACEHOLDER_MEASUREMENT_ID), false);
 assert.equal(isRealGa4MeasurementId('UA-123456-1'), false);
+
+// The committed configuration activates in production only, and stays reversible from the environment.
+const committedProductionState = resolveAnalyticsFeatureState(siteSettings, 'production', {});
+assert.equal(committedProductionState.enabled, true);
+assert.equal(committedProductionState.measurementId, siteSettings.analytics.measurement_id);
+assert.equal(committedProductionState.debugMode, false);
+assert.equal(committedProductionState.initialState, 'awaiting-consent');
+assert.equal(committedProductionState.consentCategory, 'analytics');
+for (const environment of ['development', 'preview']) {
+  const committedState = resolveAnalyticsFeatureState(siteSettings, environment, {});
+  assert.equal(committedState.enabled, false);
+  assert.equal(committedState.reason, 'environment-blocked');
+  assert.equal(committedState.measurementId, GA4_PLACEHOLDER_MEASUREMENT_ID);
+}
+const environmentOptOutState = resolveAnalyticsFeatureState(siteSettings, 'production', {
+  GA4_ENABLED: 'false'
+});
+assert.equal(environmentOptOutState.enabled, false);
+assert.equal(environmentOptOutState.reason, 'not-requested');
+assert.equal(environmentOptOutState.measurementId, GA4_PLACEHOLDER_MEASUREMENT_ID);
+
+const placeholderSettings = structuredClone(siteSettings);
+placeholderSettings.analytics.enabled = false;
+placeholderSettings.analytics.measurement_id = GA4_PLACEHOLDER_MEASUREMENT_ID;
 
 const requestedSettings = structuredClone(siteSettings);
 requestedSettings.analytics.enabled = true;
@@ -290,15 +321,15 @@ for (const environment of ['development', 'preview']) {
   assert.equal(state.debugMode, false);
 }
 assert.throws(
-  () => resolveAnalyticsFeatureState(siteSettings, 'production', { GA4_ENABLED: 'true' }),
+  () => resolveAnalyticsFeatureState(placeholderSettings, 'production', { GA4_ENABLED: 'true' }),
   /real GA4_MEASUREMENT_ID/
 );
 assert.throws(
-  () => resolveAnalyticsFeatureState(siteSettings, 'production', { GA4_ENABLED: 'yes' }),
+  () => resolveAnalyticsFeatureState(placeholderSettings, 'production', { GA4_ENABLED: 'yes' }),
   /must be true or false/
 );
 assert.throws(
-  () => resolveAnalyticsFeatureState(siteSettings, 'development', { GA4_MEASUREMENT_ID: 'invalid' }),
+  () => resolveAnalyticsFeatureState(placeholderSettings, 'development', { GA4_MEASUREMENT_ID: 'invalid' }),
   /G-XXXXXXXXXX format/
 );
 const runtimeSource = createAnalyticsRuntimeSource(productionState);
@@ -465,6 +496,7 @@ assert.equal(eventCommands(articleRuntime.windowObject, 'article_read').length, 
 
 // Isolated artifacts prove real IDs cannot leak into development/Preview and can activate only in production.
 const realId = 'G-1234567890';
+const committedId = siteSettings.analytics.measurement_id;
 const isolatedArtifacts = [];
 try {
   const development = await isolatedBuild('development', {
@@ -476,6 +508,10 @@ try {
   assert.equal(development.manifest.enabled, false);
   assert.equal(development.manifest.measurementId, GA4_PLACEHOLDER_MEASUREMENT_ID);
   assert.ok(!development.config.includes(realId));
+  assert.ok(
+    !development.config.includes(committedId),
+    'The committed production measurement ID must not reach development output.'
+  );
 
   const preview = await isolatedBuild('preview', {
     GA4_ENABLED: 'true',
@@ -487,6 +523,10 @@ try {
   assert.equal(preview.manifest.environmentAllowed, false);
   assert.equal(preview.manifest.measurementId, GA4_PLACEHOLDER_MEASUREMENT_ID);
   assert.ok(!preview.config.includes(realId));
+  assert.ok(
+    !preview.config.includes(committedId),
+    'The committed production measurement ID must not reach Preview output.'
+  );
 
   const production = await isolatedBuild('production', {
     GA4_ENABLED: 'true',
@@ -500,6 +540,37 @@ try {
   assert.ok(production.config.includes(realId));
   const productionAdmin = await readFile(path.join(production.outputDirectory, 'admin/index.html'), 'utf8');
   assert.doesNotMatch(productionAdmin, /analytics(?:-config)?\.js|googletagmanager|G-[A-Z0-9]{10}/i);
+
+  // The committed settings alone must activate the approved measurement ID on a production build.
+  const committedProduction = await isolatedBuild('production', {
+    GA4_ENABLED: undefined,
+    GA4_MEASUREMENT_ID: undefined,
+    GA4_DEBUG_MODE: undefined
+  });
+  isolatedArtifacts.push(committedProduction);
+  assert.equal(committedProduction.manifest.enabled, true);
+  assert.equal(committedProduction.manifest.requested, true);
+  assert.equal(committedProduction.manifest.environmentAllowed, true);
+  assert.equal(committedProduction.manifest.measurementConfigured, true);
+  assert.equal(committedProduction.manifest.measurementId, committedId);
+  assert.equal(committedProduction.manifest.debugMode, false, 'DebugView must stay off for routine releases.');
+  assert.equal(committedProduction.manifest.consentMode, 'strict-opt-in');
+  assert.equal(committedProduction.manifest.automaticPageViews, false);
+  assert.equal(committedProduction.manifest.advertisingSignals, false);
+  assert.equal(committedProduction.manifest.preConsentNetworkRequests, false);
+  assert.ok(committedProduction.config.includes(committedId));
+  const committedProductionHtmlPaths = await collectPublicHtml(committedProduction.outputDirectory);
+  assert.equal(committedProductionHtmlPaths.length, 30);
+  for (const relativePath of committedProductionHtmlPaths) {
+    const html = await readFile(path.join(committedProduction.outputDirectory, relativePath), 'utf8');
+    assert.equal((html.match(/\/js\/analytics\.js/g) || []).length, 1, `${relativePath}: analytics client`);
+    assert.equal((html.match(/\/js\/analytics-config\.js/g) || []).length, 1, `${relativePath}: analytics config`);
+    assert.doesNotMatch(
+      html,
+      /googletagmanager\.com/,
+      `${relativePath}: the Google tag must never be hard-coded into a document.`
+    );
+  }
 } finally {
   await Promise.all(
     isolatedArtifacts.map(({ temporaryRoot }) => rm(temporaryRoot, { recursive: true, force: true }))
@@ -509,9 +580,18 @@ try {
 // Public disclosure, environment controls, DebugView, filters, retention, and PII documentation.
 const analyticsService = privacySettings.service_inventory.find(({ key }) => key === 'analytics');
 assert.equal(analyticsService.name, 'Google Analytics 4');
-assert.equal(analyticsService.status, 'inactive');
-assert.equal(analyticsService.details_confirmed, false);
+assert.equal(
+  analyticsService.status,
+  siteSettings.analytics.enabled ? 'configured' : 'inactive',
+  'The Privacy Policy service inventory must match the committed analytics activation state.'
+);
+assert.ok(analyticsService.privacy_url.startsWith('https://'));
 assert.match(analyticsService.retention, /two-month event-data retention/i);
+assert.ok(
+  renderPrivacySource.includes('Current status: available after opt-in.') &&
+    renderPrivacySource.includes('Current status: inactive.'),
+  'The Privacy Policy renderer must keep both the active and inactive GA4 disclosures.'
+);
 for (const phrase of [
   'Google Analytics 4',
   'no consent-mode ping before',

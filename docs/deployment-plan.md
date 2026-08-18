@@ -8,7 +8,7 @@
 4. Use `generated` as the output directory.
 5. Keep production deployments on the protected `main` branch.
 6. Keep the centralized canonical origin at `https://getlawscope.com`; Preview output intentionally remains noindex while pointing equivalent generated routes to that production canonical.
-7. GA4 remains off unless the Module 30 activation checklist passes. Configure `GA4_ENABLED`, the public `GA4_MEASUREMENT_ID`, and temporary `GA4_DEBUG_MODE` only in the intended Vercel environment; never add provider secrets to Git.
+7. GA4 is active for production builds through `content/settings/site.json` (`analytics.enabled: true`, `G-XRQT4RL4G5`); no GA4 variable is required in Vercel for a routine release. Use `GA4_ENABLED=false` in Vercel production as the kill switch, and set `GA4_MEASUREMENT_ID`/temporary `GA4_DEBUG_MODE` only for a controlled test in the intended environment; never add provider secrets to Git.
 8. AdSense remains off unless the Module 31 activation checklist passes. Configure its three owner attestations, public publisher ID, and seven public unit IDs only for Production; keep `ADSENSE_ENABLED=false` in Preview and development. Newsletter, contact, and CMS credentials remain separately gated.
 9. Keep `npm run validate:seo`, `npm run validate:sitemap-robots`, `npm run validate:analytics`, `npm run validate:adsense`, `npm run validate:cms-auth`, and `npm run validate:final-qa` in the deployment check so indexing, providers, authentication, accessibility contracts, measured budgets, and launch blockers remain audited.
 10. Do not assign an unlisted custom domain to a Preview branch; approved custom Preview hosts require their own verified site-wide `noindex, nofollow` host rule.
@@ -66,8 +66,9 @@ See `docs/module-28-seo-implementation.md` for metadata/schema policy and `docs/
 ## GA4 deployment verification
 
 - Development and Preview outputs must show `enabled: false` and `G-XXXXXXXXXX` in `/js/analytics-config.js`, even when real GA4 values exist elsewhere in Vercel.
-- Production activation requires `GA4_ENABLED=true`, a valid non-placeholder ID, the canonical runtime host, and visitor analytics consent. No Google request is permitted before consent.
-- Before activation, confirm two-month GA4 event-data retention, disabled Enhanced Measurement/Google Signals/ads personalization, data redaction, and tested developer/internal traffic filters.
+- Production collection requires the versioned enabled flag (or `GA4_ENABLED=true`), a valid non-placeholder ID, the canonical runtime host, and visitor analytics consent. No Google request is permitted before consent.
+- After each production deploy, confirm `/js/analytics-config.js` shows `"enabled":true` with `G-XRQT4RL4G5`, and that a first visit makes no `googletagmanager.com` request until analytics permission is granted in the consent banner or preference dialog.
+- Confirm two-month GA4 event-data retention, disabled Enhanced Measurement/Google Signals/ads personalization, data redaction, and tested developer/internal traffic filters in the property.
 - Run the controlled DebugView procedures and parameter-level PII audit in `docs/module-30-google-analytics-ga4.md`; restore `GA4_DEBUG_MODE=false` before routine traffic.
 - Inspect `/data/analytics-manifest.json` on the release artifact and confirm `/admin/` contains no analytics integration.
 

@@ -24,8 +24,8 @@
     "google_certified_cmp": false
   },
   "analytics": {
-    "enabled": false,
-    "measurement_id": "G-XXXXXXXXXX"
+    "enabled": true,
+    "measurement_id": "G-XRQT4RL4G5"
   },
   "advertising": {
     "enabled": false,

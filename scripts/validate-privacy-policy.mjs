@@ -123,7 +123,10 @@ assert.deepEqual(
   policySettings.service_inventory.map(({ key }) => key),
   ['hosting', 'fonts', 'icons', 'contact-delivery', 'analytics', 'advertising', 'newsletter']
 );
-assert.equal(policySettings.service_inventory.find(({ key }) => key === 'analytics').status, 'inactive');
+assert.equal(
+  policySettings.service_inventory.find(({ key }) => key === 'analytics').status,
+  siteSettings.analytics.enabled ? 'configured' : 'inactive'
+);
 assert.equal(policySettings.service_inventory.find(({ key }) => key === 'advertising').status, 'inactive');
 assert.equal(policySettings.service_inventory.find(({ key }) => key === 'newsletter').status, 'inactive');
 assert.doesNotMatch(policySettingsText, /support@|privacy@|mailto:|api[_-]?key|bearer|webhook|token|secret/i);
