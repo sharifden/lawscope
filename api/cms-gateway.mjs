@@ -93,9 +93,26 @@ function requestOriginIsAllowed(request, environment) {
   }
 }
 
+const GATEWAY_FUNCTION_PREFIXES = ['/api/cms-gateway/', '/api/cms-proxy/'];
+
+export function expandCmsGatewayPath(rawPath) {
+  let value = String(rawPath || '').trim();
+  if (!value) return null;
+  if (!value.startsWith('/')) value = `/${value}`;
+  if (
+    value === '/identity' ||
+    value.startsWith('/identity/') ||
+    value === '/git' ||
+    value.startsWith('/git/')
+  ) {
+    value = `/.netlify${value}`;
+  }
+  return value;
+}
+
 export function normalizeCmsGatewayPath(rawPath) {
-  const value = String(rawPath || '').trim();
-  if (!value.startsWith('/.netlify/')) return null;
+  const value = expandCmsGatewayPath(rawPath);
+  if (!value || !value.startsWith('/.netlify/')) return null;
   if (/[\u0000-\u001f\s]/.test(value)) return null;
   if (value.includes('\\') || value.includes('//')) return null;
 
@@ -149,8 +166,9 @@ export function resolveCmsGatewayRequestPath(request) {
 
   const candidates = [url.searchParams.get('path')];
   const pathname = url.pathname || '';
-  if (pathname.startsWith('/api/cms-gateway/')) {
-    candidates.push(`/.netlify/${pathname.slice('/api/cms-gateway/'.length)}`);
+  const functionPrefix = GATEWAY_FUNCTION_PREFIXES.find((prefix) => pathname.startsWith(prefix));
+  if (functionPrefix) {
+    candidates.push(`/.netlify/${pathname.slice(functionPrefix.length)}`);
   } else if (pathname.startsWith('/.netlify/')) {
     candidates.push(pathname);
   }
@@ -219,12 +237,11 @@ function rewriteUpstreamLocation(location, upstreamOrigin) {
     const normalized = normalizeCmsGatewayPath(url.pathname.replace(/\/+$/, '') || url.pathname);
     if (!normalized) return null;
 
-    const gatewayUrl = new URL('/api/cms-gateway', PRODUCTION_CMS_PUBLIC_ORIGIN);
-    gatewayUrl.searchParams.set('path', normalized);
+    const rewritten = new URL(normalized, `${PRODUCTION_CMS_PUBLIC_ORIGIN}/`);
     for (const [key, value] of url.searchParams.entries()) {
-      gatewayUrl.searchParams.append(key, value);
+      rewritten.searchParams.append(key, value);
     }
-    return gatewayUrl.href;
+    return rewritten.href;
   } catch {
     return null;
   }

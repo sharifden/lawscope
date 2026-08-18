@@ -15,8 +15,10 @@ import {
   resolveCmsGatewayUpstreamOrigin
 } from './cms-auth.mjs';
 import {
+  expandCmsGatewayPath,
   handleCmsGatewayRequest,
-  normalizeCmsGatewayPath
+  normalizeCmsGatewayPath,
+  resolveCmsGatewayRequestPath
 } from '../api/cms-gateway.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -70,6 +72,7 @@ const [
   adminSource,
   adminClient,
   manualInit,
+  identityInit,
   companionHtml,
   companionCss,
   callbackSource,
@@ -84,6 +87,7 @@ const [
   readFile(relative('admin/index.html'), 'utf8'),
   readFile(relative('admin/cms.js'), 'utf8'),
   readFile(relative('admin/cms-manual-init.js'), 'utf8'),
+  readFile(relative('admin/cms-identity-init.js'), 'utf8'),
   readFile(relative('netlify-companion/index.html'), 'utf8'),
   readFile(relative('netlify-companion/companion.css'), 'utf8'),
   readFile(relative('netlify-companion/identity-callback.js'), 'utf8'),
@@ -197,11 +201,11 @@ const productionManifest = createCmsAuthManifest({
 });
 assert.equal(
   productionManifest.identityEndpoint,
-  `${PRODUCTION_CMS_PUBLIC_ORIGIN}/api/cms-gateway?path=/.netlify/identity`
+  `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/identity`
 );
 assert.equal(
   productionManifest.gatewayEndpoint,
-  `${PRODUCTION_CMS_PUBLIC_ORIGIN}/api/cms-gateway?path=/.netlify/git/github`
+  `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/git/github`
 );
 assert.equal(productionManifest.upstreamCompanionOrigin, APPROVED_CMS_COMPANION_ORIGIN);
 assert.equal(productionManifest.sameOriginProxy, true);
@@ -272,18 +276,78 @@ assert.equal(adminHeaders.get('Referrer-Policy'), 'no-referrer');
 assert.equal(adminHeaders.get('X-Frame-Options'), 'DENY');
 check(adminHeaders.get('Content-Security-Policy').includes("frame-ancestors 'none'"), 'Vercel must prevent framing /admin/');
 const identityRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/identity');
-const gatewayRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/git/:path*');
-check(identityRewrite?.destination === '/api/cms-gateway?path=/.netlify/identity', 'Vercel must rewrite Identity onto the same-origin gateway');
-check(gatewayRewrite?.destination === '/api/cms-gateway?path=/.netlify/git/:path*', 'Vercel must rewrite Git Gateway onto the same-origin gateway');
+const identitySettingsRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/identity/settings');
+const identitySettingsSlashRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/identity/settings/');
+const gitSettingsRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/git/settings');
+const catchAllRewrite = vercel.rewrites?.find((rule) => rule.source === '/.netlify/:path*');
+check(identityRewrite?.destination === '/api/cms-gateway?path=/.netlify/identity', 'Vercel must rewrite the Identity root onto the same-origin gateway');
+check(
+  identitySettingsRewrite?.destination === '/api/cms-gateway?path=/.netlify/identity/settings',
+  'Vercel must statically rewrite the GoTrue settings path the Identity widget actually requests'
+);
+check(
+  identitySettingsSlashRewrite?.destination === '/api/cms-gateway?path=/.netlify/identity/settings',
+  'Vercel trailingSlash must still land Identity settings on the gateway'
+);
+check(
+  gitSettingsRewrite?.destination === '/api/cms-gateway?path=/.netlify/git/settings',
+  'Vercel must statically rewrite the Git Gateway settings probe Decap CMS issues after login'
+);
+check(
+  catchAllRewrite?.destination === '/api/cms-proxy/:path*',
+  'Vercel must path-rewrite remaining Identity and Git Gateway URLs onto the catch-all proxy'
+);
+check(
+  !vercel.rewrites.some((rule) => String(rule.destination || '').includes(':path*') && String(rule.destination).includes('?')),
+  'Dynamic :path* values must not be placed in query-string rewrite destinations'
+);
 check(!/Access-Control-Allow-Origin\s*:\s*\*/i.test(vercelSource), 'Vercel config must not add wildcard CORS');
 record('Defense-in-depth Netlify companion and Vercel admin response policies without wildcard CORS');
 
 assert.equal(normalizeCmsGatewayPath('/.netlify/identity'), '/.netlify/identity');
 assert.equal(normalizeCmsGatewayPath('/.netlify/identity/token/'), '/.netlify/identity/token');
 assert.equal(normalizeCmsGatewayPath('/.netlify/git/github/git/trees/main'), '/.netlify/git/github/git/trees/main');
+assert.equal(normalizeCmsGatewayPath('identity/settings'), '/.netlify/identity/settings');
+assert.equal(normalizeCmsGatewayPath('.netlify/identity/settings'), '/.netlify/identity/settings');
+assert.equal(expandCmsGatewayPath('identity/settings'), '/.netlify/identity/settings');
 assert.equal(normalizeCmsGatewayPath('/.netlify/identity/../secret'), null);
 assert.equal(normalizeCmsGatewayPath('/.netlify/functions'), null);
 assert.equal(normalizeCmsGatewayPath('/admin/'), null);
+
+function gotrueRequestUrl(apiUrl, path) {
+  return `${apiUrl}${path}`;
+}
+
+assert.equal(
+  gotrueRequestUrl(`${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/identity`, '/settings'),
+  `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/identity/settings`
+);
+assert.equal(
+  resolveCmsGatewayRequestPath({
+    url: gotrueRequestUrl(`${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/identity`, '/settings')
+  })?.path,
+  '/.netlify/identity/settings'
+);
+assert.equal(
+  resolveCmsGatewayRequestPath({ url: '/.netlify/identity/settings/' })?.path,
+  '/.netlify/identity/settings'
+);
+assert.equal(
+  resolveCmsGatewayRequestPath({ url: '/api/cms-proxy/identity/settings' })?.path,
+  '/.netlify/identity/settings'
+);
+assert.equal(
+  resolveCmsGatewayRequestPath({
+    url: '/api/cms-proxy/git/github/git/trees/main?recursive=1'
+  })?.path,
+  '/.netlify/git/github/git/trees/main'
+);
+assert.equal(
+  resolveCmsGatewayRequestPath({
+    url: '/api/cms-gateway?path=/.netlify/identity/settings'
+  })?.path,
+  '/.netlify/identity/settings'
+);
 
 function createGatewayRequest({
   method = 'GET',
@@ -379,7 +443,7 @@ assert.doesNotMatch(JSON.stringify(forwarded.options.headers), /ghp_|github_pat_
 assert.equal(proxied.headers['Content-Type'], 'application/json');
 assert.equal(
   proxied.headers.Location,
-  `${PRODUCTION_CMS_PUBLIC_ORIGIN}/api/cms-gateway?path=%2F.netlify%2Fidentity%2Fuser`
+  `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/identity/user`
 );
 assert.equal(proxied.headers['Access-Control-Allow-Origin'], undefined);
 assert.equal(proxied.headers['X-Robots-Tag'], 'noindex, nofollow, noarchive');
@@ -432,6 +496,74 @@ assert.equal(
   identitySettingsUrl,
   `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/identity/settings`
 );
+
+let widgetSettingsUrl;
+const widgetSettingsResponse = await handleCmsGatewayRequest(
+  createGatewayRequest({
+    url: gotrueRequestUrl('/.netlify/identity', '/settings'),
+    headers: { accept: 'application/json' }
+  }),
+  {
+    environment: { VERCEL_ENV: 'production' },
+    fetchImplementation: async (url) => {
+      widgetSettingsUrl = String(url);
+      return {
+        status: 200,
+        headers: new Headers({ 'Content-Type': 'application/json; charset=utf-8' }),
+        arrayBuffer: async () => Buffer.from('{"disable_signup":true,"external":{"email":true}}')
+      };
+    }
+  }
+);
+assert.equal(widgetSettingsResponse.status, 200);
+assert.equal(widgetSettingsUrl, `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/identity/settings`);
+assert.match(String(widgetSettingsResponse.headers['Content-Type']), /json/i);
+
+let gitSettingsUrl;
+const gitSettingsResponse = await handleCmsGatewayRequest(
+  createGatewayRequest({
+    url: `${PRODUCTION_CMS_PUBLIC_ORIGIN}/.netlify/git/settings`,
+    headers: { authorization: 'Bearer editor-session' }
+  }),
+  {
+    environment: { VERCEL_ENV: 'production' },
+    fetchImplementation: async (url) => {
+      gitSettingsUrl = String(url);
+      return {
+        status: 200,
+        headers: new Headers({ 'Content-Type': 'application/json' }),
+        arrayBuffer: async () => Buffer.from('{"github_enabled":true,"roles":["lawscope-editor"]}')
+      };
+    }
+  }
+);
+assert.equal(gitSettingsResponse.status, 200);
+assert.equal(gitSettingsUrl, `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/git/settings`);
+
+let catchAllForwarded;
+const catchAllResponse = await handleCmsGatewayRequest(
+  createGatewayRequest({
+    url: '/api/cms-proxy/git/github/git/trees/main?recursive=1',
+    headers: { authorization: 'Bearer editor-session' }
+  }),
+  {
+    environment: { VERCEL_ENV: 'production' },
+    fetchImplementation: async (url, options) => {
+      catchAllForwarded = { url: String(url), options };
+      return {
+        status: 200,
+        headers: new Headers({ 'Content-Type': 'application/json' }),
+        arrayBuffer: async () => Buffer.from('{"ok":true}')
+      };
+    }
+  }
+);
+assert.equal(catchAllResponse.status, 200);
+assert.equal(
+  catchAllForwarded.url,
+  `${APPROVED_CMS_COMPANION_ORIGIN}/.netlify/git/github/git/trees/main?recursive=1`
+);
+
 check(!/Access-Control-Allow-Origin\s*:\s*\*/.test(gatewaySource), 'The gateway must not emit wildcard CORS');
 check(!/Authorization': `Bearer \$\{/.test(gatewaySource), 'The gateway must not inject a provider token');
 check(!/console\.(?:log|info|warn|error)/.test(gatewaySource), 'The gateway must not log request or token details');
@@ -441,6 +573,8 @@ check(environmentExample.includes('CMS_COMPANION_ORIGIN='), 'Environment templat
 check(!environmentExample.includes('NETLIFY_IDENTITY_URL='), 'Identity endpoint must be derived, not independently configurable');
 check(!environmentExample.includes('NETLIFY_GATEWAY_URL='), 'Gateway endpoint must be derived, not independently configurable');
 check(/window\.CMS_MANUAL_INIT\s*=\s*true/.test(manualInit), 'Manual initialization guard must remain active');
+check(identityInit.includes('identity.init({ APIUrl: `${serviceOrigin}/.netlify/identity` })'), 'Identity must be initialized with the native GoTrue API root before Decap loads');
+check(adminSource.includes('/admin/cms-identity-init.js'), 'Admin shell must load the early Identity initializer');
 check(adminClient.includes("const REQUIRED_EDITOR_ROLE = 'lawscope-editor'"), 'Admin client must enforce the required editor role in depth');
 check(adminClient.includes("identity.on('login', denyUnauthorizedUser)"), 'Admin client must check each login event');
 record('Single-source environment configuration and client-side editor-role defense in depth');
@@ -470,6 +604,7 @@ const secretAuditSource = [
   adminSource,
   adminClient,
   manualInit,
+  identityInit,
   companionHtml,
   companionCss,
   callbackSource,
