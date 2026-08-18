@@ -310,7 +310,7 @@ function validateSettings(collection) {
   record('Singleton JSON site settings with guarded providers, consent, analytics, contact, and legal-file exclusions');
 }
 
-function executeCmsClient(client, companionOrigin, currentIdentityUser = null) {
+function executeCmsClient(client, companionOrigin, currentIdentityUser = null, pageOrigin = '') {
   const registrations = {
     widgets: new Map(),
     templates: new Map(),
@@ -346,6 +346,10 @@ function executeCmsClient(client, companionOrigin, currentIdentityUser = null) {
     createClass: (definition) => definition,
     h: (element, props, ...children) => ({ element, props, children }),
     initCMS: (options) => initCalls.push(options),
+    location: {
+      origin: pageOrigin,
+      hash: ''
+    },
     netlifyIdentity: {
       init: (options) => identityCalls.push(options),
       on: (event, handler) => identityEvents.set(event, handler),

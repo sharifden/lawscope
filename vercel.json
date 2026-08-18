@@ -26,6 +26,32 @@
       "permanent": false
     }
   ],
+  "rewrites": [
+    {
+      "source": "/.netlify/identity",
+      "destination": "/api/cms-gateway?path=/.netlify/identity"
+    },
+    {
+      "source": "/.netlify/identity/",
+      "destination": "/api/cms-gateway?path=/.netlify/identity"
+    },
+    {
+      "source": "/.netlify/identity/:path*",
+      "destination": "/api/cms-gateway?path=/.netlify/identity/:path*"
+    },
+    {
+      "source": "/.netlify/git",
+      "destination": "/api/cms-gateway?path=/.netlify/git"
+    },
+    {
+      "source": "/.netlify/git/",
+      "destination": "/api/cms-gateway?path=/.netlify/git"
+    },
+    {
+      "source": "/.netlify/git/:path*",
+      "destination": "/api/cms-gateway?path=/.netlify/git/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

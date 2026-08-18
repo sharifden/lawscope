@@ -474,6 +474,7 @@ function validatePolicyHelpers() {
   for (const route of [
     '/admin/',
     '/api/contact/',
+    '/.netlify/identity',
     '/private/report/',
     '/404.html',
     '/articles/?q=arrest',

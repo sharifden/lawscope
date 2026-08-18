@@ -4,6 +4,7 @@
   const COMPANION_META_NAME = 'cms-companion-origin';
   const UNPROVISIONED_SUFFIX = '.invalid';
   const REQUIRED_EDITOR_ROLE = 'lawscope-editor';
+  const PRODUCTION_PUBLIC_ORIGIN = 'https://getlawscope.com';
   const LEGAL_DISCLAIMER =
     'The information on this page is for educational purposes only and does not constitute legal advice. Laws vary by state. Always consult a qualified attorney for advice specific to your situation.';
 
@@ -329,6 +330,19 @@
     }
   }
 
+  function resolveBrowserServiceOrigin(companionOrigin) {
+    try {
+      const pageOrigin = window.location && window.location.origin;
+      if (pageOrigin === PRODUCTION_PUBLIC_ORIGIN) return pageOrigin;
+      if (typeof pageOrigin === 'string' && pageOrigin.startsWith('https://')) {
+        return pageOrigin;
+      }
+    } catch {
+      // Fall back to the build-injected companion origin.
+    }
+    return companionOrigin;
+  }
+
   function markAuthenticationState(isProvisioned) {
     const boundary = document.querySelector('[data-cms-auth-boundary]');
     if (boundary) boundary.hidden = isProvisioned;
@@ -390,7 +404,8 @@
   markAuthenticationState(Boolean(companionOrigin));
 
   if (companionOrigin) {
-    const identityUrl = `${companionOrigin}/.netlify/identity`;
+    const serviceOrigin = resolveBrowserServiceOrigin(companionOrigin);
+    const identityUrl = `${serviceOrigin}/.netlify/identity`;
     const identity = window.netlifyIdentity;
     if (!identity || typeof identity.init !== 'function') {
       showFatal('The pinned authentication client did not load. Access remains disabled.');
@@ -415,7 +430,7 @@
           name: 'git-gateway',
           branch: 'main',
           identity_url: identityUrl,
-          gateway_url: `${companionOrigin}/.netlify/git/github`
+          gateway_url: `${serviceOrigin}/.netlify/git/github`
         }
       }
     });
