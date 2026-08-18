@@ -190,20 +190,24 @@ export function resolveCmsGatewayRequestPath(request) {
 }
 
 async function readRequestBody(request) {
-  if (request.body === undefined || request.body === null || request.body === '') {
+  let source = request.body;
+  if (source === undefined && typeof request[Symbol.asyncIterator] === 'function') {
+    source = request;
+  }
+  if (source === undefined || source === null || source === '') {
     return { buffer: null, bytes: 0 };
   }
-  if (Buffer.isBuffer(request.body)) {
-    return { buffer: request.body, bytes: request.body.length };
+  if (Buffer.isBuffer(source)) {
+    return { buffer: source, bytes: source.length };
   }
-  if (typeof request.body === 'string') {
-    const buffer = Buffer.from(request.body);
+  if (typeof source === 'string') {
+    const buffer = Buffer.from(source);
     return { buffer, bytes: buffer.length };
   }
-  if (typeof request.body[Symbol.asyncIterator] === 'function') {
+  if (typeof source[Symbol.asyncIterator] === 'function') {
     const chunks = [];
     let bytes = 0;
-    for await (const chunk of request.body) {
+    for await (const chunk of source) {
       const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
       bytes += buffer.length;
       if (bytes > MAX_BODY_BYTES) {
@@ -215,9 +219,44 @@ async function readRequestBody(request) {
     }
     return { buffer: Buffer.concat(chunks), bytes };
   }
-  const encoded = JSON.stringify(request.body);
+  const encoded = JSON.stringify(source);
   const buffer = Buffer.from(encoded);
   return { buffer, bytes: buffer.length };
+}
+
+function rewriteVerifyRequestBody(gatewayPath, bodyBuffer) {
+  if (gatewayPath !== '/.netlify/identity/verify' || !bodyBuffer || bodyBuffer.length === 0) {
+    return bodyBuffer;
+  }
+
+  const text = bodyBuffer.toString('utf8');
+  try {
+    const parsed = JSON.parse(text);
+    if (parsed && typeof parsed === 'object' && parsed.type === 'signup') {
+      parsed.type = 'invite';
+      return Buffer.from(JSON.stringify(parsed));
+    }
+  } catch {
+    try {
+      const params = new URLSearchParams(text);
+      if (params.get('type') === 'signup') {
+        params.set('type', 'invite');
+        return Buffer.from(params.toString());
+      }
+    } catch {
+      // Preserve existing payload if it cannot be parsed.
+    }
+  }
+  return bodyBuffer;
+}
+
+function sanitizeRequestCookie(cookieHeader) {
+  if (!cookieHeader) return '';
+  return String(cookieHeader)
+    .split(';')
+    .map((pair) => pair.trim())
+    .filter((pair) => pair.startsWith('nf_'))
+    .join('; ');
 }
 
 function collectForwardedRequestHeaders(request) {
@@ -225,6 +264,11 @@ function collectForwardedRequestHeaders(request) {
   for (const name of FORWARDED_REQUEST_HEADERS) {
     const value = headerValue(request.headers, name);
     if (value) headers[name] = value;
+  }
+  const rawCookie = headerValue(request.headers, 'cookie');
+  const identityCookie = sanitizeRequestCookie(rawCookie);
+  if (identityCookie) {
+    headers.cookie = identityCookie;
   }
   return headers;
 }
@@ -256,7 +300,13 @@ function collectForwardedResponseHeaders(upstreamHeaders, upstreamOrigin) {
   upstreamHeaders.forEach((value, name) => {
     const lowerName = String(name).toLowerCase();
     if (BLOCKED_RESPONSE_HEADER_PREFIXES.some((prefix) => lowerName.startsWith(prefix))) return;
-    if (lowerName === 'set-cookie') return;
+    if (lowerName === 'set-cookie') {
+      const trimmed = String(value || '').trim();
+      if (trimmed.startsWith('nf_')) {
+        headers['Set-Cookie'] = value;
+      }
+      return;
+    }
     if (lowerName === 'location') {
       const rewritten = rewriteUpstreamLocation(value, upstreamOrigin);
       if (rewritten) headers.Location = rewritten;
@@ -323,6 +373,14 @@ export async function handleCmsGatewayRequest(
   }
   if (body.bytes > MAX_BODY_BYTES) {
     return jsonResponse(413, { status: 'request_too_large' });
+  }
+
+  if (method === 'POST' && body.buffer) {
+    const rewritten = rewriteVerifyRequestBody(resolved.path, body.buffer);
+    if (rewritten !== body.buffer) {
+      body.buffer = rewritten;
+      body.bytes = rewritten.length;
+    }
   }
 
   if (typeof fetchImplementation !== 'function') {
