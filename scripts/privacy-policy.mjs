@@ -8,6 +8,7 @@ import {
 
 const SITE_ORIGIN = SEO_POLICY.siteOrigin;
 const REVIEW_STATUSES = new Set(['pending', 'approved']);
+const SEARCH_INDEXING_MODES = new Set(['gated', 'allow']);
 const SERVICE_STATUSES = new Set(['configured', 'inactive']);
 const REQUIRED_SERVICE_KEYS = Object.freeze([
   'hosting',
@@ -166,6 +167,12 @@ export function validatePrivacyPolicySettings(settings) {
   if (!REVIEW_STATUSES.has(settings.review_status)) {
     throw new Error('privacy-policy.json: review_status must be pending or approved.');
   }
+  if (
+    settings.search_indexing !== undefined &&
+    !SEARCH_INDEXING_MODES.has(settings.search_indexing)
+  ) {
+    throw new Error('privacy-policy.json: search_indexing must be gated or allow.');
+  }
   validateOperator(settings.operator);
   validatePrivacyRequest(settings.privacy_request);
   validateServices(settings.service_inventory);
@@ -238,10 +245,12 @@ export function resolvePrivacyPolicyState({
   if (!requestChannelReady) blockers.push('monitored privacy-request delivery channel');
 
   const approved = blockers.length === 0;
-  const indexable = environment === 'production' && approved;
+  const searchIndexingAllowed = settings.search_indexing === 'allow';
+  const indexable = environment === 'production' && (approved || searchIndexingAllowed);
   return Object.freeze({
     activationRequested,
     approved,
+    searchIndexingAllowed,
     indexable,
     legalReviewComplete,
     operatorConfirmed,

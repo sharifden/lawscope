@@ -2,6 +2,7 @@
   "effective_date": "2026-08-16",
   "last_updated": "2026-08-18",
   "review_status": "pending",
+  "search_indexing": "allow",
   "operator": {
     "public_name": "Lawscope",
     "legal_name": "",

@@ -1,6 +1,9 @@
 {
   "site_title": "Lawscope",
   "site_tagline": "U.S. law, explained with clarity and care.",
+  "search_console": {
+    "google_site_verification": ""
+  },
   "social_profiles": {
     "x": "",
     "facebook": "",

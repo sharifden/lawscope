@@ -1,4 +1,4 @@
-import { access, cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -32,6 +32,7 @@ import {
   resolveActiveSocialProfiles,
   resolveAdFeatureState,
   resolveConsentFeatureState,
+  resolveGoogleSiteVerification,
   resolveNewsletterFeatureState
 } from './site-settings.mjs';
 import {
@@ -102,8 +103,7 @@ const publicPaths = [
   'admin',
   'assets',
   'css',
-  'js',
-  'pages'
+  'js'
 ];
 
 async function exists(targetPath) {
@@ -756,6 +756,43 @@ async function renderArticlesFeed(page, articleCardTemplate, articlesAdSlotHtml,
 
 function outputPathForRoute(route) {
   return path.join(outputDirectory, route.replace(/^\//, ''), 'index.html');
+}
+
+async function injectSiteVerificationTag(directory, token) {
+  if (!token) return { token: '', pages: 0 };
+
+  const tag = `<meta name="google-site-verification" content="${token}">`;
+  let pages = 0;
+
+  async function walk(currentDirectory, relativeDirectory = '') {
+    for (const entry of await readdir(currentDirectory, { withFileTypes: true })) {
+      const relativePath = path.join(relativeDirectory, entry.name);
+      if (relativePath === 'admin' || relativePath.startsWith(`admin${path.sep}`)) continue;
+
+      const entryPath = path.join(currentDirectory, entry.name);
+      if (entry.isDirectory()) {
+        await walk(entryPath, relativePath);
+        continue;
+      }
+      if (!entry.isFile() || !entry.name.endsWith('.html')) continue;
+
+      const html = await readFile(entryPath, 'utf8');
+      if (html.includes('name="google-site-verification"')) continue;
+
+      const viewportMatch = html.match(/([ \t]*)<meta name="viewport"[^>]*>/);
+      if (!viewportMatch) continue;
+
+      await writeFile(
+        entryPath,
+        html.replace(viewportMatch[0], `${viewportMatch[0]}\n${viewportMatch[1] ?? ''}${tag}`),
+        'utf8'
+      );
+      pages += 1;
+    }
+  }
+
+  await walk(directory);
+  return { token, pages };
 }
 
 await rm(outputDirectory, { recursive: true, force: true });
@@ -1844,18 +1881,41 @@ await writeFile(
   )}\n`,
   'utf8'
 );
+function newestArticleLastmod(articles) {
+  const sorted = [...articles].sort(
+    (left, right) =>
+      new Date(right.updated_date || right.publish_date) -
+      new Date(left.updated_date || left.publish_date)
+  );
+  return sorted.length > 0
+    ? resolveArticleSitemapLastmod(sorted[0])
+    : TRUST_PAGE_MODIFICATION_DATE;
+}
+
+const libraryLastmod = newestArticleLastmod(publishedArticles);
+const categoryLastmodBySlug = new Map(
+  categories.map((category) => [
+    category.slug,
+    newestArticleLastmod(
+      publishedArticles.filter((article) => article.category === category.slug)
+    )
+  ])
+);
+
 const seoRouteRecords = [
   {
     route: '/',
     seo: homeSeo,
     robotsDirective: homeSeo.robotsDirective,
-    sitemapType: 'primary'
+    sitemapType: 'primary',
+    lastmod: libraryLastmod
   },
   {
     route: '/categories/',
     seo: categoriesSeo,
     robotsDirective: categoriesSeo.robotsDirective,
-    sitemapType: 'primary'
+    sitemapType: 'primary',
+    lastmod: libraryLastmod
   },
   ...renderedArticleListingPages.map(({ page, seo }) => ({
     route: page.route,
@@ -1863,13 +1923,15 @@ const seoRouteRecords = [
     robotsDirective: seo.robotsDirective,
     sitemapType: page.pageNumber === 1
       ? 'primary'
-      : 'article-listing-pagination'
+      : 'article-listing-pagination',
+    lastmod: libraryLastmod
   })),
   ...renderedCategoryPages.map(({ page, seo }) => ({
     route: page.route,
     seo,
     robotsDirective: seo.robotsDirective,
-    sitemapType: page.pageNumber === 1 ? 'category' : 'category-pagination'
+    sitemapType: page.pageNumber === 1 ? 'category' : 'category-pagination',
+    lastmod: categoryLastmodBySlug.get(page.categorySlug) ?? libraryLastmod
   })),
   ...renderedArticlePages.map(({ model, seo }) => ({
     route: model.route,
@@ -1885,9 +1947,7 @@ const seoRouteRecords = [
     sitemapType: page.key === EDITORIAL_POLICY_PAGE.key
       ? 'editorial-policy'
       : 'primary',
-    lastmod: page.key === EDITORIAL_POLICY_PAGE.key
-      ? TRUST_PAGE_MODIFICATION_DATE
-      : null
+    lastmod: TRUST_PAGE_MODIFICATION_DATE
   })),
   {
     route: renderedContactPage.route,
@@ -1897,7 +1957,8 @@ const seoRouteRecords = [
       canonicalUrl: renderedContactPage.canonicalUrl
     },
     robotsDirective: renderedContactPage.robotsDirective,
-    sitemapType: 'primary'
+    sitemapType: 'primary',
+    lastmod: TRUST_PAGE_MODIFICATION_DATE
   },
   {
     route: renderedPrivacyPolicyPage.route,
@@ -2026,6 +2087,11 @@ await writeFile(
   'utf8'
 );
 
+const siteVerification = await injectSiteVerificationTag(
+  outputDirectory,
+  resolveGoogleSiteVerification(siteSettings)
+);
+
 console.log(`Lawscope static shell built for ${deploymentEnvironment}.`);
 console.log(
   `Articles library: ${publishedArticles.length} articles across ${articleListingPages.length} static page routes.`
@@ -2043,7 +2109,13 @@ console.log(
   `Contact page: ${renderedContactPage.route} with the form ${renderedContactPage.featureEnabled ? 'enabled' : 'safely unavailable'}.`
 );
 console.log(
-  `Privacy Policy: ${renderedPrivacyPolicyPage.route} is ${renderedPrivacyPolicyPage.state.approved ? 'approved and launch-ready' : 'safely noindex pending required confirmations'}.`
+  `Privacy Policy: ${renderedPrivacyPolicyPage.route} is ${
+    renderedPrivacyPolicyPage.state.approved
+      ? 'approved and launch-ready'
+      : renderedPrivacyPolicyPage.state.indexable
+        ? 'indexable by search_indexing: allow, with owner confirmations still pending'
+        : 'safely noindex pending required confirmations'
+  }.`
 );
 console.log(
   `Legal Disclaimer: ${renderedLegalDisclaimerPage.route} is ${renderedLegalDisclaimerPage.state.approved ? 'approved and launch-ready' : 'safely noindex pending qualified legal review'}.`
@@ -2053,6 +2125,11 @@ console.log(
 );
 console.log(
   `Sitemap and robots: ${sitemap.entries.length} indexable canonical URLs; ${deploymentEnvironment === 'production' ? 'production crawler guidance' : 'nonproduction crawl blocking'} emitted.`
+);
+console.log(
+  siteVerification.token
+    ? `Search Console verification: tag added to ${siteVerification.pages} public pages.`
+    : 'Search Console verification: not configured (set search_console.google_site_verification in content/settings/site.json).'
 );
 console.log(
   `CMS authentication: ${cmsCompanionOrigin ? (cmsGatewayUpstreamOrigin && cmsGatewayUpstreamOrigin !== cmsCompanionOrigin ? 'same-origin Identity/Git Gateway proxy enabled; account acceptance still required' : 'approved companion origin injected; account acceptance still required') : 'fail-closed until CMS_COMPANION_ORIGIN is provisioned'}.`
