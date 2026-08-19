@@ -9,7 +9,7 @@ export const CONTACT_FORM_LIMITS = Object.freeze({
 
 export const CONTACT_FORM_MESSAGES = Object.freeze({
   success: 'Thank you. Your message has been received. Keep a copy of any reference number shown here.',
-  error: 'Your message could not be sent. Please try again or use the published support email once configured.'
+  error: 'Your message could not be sent. Please try again in a few minutes, or return later rather than sending confidential or time-sensitive information.'
 });
 
 const CONTACT_STATE_TRANSITIONS = Object.freeze({

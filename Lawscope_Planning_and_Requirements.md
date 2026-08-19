@@ -597,7 +597,7 @@ The standard article opening should identify the legal concept, explain why it m
 - **Consent copy:** I understand that Lawscope will use my information to respond to this inquiry as described in the Privacy Policy.
 - **Submit button:** Send message
 - **Success:** Thank you. Your message has been received. Keep a copy of any reference number shown here.
-- **Error:** Your message could not be sent. Please try again or use the published support email once configured.
+- **Error:** Your message could not be sent. Please try again in a few minutes, or return later rather than sending confidential or time-sensitive information.
 
 ### Privacy Policy
 
