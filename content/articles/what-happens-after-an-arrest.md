@@ -1,8 +1,9 @@
 ---
 title: "What Happens After an Arrest? A Plain-English Guide to the First Steps"
+seo_title: "What Happens After an Arrest: First Steps"
 slug: what-happens-after-an-arrest
 publish_date: 2026-08-12T09:00:00Z
-author: Lawscope Editorial
+author: The GetLawscope Team
 category: criminal-law
 tags: [Arrest, Booking, Bail, Criminal Procedure]
 featured: true

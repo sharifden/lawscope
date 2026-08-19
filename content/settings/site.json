@@ -18,7 +18,8 @@
   "contact": {
     "enabled": false,
     "endpoint": "/api/contact/",
-    "provider": "lawscope-serverless"
+    "provider": "lawscope-serverless",
+    "public_email": ""
   },
   "consent": {
     "mode": "strict-opt-in",

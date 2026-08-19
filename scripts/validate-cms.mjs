@@ -556,7 +556,7 @@ async function validateBuildCompatibility() {
       slug: 'cms-workflow-compatibility-fixture',
       publish_date: '2026-08-16T12:00:00Z',
       updated_date: '2026-08-16T14:00:00Z',
-      author: 'Lawscope Editorial',
+      author: 'The GetLawscope Team',
       category: 'criminal-law',
       tags: ['CMS validation', 'Editorial workflow'],
       featured: false,

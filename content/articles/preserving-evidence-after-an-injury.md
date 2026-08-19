@@ -1,8 +1,9 @@
 ---
 title: "Preserving Evidence After an Injury: A Practical Checklist"
+seo_title: "Preserving Evidence After an Injury: Checklist"
 slug: preserving-evidence-after-an-injury
 publish_date: 2026-08-07T09:00:00Z
-author: Lawscope Editorial
+author: The GetLawscope Team
 category: personal-injury
 tags: [Evidence, Injury Claims, Documentation]
 featured: false

@@ -284,6 +284,7 @@ function renderArticleStructuredData(model, articleSeo) {
           '@type': 'Organization',
           '@id': `${canonicalUrl('/about/')}#editorial-team`,
           name: article.author,
+          description: 'Legal Research & Information Team',
           url: canonicalUrl('/about/')
         },
         publisher: { '@id': publisher['@id'] },

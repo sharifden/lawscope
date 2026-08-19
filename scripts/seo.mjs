@@ -3,7 +3,7 @@ const SITE_NAME = 'Lawscope';
 const SITE_LANGUAGE = 'en-US';
 const OPEN_GRAPH_LOCALE = 'en_US';
 const TITLE_SUFFIX = ` | ${SITE_NAME}`;
-const MAX_TITLE_LENGTH = 100;
+const MAX_TITLE_LENGTH = 60;
 const MAX_DESCRIPTION_LENGTH = 155;
 
 export const LEGACY_REDIRECT_POLICY = Object.freeze({
@@ -167,6 +167,21 @@ export function createOrganizationStructuredData(siteSettings = {}) {
   };
   const sameAs = activeOfficialProfiles(siteSettings);
   if (sameAs.length > 0) organization.sameAs = sameAs;
+
+  const publicEmail = String(siteSettings?.contact?.public_email || '').trim();
+  if (publicEmail) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(publicEmail)) {
+      throw new Error(
+        `content/settings/site.json: contact.public_email must be a valid address: ${publicEmail}`
+      );
+    }
+    organization.contactPoint = {
+      '@type': 'ContactPoint',
+      email: publicEmail,
+      contactType: 'editorial',
+      url: `${SITE_ORIGIN}/contact/`
+    };
+  }
   return organization;
 }
 

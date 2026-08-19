@@ -284,7 +284,8 @@ function assertPageSchema({ schema, route, description, html, articleManifestByR
     assert.ok(String(article.articleSection || '').trim());
     assert.ok(Array.isArray(article.keywords) && article.keywords.length > 0);
     assert.equal(article.author?.['@type'], 'Organization');
-    assert.equal(article.author?.name, 'Lawscope Editorial');
+    assert.equal(article.author?.name, 'The GetLawscope Team');
+    assert.equal(article.author?.description, 'Legal Research & Information Team');
     assert.equal(article.publisher?.['@id'], organization['@id']);
     assert.equal(article.image?.['@type'], 'ImageObject');
     assert.match(article.image?.url, /^https:\/\/getlawscope\.com\//);

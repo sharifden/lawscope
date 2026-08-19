@@ -1,8 +1,9 @@
 ---
 title: "At-Will Employment: What It Means—and What It Does Not Mean"
+seo_title: "At-Will Employment: Meaning and Legal Limits"
 slug: at-will-employment-meaning-and-limits
 publish_date: 2026-08-11T09:00:00Z
-author: Lawscope Editorial
+author: The GetLawscope Team
 category: employment-law
 tags: [At-Will Employment, Termination, Workplace Rights]
 featured: true

@@ -1,8 +1,9 @@
 ---
 title: "Reasonable Accommodation Requests: Documenting the Process"
+seo_title: "Reasonable Accommodation Requests at Work"
 slug: reasonable-accommodation-requests
 publish_date: 2026-08-04T09:00:00Z
-author: Lawscope Editorial
+author: The GetLawscope Team
 category: civil-rights
 tags: [Disability Rights, Reasonable Accommodation, Accessibility]
 featured: false

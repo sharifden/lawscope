@@ -142,7 +142,7 @@ for (const requiredText of [
   'Lawscope is an independent educational publication.',
   'It is not a law firm',
   'Our Editorial Standards',
-  'Lawscope Editorial',
+  'The GetLawscope Team',
   'Lawscope will not display unverified credentials.',
   'Help Us Keep Information Accurate'
 ]) {

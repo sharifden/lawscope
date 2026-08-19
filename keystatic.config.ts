@@ -12,7 +12,7 @@ export default config({
     // branchPrefix: 'keystatic/'
   },
   ui: {
-    brand: { name: 'Lawscope Editorial' },
+    brand: { name: 'The GetLawscope Team' },
     navigation: {
       Content: ['articles', 'categories'],
       Settings: ['siteSettings'],
@@ -56,8 +56,8 @@ export default config({
         }),
         author: fields.text({
           label: 'Author name',
-          description: 'Truthful byline. Default: Lawscope Editorial',
-          defaultValue: 'Lawscope Editorial',
+          description: 'Truthful byline. Default: The GetLawscope Team',
+          defaultValue: 'The GetLawscope Team',
           validation: { isRequired: true },
         }),
         category: fields.relationship({

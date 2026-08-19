@@ -2,7 +2,7 @@
 title: "USCIS Notices: Common Types and Response Basics"
 slug: uscis-notices-types-and-response-basics
 publish_date: 2026-08-06T09:00:00Z
-author: Lawscope Editorial
+author: The GetLawscope Team
 category: immigration-law
 tags: [USCIS, Immigration Forms, Requests for Evidence]
 featured: false
