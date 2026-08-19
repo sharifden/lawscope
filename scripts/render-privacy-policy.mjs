@@ -233,6 +233,8 @@ export async function renderPrivacyPolicyPage({
     contactChannelReady: state.requestChannelReady,
     approvalRequested: state.activationRequested,
     productionApproved: state.approved,
+    searchIndexing: policySettings.search_indexing ?? 'gated',
+    searchIndexingAllowed: state.searchIndexingAllowed,
     indexable: state.indexable,
     robotsDirective: state.robotsDirective,
     blockers: [...state.blockers],

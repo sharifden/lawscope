@@ -78,6 +78,31 @@ The renderer emits:
 
 The responsible operator is not fabricated in structured data. Until it is confirmed, the public `Organization` node identifies the Lawscope publication only.
 
+## Search indexing switch (`search_indexing`)
+
+`content/settings/privacy-policy.json` carries a `search_indexing` field that is deliberately
+separate from `review_status` and from the `PRIVACY_POLICY_APPROVED` production toggle.
+
+| Value | Effect in a production build | Effect in development/preview |
+| --- | --- | --- |
+| `"gated"` (default when the field is absent) | `noindex, nofollow` until every approval gate passes | `noindex, nofollow` |
+| `"allow"` | `index, follow`, and the route enters `sitemap.xml` | `noindex, nofollow` |
+
+The field exists because withholding the Privacy Policy from search is itself a publishing
+problem: advertising networks, including Google AdSense, expect a reachable and indexable
+privacy notice, and a `noindex` policy page can block an application.
+
+`search_indexing: "allow"` changes only crawler visibility. It does **not** mark the policy
+as counsel-approved. `review_status`, `operator.legal_identity_confirmed`, the service
+`details_confirmed` flags, and the monitored-request-channel gate all keep their original
+meaning, the blocker list is still emitted to
+`generated/data/privacy-policy-manifest.json`, and the on-page "Pre-launch review status"
+notice stays visible to every reader.
+
+Preview and development builds are never indexable regardless of this setting.
+
+To withhold the page again, set the value back to `"gated"` and rebuild.
+
 ## Verification
 
 Run:

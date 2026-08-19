@@ -1,9 +1,10 @@
 ---
 title: "What Happens After an Arrest? A Plain-English Guide to the First Steps"
+seo_title: "What Happens After an Arrest: First Steps"
 slug: what-happens-after-an-arrest
 publish_date: 2026-08-12T09:00:00Z
-author: Lawscope Editorial
-category: criminal-law
+author: The GetLawscope Team
+category: legal-basics
 tags: [Arrest, Booking, Bail, Criminal Procedure]
 featured: true
 status: published
@@ -23,7 +24,7 @@ sources:
 
 ## The short version
 
-An arrest begins a legal process; it does not decide guilt. What happens next depends on the alleged offense, the place of arrest, whether the matter is handled in state or federal court, and the rules of the particular jurisdiction. Even the names of early hearings can differ. Still, many cases move through a recognizable sequence: custody, booking, a decision about charges, a first court appearance, a decision about release or detention, and later hearings where the accused can review and challenge the case.
+An arrest begins a legal process; it does not decide guilt. What happens next depends on the alleged offense, the place of arrest, whether the matter is handled in [state or federal court](/articles/how-to-read-a-court-decision/), and the rules of the particular jurisdiction. Even the names of early hearings can differ. Still, many cases move through a recognizable sequence: custody, booking, a decision about charges, a first court appearance, a decision about release or detention, and later hearings where the accused can [review and challenge the case](/categories/legal-basics/).
 
 This guide describes that general sequence. It cannot predict what will happen in a particular case, and it does not replace advice from a qualified lawyer who can review the facts and local law. If someone is in custody, deadlines can be short. A public defender’s office, court-appointed lawyer, or licensed criminal-defense lawyer may be able to provide advice that accounts for the relevant state and court.
 

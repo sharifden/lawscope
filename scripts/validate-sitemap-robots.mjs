@@ -42,9 +42,26 @@ const REQUIRED_PRODUCTION_ROUTES = [
 ];
 const READINESS_GATED_ROUTES = ['/privacy-policy/', '/legal-disclaimer/'];
 const ALLOWED_NONARTICLE_LASTMOD_ROUTES = new Set([
+  '/about/',
+  '/contact/',
   '/editorial-policy/',
   ...READINESS_GATED_ROUTES
 ]);
+
+// Listing, category, and home routes have no visible policy date of their own, so their
+// lastmod must be inherited from the newest article they actually display.
+const DERIVED_LASTMOD_ROUTE_PATTERNS = Object.freeze([
+  /^\/$/,
+  /^\/articles\/$/,
+  /^\/articles\/page\/\d+\/$/,
+  /^\/categories\/$/,
+  /^\/categories\/[a-z0-9-]+\/$/,
+  /^\/categories\/[a-z0-9-]+\/page\/\d+\/$/
+]);
+
+function routeUsesDerivedLastmod(route) {
+  return DERIVED_LASTMOD_ROUTE_PATTERNS.some((pattern) => pattern.test(route));
+}
 
 function decodeXml(value) {
   return String(value)
@@ -79,6 +96,10 @@ function outputPathForRoute(outputDirectory, route) {
     : path.join(outputDirectory, route.slice(1), 'index.html');
 }
 
+const CONTROLLED_CHANGEFREQ_VALUES = new Set(
+  Object.values(SITEMAP_POLICY.changefreq)
+);
+
 function parseSitemapXml(xml) {
   assert.ok(
     xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>\n'),
@@ -89,24 +110,40 @@ function parseSitemapXml(xml) {
     'sitemap.xml must use the Sitemap protocol namespace.'
   );
   assert.ok(!/<sitemapindex\b/i.test(xml), 'A sitemap index is unnecessary below protocol limits.');
-  assert.ok(!/<(?:changefreq|priority)>/i.test(xml), 'Sitemap must not publish guessed changefreq or priority values.');
+  assert.ok(!/<priority>/i.test(xml), 'Sitemap must not publish guessed priority values.');
 
   const urlBlocks = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => match[1]);
   const entries = urlBlocks.map((block, index) => {
     const locationMatches = [...block.matchAll(/<loc>([\s\S]*?)<\/loc>/g)];
     const lastmodMatches = [...block.matchAll(/<lastmod>([\s\S]*?)<\/lastmod>/g)];
+    const changefreqMatches = [...block.matchAll(/<changefreq>([\s\S]*?)<\/changefreq>/g)];
     assert.equal(locationMatches.length, 1, `Sitemap URL entry ${index + 1} needs one loc.`);
     assert.ok(lastmodMatches.length <= 1, `Sitemap URL entry ${index + 1} has duplicate lastmod.`);
+    assert.ok(
+      changefreqMatches.length <= 1,
+      `Sitemap URL entry ${index + 1} has duplicate changefreq.`
+    );
     const recognizedContent = block
       .replace(/<loc>[\s\S]*?<\/loc>/g, '')
       .replace(/<lastmod>[\s\S]*?<\/lastmod>/g, '')
+      .replace(/<changefreq>[\s\S]*?<\/changefreq>/g, '')
       .trim();
     assert.equal(recognizedContent, '', `Sitemap URL entry ${index + 1} has unsupported elements.`);
+    const changefreq = changefreqMatches[0]
+      ? decodeXml(changefreqMatches[0][1].trim())
+      : null;
+    if (changefreq !== null) {
+      assert.ok(
+        CONTROLLED_CHANGEFREQ_VALUES.has(changefreq),
+        `Sitemap URL entry ${index + 1} publishes an uncontrolled changefreq: ${changefreq}`
+      );
+    }
     return {
       canonicalUrl: decodeXml(locationMatches[0][1].trim()),
       lastmod: lastmodMatches[0]
         ? decodeXml(lastmodMatches[0][1].trim())
-        : null
+        : null,
+      changefreq
     };
   });
 
@@ -356,6 +393,11 @@ async function validateOutput(outputDirectory) {
     }
   }
 
+  const articleLastmodValues = new Set(
+    articleManifest.articles.map((article) =>
+      normalizeSitemapLastmod(article.updatedDate || article.publishDate)
+    )
+  );
   for (const entry of parsedEntries) {
     const manifestEntry = manifestByUrl.get(entry.canonicalUrl);
     assert.ok(manifestEntry);
@@ -364,10 +406,24 @@ async function validateOutput(outputDirectory) {
       assert.ok(entry.lastmod, `${entry.canonicalUrl} article entry requires lastmod.`);
     } else if (entry.lastmod) {
       const route = new URL(entry.canonicalUrl).pathname;
-      assert.ok(
-        ALLOWED_NONARTICLE_LASTMOD_ROUTES.has(route),
-        `${route} must omit lastmod unless a substantive visible policy date exists.`
-      );
+      if (routeUsesDerivedLastmod(route)) {
+        assert.ok(
+          articleLastmodValues.has(entry.lastmod),
+          `${route} lastmod must be inherited from a published article, not guessed.`
+        );
+      } else {
+        assert.ok(
+          ALLOWED_NONARTICLE_LASTMOD_ROUTES.has(route),
+          `${route} must omit lastmod unless a substantive visible policy date exists.`
+        );
+        if (!READINESS_GATED_ROUTES.includes(route)) {
+          assert.equal(
+            entry.lastmod,
+            TRUST_PAGE_MODIFICATION_DATE,
+            `${route} lastmod must use the controlled trust-page modification date.`
+          );
+        }
+      }
     }
   }
   const editorialEntry = parsedByUrl.get(canonicalSeoUrl('/editorial-policy/'));

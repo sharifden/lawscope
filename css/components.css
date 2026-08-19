@@ -3572,6 +3572,16 @@ label.consent-category:hover {
   color: var(--color-brand);
 }
 
+.about-publication__role {
+  color: var(--color-text-secondary) !important;
+  font-size: var(--step--1);
+}
+
+.about-publication__role::before {
+  content: "·";
+  margin-inline-end: var(--space-2);
+}
+
 .about-corrections {
   border-inline-start: var(--size-border-strong) solid var(--color-brand);
   background-color: var(--color-surface);

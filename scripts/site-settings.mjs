@@ -83,6 +83,42 @@ function validateSocialProfileSettings(settings) {
   }
 }
 
+export function resolveGoogleSiteVerification(settings) {
+  const rawValue = settings?.search_console?.google_site_verification;
+  if (typeof rawValue !== 'string') return '';
+
+  const pastedTagMatch = rawValue.match(/content=["']([^"']+)["']/i);
+  const token = (pastedTagMatch ? pastedTagMatch[1] : rawValue).trim();
+  if (!token) return '';
+
+  if (!/^[A-Za-z0-9_-]{16,128}$/.test(token)) {
+    throw new Error(
+      'content/settings/site.json: search_console.google_site_verification must be the token from Search Console, or the full meta tag you copied'
+    );
+  }
+  return token;
+}
+
+function validateSearchConsoleSettings(settings) {
+  const searchConsole = settings.search_console;
+  if (searchConsole === undefined) return;
+  if (!searchConsole || typeof searchConsole !== 'object' || Array.isArray(searchConsole)) {
+    throw new Error('content/settings/site.json: search_console must be an object when present');
+  }
+
+  for (const key of Object.keys(searchConsole)) {
+    if (key !== 'google_site_verification') {
+      throw new Error(`content/settings/site.json: unsupported search_console key: ${key}`);
+    }
+  }
+  if (typeof searchConsole.google_site_verification !== 'string') {
+    throw new Error(
+      'content/settings/site.json: search_console.google_site_verification must be a string'
+    );
+  }
+  resolveGoogleSiteVerification(settings);
+}
+
 function validateConsentSettings(settings) {
   const consent = settings.consent;
   if (!consent || typeof consent !== 'object' || Array.isArray(consent)) {
@@ -180,6 +216,7 @@ export async function loadSiteSettings(projectRoot) {
     );
   }
   validateContactSettings(settings);
+  validateSearchConsoleSettings(settings);
   validateConsentSettings(settings);
   validateAnalyticsSettings(settings);
   validateAdvertisingSettings(settings);

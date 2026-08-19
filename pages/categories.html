@@ -47,22 +47,39 @@
     <meta name="twitter:image" content="{{SOCIAL_IMAGE_URL}}">
     <meta name="twitter:image:alt" content="{{SOCIAL_IMAGE_ALT}}">
     <script type="application/ld+json">{{CATEGORIES_JSON_LD}}</script>
+    <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <meta name="theme-color" content="#12355b">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Merriweather:wght@700;900&amp;display=swap"
     >
     <link
-      rel="stylesheet"
+      rel="preload"
+      as="style"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
       integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
+      data-deferred-stylesheet
     >
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      >
+    </noscript>
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/dark-mode.css">
     <link rel="stylesheet" href="/css/components.css">
+    <script src="/js/deferred-styles.js" defer></script>
     <script src="/js/theme.js" defer></script>
     <script src="/js/header.js" defer></script>
     <script src="/js/search.js" defer></script>
@@ -115,7 +132,10 @@
               <a class="site-header__navigation-link" href="/articles/">Articles</a>
             </li>
             <li>
-              <a class="site-header__navigation-link" href="/categories/" aria-current="page">Categories</a>
+              <a class="site-header__navigation-link" href="/categories/personal-injury/">Personal Injury</a>
+            </li>
+            <li>
+              <a class="site-header__navigation-link" href="/categories/legal-basics/">Legal Basics</a>
             </li>
             <li>
               <a class="site-header__navigation-link" href="/about/">About</a>

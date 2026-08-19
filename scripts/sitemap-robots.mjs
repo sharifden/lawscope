@@ -9,6 +9,12 @@ export const SITEMAP_POLICY = Object.freeze({
   maximumUncompressedBytes: 50 * 1024 * 1024,
   canonicalOrigin: SEO_POLICY.siteOrigin,
   articleLastmodSource: 'updated_date-or-publish_date',
+  changefreq: Object.freeze({
+    articles: 'weekly',
+    categories: 'weekly',
+    listings: 'weekly',
+    trustPages: 'monthly'
+  }),
   deploymentTimestampAllowedAsLastmod: false
 });
 
@@ -25,6 +31,18 @@ Disallow: /
 
 export const PREVIEW_ROBOTS_HEADER = 'noindex, nofollow';
 export const PERMANENT_NOINDEX_ROBOTS_HEADER = 'noindex, nofollow, noarchive';
+
+const MONTHLY_CHANGEFREQ_ROUTES = new Set([
+  '/about/',
+  '/contact/',
+  '/editorial-policy/',
+  '/legal-disclaimer/',
+  '/privacy-policy/'
+]);
+
+export function resolveSitemapChangefreq(route) {
+  return MONTHLY_CHANGEFREQ_ROUTES.has(route) ? 'monthly' : 'weekly';
+}
 
 const ALLOWED_SITEMAP_TYPES = new Set([
   'primary',
@@ -129,6 +147,7 @@ function validateSitemapCandidate(candidate, index) {
     canonicalUrl,
     type,
     robotsDirective,
+    changefreq: resolveSitemapChangefreq(route),
     lastmod: candidate.lastmod
       ? normalizeSitemapLastmod(candidate.lastmod)
       : null
@@ -139,7 +158,10 @@ function renderSitemapEntry(entry) {
   const lastmod = entry.lastmod
     ? `\n    <lastmod>${escapeXml(entry.lastmod)}</lastmod>`
     : '';
-  return `  <url>\n    <loc>${escapeXml(entry.canonicalUrl)}</loc>${lastmod}\n  </url>`;
+  const changefreq = entry.changefreq
+    ? `\n    <changefreq>${escapeXml(entry.changefreq)}</changefreq>`
+    : '';
+  return `  <url>\n    <loc>${escapeXml(entry.canonicalUrl)}</loc>${lastmod}${changefreq}\n  </url>`;
 }
 
 export function createSitemapDocument(candidates) {

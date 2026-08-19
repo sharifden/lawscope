@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { APPROVED_CATEGORIES } from './content-graph.mjs';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { parseDocument, stringify } from 'yaml';
@@ -208,9 +209,9 @@ function validateCategories(collection) {
   assert.equal(related.collection, 'categories');
   assert.equal(related.value_field, 'slug');
   assert.equal(related.multiple, true);
-  assert.equal(related.min, 3);
+  assert.equal(related.min, 1);
   assert.equal(related.max, 3);
-  record('Non-creatable controlled categories with locked taxonomy and exactly three relations');
+  record('Non-creatable controlled categories with locked taxonomy and 1-3 relations');
 }
 
 function validateSettings(collection) {
@@ -543,7 +544,11 @@ async function validateBuildCompatibility() {
     loadPublishedArticles(projectRoot, new Date()),
     loadSiteSettings(projectRoot)
   ]);
-  assert.equal(categories.length, 10, 'Controlled category content must remain build-valid');
+  assert.equal(
+    categories.length,
+    APPROVED_CATEGORIES.length,
+    'Controlled category content must remain build-valid'
+  );
   check(articles.length >= 1, 'Existing article content must remain build-valid');
   check(settings.site_title && settings.consent, 'Existing singleton settings must remain build-valid');
 
@@ -556,8 +561,8 @@ async function validateBuildCompatibility() {
       slug: 'cms-workflow-compatibility-fixture',
       publish_date: '2026-08-16T12:00:00Z',
       updated_date: '2026-08-16T14:00:00Z',
-      author: 'Lawscope Editorial',
-      category: 'criminal-law',
+      author: 'The GetLawscope Team',
+      category: 'legal-basics',
       tags: ['CMS validation', 'Editorial workflow'],
       featured: false,
       status: 'published',

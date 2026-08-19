@@ -1,8 +1,9 @@
 ---
 title: "Preserving Evidence After an Injury: A Practical Checklist"
+seo_title: "Preserving Evidence After an Injury: Checklist"
 slug: preserving-evidence-after-an-injury
 publish_date: 2026-08-07T09:00:00Z
-author: Lawscope Editorial
+author: The GetLawscope Team
 category: personal-injury
 tags: [Evidence, Injury Claims, Documentation]
 featured: false
@@ -39,7 +40,7 @@ Retain the original files when possible. Editing, filtering, or repeatedly resav
 
 ## Identify records and witnesses
 
-Write down the names and contact information of people who directly observed the event or its immediate aftermath. Avoid pressuring witnesses or suggesting what they should say. Incident reports, emergency call records, inspection logs, maintenance records, receipts, and photographs held by another party may also matter.
+Write down the names and contact information of people who directly observed the event or its immediate aftermath. Avoid pressuring witnesses or suggesting what they should say. [Incident reports](/articles/what-happens-after-an-arrest/), emergency call records, inspection logs, maintenance records, receipts, and photographs held by another party may also [matter](/categories/personal-injury/).
 
 Some records are routinely deleted. A lawyer may advise whether a prompt preservation notice is appropriate and who should receive it. A preservation request should be accurate and targeted; it is not a substitute for formal discovery.
 

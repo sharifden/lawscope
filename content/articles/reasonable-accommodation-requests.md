@@ -1,9 +1,10 @@
 ---
 title: "Reasonable Accommodation Requests: Documenting the Process"
+seo_title: "Reasonable Accommodation Requests at Work"
 slug: reasonable-accommodation-requests
 publish_date: 2026-08-04T09:00:00Z
-author: Lawscope Editorial
-category: civil-rights
+author: The GetLawscope Team
+category: legal-basics
 tags: [Disability Rights, Reasonable Accommodation, Accessibility]
 featured: false
 status: published
@@ -21,13 +22,13 @@ sources:
 
 ## Start with the setting
 
-“Reasonable accommodation” appears in several areas of disability law, but the rules are not identical. Employment, housing, education, state and local government services, transportation, and public accommodations can involve different statutes, responsible organizations, definitions, procedures, and remedies.
+“Reasonable accommodation” appears in several areas of disability law, but the rules are not identical. [Employment](/articles/at-will-employment-meaning-and-limits/), housing, education, state and local government services, transportation, and public accommodations can involve different statutes, responsible organizations, definitions, procedures, and remedies.
 
 Identify the setting before relying on a form or deadline. An employer’s process under the Americans with Disabilities Act differs from a housing provider’s duties under fair housing law, and state law may add protections.
 
 ## A request does not always need special words
 
-In many settings, a person does not need to say “reasonable accommodation” or cite a statute. A communication may be enough if it explains that a change or assistance is needed because of a disability-related limitation. Still, a clear written request can reduce uncertainty about what was asked and when.
+In many settings, a person does not need to say “reasonable accommodation” or cite a statute. A communication may be enough if it explains that a change or assistance is needed because of a disability-related limitation. Still, a [clear written request](/articles/preserving-evidence-after-an-injury/) can reduce uncertainty about what was asked and when.
 
 Identify the policy, practice, environment, schedule, communication method, or other barrier involved. Describe the requested change and how it would help address the limitation. A person does not necessarily need to disclose every detail of a diagnosis.
 

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { APPROVED_CATEGORIES } from './content-graph.mjs';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { loadCategories, loadPublishedArticles } from './content-graph.mjs';
@@ -68,7 +69,10 @@ function articleSlugs(source) {
 }
 
 const categorySlugs = categories.map((category) => category.slug);
-contract(categorySlugs.length === 10, 'The controlled CMS graph must expose exactly ten categories.');
+contract(
+  categorySlugs.length === APPROVED_CATEGORIES.length,
+  `The controlled CMS graph must expose exactly ${APPROVED_CATEGORIES.length} categories.`
+);
 contract(publishedArticles.length === 10, 'The validation fixture expects all ten published launch articles.');
 
 includesAll(sourceTemplate, [
@@ -190,27 +194,31 @@ for (const [html, route, staticCount, supplementCount] of [
 }
 
 // Pure executable model: normalization, controlled state, matching, sorting, count, and URL stability.
+// The pure-model checks below exercise filter behaviour with their own fixture
+// taxonomy so they stay stable when the published category set changes.
+const fixtureCategorySlugs = ['employment-law', 'consumer-law', 'family-law'];
+
 contract(normalizeArticleFilterText('Résumé & Due–Process') === 'resume due process', 'Matching must be case-, punctuation-, and diacritic-insensitive.');
 const cleanState = sanitizeArticleFilterState(
   { q: '  Court   order  ', category: 'family-law', sort: 'updated' },
-  categorySlugs
+  fixtureCategorySlugs
 );
 contract(cleanState.q === 'Court order', 'Query state must trim and collapse whitespace.');
 contract(cleanState.category === 'family-law' && cleanState.sort === 'updated', 'Valid controlled category and sort values must survive.');
 const rejectedState = sanitizeArticleFilterState(
   { q: '', category: 'invented-category', sort: 'popular' },
-  categorySlugs
+  fixtureCategorySlugs
 );
 contract(rejectedState.category === '' && rejectedState.sort === ARTICLE_FILTER_DEFAULT_SORT, 'Unknown category and sort values must fall back safely.');
 contract(isArticleFilterStateActive(cleanState), 'A query/category/nondefault sort must create active state.');
 contract(!isArticleFilterStateActive(rejectedState), 'Default empty state must remain inactive.');
 
-const parsedState = readArticleFilterState('?q=credit%20report&category=consumer-law&sort=updated', categorySlugs);
+const parsedState = readArticleFilterState('?q=credit%20report&category=consumer-law&sort=updated', fixtureCategorySlugs);
 contract(parsedState.q === 'credit report' && parsedState.category === 'consumer-law' && parsedState.sort === 'updated', 'URL state must parse predictably.');
 const stableUrl = createArticleFilterUrl(
   'https://getlawscope.com/articles/page/2/?utm_source=brief&q=old&sort=newest#library',
   { q: 'court order', category: 'family-law', sort: 'updated' },
-  { allowedCategories: categorySlugs }
+  { allowedCategories: fixtureCategorySlugs }
 );
 contract(stableUrl.pathname === '/articles/', 'Active state URLs must use the base listing route.');
 contract(stableUrl.searchParams.get('utm_source') === 'brief', 'Unrelated tracking parameters must be preserved.');
@@ -221,7 +229,7 @@ contract(stableUrl.hash === '#library', 'Unrelated URL fragments must be preserv
 const defaultUrl = createArticleFilterUrl(
   'https://getlawscope.com/articles/?utm_campaign=launch&q=old&category=family-law&sort=updated',
   { q: '', category: '', sort: 'newest' },
-  { allowedCategories: categorySlugs }
+  { allowedCategories: fixtureCategorySlugs }
 );
 contract(defaultUrl.search === '?utm_campaign=launch', 'Reset must remove only known filter parameters and omit the default sort.');
 

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { APPROVED_CATEGORIES } from './content-graph.mjs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -43,18 +44,10 @@ function includesAll(haystack, needles, label) {
   }
 }
 
-const categoryRecords = [
-  ['criminal-law', 'Criminal Law'],
-  ['family-law', 'Family Law'],
-  ['business-law', 'Business Law'],
-  ['employment-law', 'Employment Law'],
-  ['personal-injury', 'Personal Injury'],
-  ['real-estate-property-law', 'Real Estate &amp; Property Law'],
-  ['immigration-law', 'Immigration Law'],
-  ['consumer-law', 'Consumer Law'],
-  ['civil-rights', 'Civil Rights'],
-  ['legal-news-updates', 'Legal News &amp; Updates']
-];
+const categoryRecords = APPROVED_CATEGORIES.map(({ slug, name }) => [
+  slug,
+  name.replaceAll('&', '&amp;')
+]);
 const primaryRoutes = ['/', '/articles/', '/categories/', '/about/', '/contact/'];
 const policyRoutes = [
   '/privacy-policy/',
@@ -159,7 +152,12 @@ for (const route of policyRoutes) {
 const footerHrefs = [...footerHtml.matchAll(/<a\b[^>]*href="([^"]+)"/g)].map(
   (match) => match[1]
 );
-contract(footerHrefs.length === 20, 'Baseline footer must render 20 intentional internal links.');
+const expectedFooterLinkCount =
+  primaryRoutes.length + categoryRecords.length + policyRoutes.length + 1;
+contract(
+  footerHrefs.length === expectedFooterLinkCount,
+  `Baseline footer must render ${expectedFooterLinkCount} intentional internal links.`
+);
 for (const href of footerHrefs) {
   contract(approvedInternalRoutes.has(href), `Footer link is outside the approved sitemap: ${href}`);
   contract(!href.includes('?') && !href.includes('#'), `Footer link must be a clean route: ${href}`);

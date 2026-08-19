@@ -2,24 +2,8 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 export const APPROVED_CATEGORIES = Object.freeze([
-  { slug: 'criminal-law', name: 'Criminal Law', icon: 'fa-scale-balanced' },
-  { slug: 'family-law', name: 'Family Law', icon: 'fa-people-roof' },
-  { slug: 'business-law', name: 'Business Law', icon: 'fa-briefcase' },
-  { slug: 'employment-law', name: 'Employment Law', icon: 'fa-user-tie' },
   { slug: 'personal-injury', name: 'Personal Injury', icon: 'fa-kit-medical' },
-  {
-    slug: 'real-estate-property-law',
-    name: 'Real Estate & Property Law',
-    icon: 'fa-house'
-  },
-  { slug: 'immigration-law', name: 'Immigration Law', icon: 'fa-passport' },
-  { slug: 'consumer-law', name: 'Consumer Law', icon: 'fa-receipt' },
-  { slug: 'civil-rights', name: 'Civil Rights', icon: 'fa-handshake' },
-  {
-    slug: 'legal-news-updates',
-    name: 'Legal News & Updates',
-    icon: 'fa-newspaper'
-  }
+  { slug: 'legal-basics', name: 'Legal Basics', icon: 'fa-scale-balanced' }
 ]);
 
 export const CATEGORY_NAMES = new Map(
@@ -291,9 +275,13 @@ export async function loadCategories(projectRoot) {
       validationProblems.push(`${category.sourceFile}: related_categories must be an array`);
       continue;
     }
-    if (category.related_categories.length !== 3) {
+    const maximumRelatedCategories = Math.min(3, APPROVED_CATEGORIES.length - 1);
+    if (
+      category.related_categories.length < 1 ||
+      category.related_categories.length > maximumRelatedCategories
+    ) {
       validationProblems.push(
-        `${category.sourceFile}: exactly three editorially related categories are required`
+        `${category.sourceFile}: related_categories must list 1-${maximumRelatedCategories} distinct approved categories`
       );
     }
     if (new Set(category.related_categories).size !== category.related_categories.length) {

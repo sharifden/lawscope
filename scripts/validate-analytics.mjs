@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { APPROVED_CATEGORIES, loadPublishedArticles } from './content-graph.mjs';
 import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -360,8 +361,18 @@ assert.ok(buildSource.includes('ARTICLE_SLUG: article.slug'));
 assert.ok(buildSource.includes('resolveAnalyticsFeatureState'));
 assert.ok(buildSource.includes("'data', 'analytics-manifest.json'"));
 
+// 9 fixed routes + one per approved category + one per published article.
+const EXPECTED_CANONICAL_ROUTE_COUNT =
+  9 +
+  APPROVED_CATEGORIES.length +
+  (await loadPublishedArticles(projectRoot, new Date())).length;
 const publicHtmlPaths = await collectPublicHtml(generatedRoot);
-assert.equal(publicHtmlPaths.length, 30, 'All 29 canonical public routes plus the host-level 404 must be audited.');
+const expectedPublicHtmlCount = EXPECTED_CANONICAL_ROUTE_COUNT + 1;
+assert.equal(
+  publicHtmlPaths.length,
+  expectedPublicHtmlCount,
+  `All ${EXPECTED_CANONICAL_ROUTE_COUNT} canonical public routes plus the host-level 404 must be audited.`
+);
 for (const relativePath of publicHtmlPaths) {
   const html = await readFile(path.join(generatedRoot, relativePath), 'utf8');
   assert.equal((html.match(/\/js\/analytics\.js/g) || []).length, 1, `${relativePath}: analytics client`);
@@ -560,7 +571,7 @@ try {
   assert.equal(committedProduction.manifest.preConsentNetworkRequests, false);
   assert.ok(committedProduction.config.includes(committedId));
   const committedProductionHtmlPaths = await collectPublicHtml(committedProduction.outputDirectory);
-  assert.equal(committedProductionHtmlPaths.length, 30);
+  assert.equal(committedProductionHtmlPaths.length, EXPECTED_CANONICAL_ROUTE_COUNT + 1);
   for (const relativePath of committedProductionHtmlPaths) {
     const html = await readFile(path.join(committedProduction.outputDirectory, relativePath), 'utf8');
     assert.equal((html.match(/\/js\/analytics\.js/g) || []).length, 1, `${relativePath}: analytics client`);

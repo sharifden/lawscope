@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { APPROVED_CATEGORIES } from './content-graph.mjs';
 import { fileURLToPath } from 'node:url';
 import { loadCategories } from './content-graph.mjs';
 import { loadSiteSettings } from './site-settings.mjs';
@@ -58,7 +59,7 @@ requireFragments('pages/categories.html', sourceHtml, [
   '<meta property="og:url" content="{{CANONICAL_URL}}">',
   '<meta name="twitter:card" content="summary_large_image">',
   '{{CATEGORIES_JSON_LD}}',
-  'href="/categories/" aria-current="page">Categories</a>',
+  'href="/categories/personal-injury/">Personal Injury</a>',
   '<main class="categories-page" id="main-content" tabindex="-1">',
   '<nav class="breadcrumb" aria-label="Breadcrumb">',
   '<li class="breadcrumb__item" aria-current="page">Categories</li>',
@@ -117,8 +118,10 @@ requireFragments('categories ad partial', adPartial, [
   'data-ad-container'
 ]);
 
-if (categories.length !== 10) {
-  problems.push(`controlled categories: expected 10 records, received ${categories.length}`);
+if (categories.length !== APPROVED_CATEGORIES.length) {
+  problems.push(
+    `controlled categories: expected ${APPROVED_CATEGORIES.length} records, received ${categories.length}`
+  );
 }
 const normalizedDescriptions = categories.map((category) => category.description.trim().toLowerCase());
 if (new Set(normalizedDescriptions).size !== categories.length) {
@@ -141,8 +144,10 @@ if (!gridMatch) {
 } else {
   const gridHtml = gridMatch[1];
   const tileCount = (gridHtml.match(/<li class="category-tile"/g) || []).length;
-  if (tileCount !== 10) {
-    problems.push(`generated categories page: expected 10 tiles, received ${tileCount}`);
+  if (tileCount !== categories.length) {
+    problems.push(
+      `generated categories page: expected ${categories.length} tiles, received ${tileCount}`
+    );
   }
   if (gridHtml.includes('data-ad-slot=') || gridHtml.includes('>Advertisement</p>')) {
     problems.push('generated categories page: advertising inventory must never appear between category tiles');
@@ -177,7 +182,7 @@ requireFragments('generated categories page', generatedHtml, [
   '<meta name="description" content="Explore U.S. legal information by category, from criminal and family law to employment, consumer rights, and legal news.">',
   '<title>Legal Topics &amp; Categories | Lawscope</title>',
   '<link rel="canonical" href="https://getlawscope.com/categories/">',
-  'data-category-count="10"',
+  `data-category-count="${APPROVED_CATEGORIES.length}"`,
   'data-ad-slot="categories-overview-below-grid"',
   'data-ad-feature-enabled="false"',
   'data-ad-state="disabled"',
@@ -221,7 +226,9 @@ if (!jsonLdMatch) {
     if (schema.breadcrumb?.itemListElement?.length !== 2) problems.push('categories schema: expected two breadcrumb entries');
     if (schema.publisher?.name !== 'Lawscope') problems.push('categories schema: publisher reference missing');
     if (schema.mainEntity?.['@type'] !== 'ItemList') problems.push('categories schema: mainEntity must be an ItemList');
-    if (schema.mainEntity?.numberOfItems !== 10) problems.push('categories schema: numberOfItems must be 10');
+    if (schema.mainEntity?.numberOfItems !== categories.length) {
+      problems.push(`categories schema: numberOfItems must be ${categories.length}`);
+    }
     const schemaItems = schema.mainEntity?.itemListElement || [];
     if (schemaItems.length !== categories.length) {
       problems.push('categories schema: visible category list is incomplete');

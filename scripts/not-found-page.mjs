@@ -1,4 +1,13 @@
-export const NOT_FOUND_POPULAR_CATEGORY_COUNT = 5;
+export const NOT_FOUND_POPULAR_CATEGORY_LIMIT = 5;
+
+// The 404 page lists every controlled category, capped at the layout limit, so the
+// page stays correct whether the taxonomy holds two hubs or the full five-plus.
+export function resolveNotFoundPopularCategoryCount(categories) {
+  if (!Array.isArray(categories) || categories.length < 1) {
+    throw new Error('404 popular categories require at least one controlled category');
+  }
+  return Math.min(NOT_FOUND_POPULAR_CATEGORY_LIMIT, categories.length);
+}
 
 export const NOT_FOUND_PAGE = Object.freeze({
   key: 'not-found',
@@ -44,15 +53,13 @@ export function selectNotFoundPopularCategories(categories) {
   if (!Array.isArray(categories)) {
     throw new Error('404 popular categories require the validated category collection');
   }
-  if (categories.length < NOT_FOUND_POPULAR_CATEGORY_COUNT) {
-    throw new Error(`404 requires at least ${NOT_FOUND_POPULAR_CATEGORY_COUNT} controlled categories`);
-  }
+  const popularCategoryCount = resolveNotFoundPopularCategoryCount(categories);
 
-  const selected = categories.slice(0, NOT_FOUND_POPULAR_CATEGORY_COUNT);
+  const selected = categories.slice(0, popularCategoryCount);
   selected.forEach(validateCategory);
 
   const uniqueSlugs = new Set(selected.map((category) => category.slug));
-  if (uniqueSlugs.size !== NOT_FOUND_POPULAR_CATEGORY_COUNT) {
+  if (uniqueSlugs.size !== popularCategoryCount) {
     throw new Error('404 popular category links must be unique');
   }
 

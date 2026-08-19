@@ -73,6 +73,17 @@ export function validateContactSettings(settings) {
   if (!CONTACT_PROVIDERS.has(contact.provider)) {
     throw new Error('content/settings/site.json: contact.provider is not approved');
   }
+  if (contact.public_email !== undefined) {
+    if (typeof contact.public_email !== 'string') {
+      throw new Error('content/settings/site.json: contact.public_email must be a string');
+    }
+    const publicEmail = contact.public_email.trim();
+    if (publicEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(publicEmail)) {
+      throw new Error(
+        'content/settings/site.json: contact.public_email must be empty or a valid address'
+      );
+    }
+  }
 }
 
 export function resolveContactFeatureState(settings, environmentVariables = process.env) {

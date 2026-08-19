@@ -140,11 +140,53 @@ const pendingState = resolvePrivacyPolicyState({
   environmentVariables: { PRIVACY_POLICY_APPROVED: 'true' }
 });
 assert.equal(pendingState.approved, false, 'An environment toggle alone must not approve the policy.');
-assert.equal(pendingState.indexable, false);
-assert.equal(pendingState.robotsDirective, 'noindex, nofollow');
+assert.equal(
+  pendingState.indexable,
+  true,
+  'search_indexing: allow publishes the policy while owner confirmations stay pending.'
+);
+assert.equal(pendingState.robotsDirective, 'index, follow');
+assert.equal(pendingState.searchIndexingAllowed, true);
 assert.ok(pendingState.blockers.includes('qualified legal review'));
 assert.ok(pendingState.blockers.includes('confirmed legal operator and postal address'));
 assert.ok(pendingState.blockers.includes('monitored privacy-request delivery channel'));
+
+const gatedFixture = structuredClone(policySettings);
+gatedFixture.search_indexing = 'gated';
+const gatedState = resolvePrivacyPolicyState({
+  settings: gatedFixture,
+  siteSettings,
+  environment: 'production',
+  contactFeature: disabledContact,
+  environmentVariables: {}
+});
+assert.equal(gatedState.approved, false);
+assert.equal(gatedState.searchIndexingAllowed, false);
+assert.equal(gatedState.indexable, false, 'Gating must still fully withhold the policy from search.');
+assert.equal(gatedState.robotsDirective, 'noindex, nofollow');
+
+const gatedPreviewState = resolvePrivacyPolicyState({
+  settings: policySettings,
+  siteSettings,
+  environment: 'preview',
+  contactFeature: disabledContact,
+  environmentVariables: {}
+});
+assert.equal(
+  gatedPreviewState.indexable,
+  false,
+  'search_indexing: allow must never expose preview builds to search engines.'
+);
+assert.equal(gatedPreviewState.robotsDirective, 'noindex, nofollow');
+
+assert.throws(
+  () =>
+    validatePrivacyPolicySettings({
+      ...policySettings,
+      search_indexing: 'sometimes'
+    }),
+  /search_indexing must be gated or allow/
+);
 
 const approvedFixture = structuredClone(policySettings);
 approvedFixture.review_status = 'approved';
@@ -218,7 +260,7 @@ assert.doesNotMatch(html, /<table\b/i);
 assert.doesNotMatch(html, /data-ad-|>Advertisement</i);
 assert.doesNotMatch(html, /<form\b[^>]*(?:newsletter|subscribe)|\/js\/(?:newsletter|ad-slots)\.js/i);
 assert.doesNotMatch(html, /{{[A-Z0-9_]+}}/);
-assert.ok(html.includes('<meta name="robots" content="noindex, nofollow">'));
+assert.ok(html.includes(`<meta name="robots" content="${manifest.robotsDirective}">`));
 assert.ok(html.includes('Pre-launch review status'));
 assert.ok(html.includes('not represented as counsel-approved final language'));
 assert.ok(html.includes('word-break: break-word') || componentCss.includes('word-break: break-word'));
@@ -311,8 +353,22 @@ assert.equal(manifest.effectiveDate, policySettings.effective_date);
 assert.equal(manifest.lastUpdated, policySettings.last_updated);
 assert.equal(manifest.reviewStatus, 'pending');
 assert.equal(manifest.productionApproved, false);
-assert.equal(manifest.indexable, false);
-assert.equal(manifest.robotsDirective, 'noindex, nofollow');
+assert.equal(manifest.searchIndexing, 'allow');
+assert.equal(manifest.searchIndexingAllowed, true);
+
+const builtEnvironment = JSON.parse(
+  await readFile(path.join(projectRoot, 'generated/build-info.json'), 'utf8')
+).deploymentEnvironment;
+const expectedIndexable = builtEnvironment === 'production';
+assert.equal(
+  manifest.indexable,
+  expectedIndexable,
+  'search_indexing: allow must publish the policy in production only.'
+);
+assert.equal(
+  manifest.robotsDirective,
+  expectedIndexable ? 'index, follow' : 'noindex, nofollow'
+);
 assert.equal(manifest.tocSections, 20);
 assert.equal(manifest.contactChannelReady, false);
 assert.equal(manifest.serviceInventory.length, 7);

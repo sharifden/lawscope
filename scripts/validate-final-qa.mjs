@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { APPROVED_CATEGORIES, loadPublishedArticles } from './content-graph.mjs';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { brotliCompressSync, constants as zlibConstants } from 'node:zlib';
@@ -170,7 +171,16 @@ const publicRouteFiles = allGeneratedFiles
   })
   .sort();
 
-assert.equal(publicRouteFiles.length, 29, 'Final integration must assemble exactly 29 public static routes');
+// 9 fixed routes + one per approved category + one per published article.
+const expectedPublicRouteCount =
+  9 +
+  APPROVED_CATEGORIES.length +
+  (await loadPublishedArticles(projectRoot, new Date())).length;
+assert.equal(
+  publicRouteFiles.length,
+  expectedPublicRouteCount,
+  `Final integration must assemble exactly ${expectedPublicRouteCount} public static routes`
+);
 const records = [];
 for (const filePath of publicRouteFiles) {
   records.push({
@@ -180,7 +190,9 @@ for (const filePath of publicRouteFiles) {
   });
 }
 const recordByRoute = new Map(records.map((recordItem) => [recordItem.route, recordItem]));
-record('Complete 29-route public assembly across fixed, listing, category, and article templates');
+record(
+  `Complete ${expectedPublicRouteCount}-route public assembly across fixed, listing, category, and article templates`
+);
 
 const inboundLinks = new Map(records.map(({ route }) => [route, 0]));
 for (const recordItem of records) {
@@ -302,13 +314,22 @@ for (const { html, route } of records) {
     check(Boolean(dialog.attributes.get('aria-labelledby') || dialog.attributes.get('aria-label')), `${route}: dialog lacks a name`);
   }
 }
-const componentCss = await readFile(path.join(generatedRoot, 'css/components.css'), 'utf8');
-const mainCss = await readFile(path.join(generatedRoot, 'css/main.css'), 'utf8');
-const darkCss = await readFile(path.join(generatedRoot, 'css/dark-mode.css'), 'utf8');
+// Served CSS is minified, so these contract checks compare declaration text with
+// insignificant whitespace removed rather than assuming a pretty-printed build.
+const normalizeCssContract = (css) => css.replace(/\s*([:,{};])\s*/g, '$1');
+const componentCss = normalizeCssContract(
+  await readFile(path.join(generatedRoot, 'css/components.css'), 'utf8')
+);
+const mainCss = normalizeCssContract(
+  await readFile(path.join(generatedRoot, 'css/main.css'), 'utf8')
+);
+const darkCss = normalizeCssContract(
+  await readFile(path.join(generatedRoot, 'css/dark-mode.css'), 'utf8')
+);
 check(componentCss.includes(':focus-visible'), 'Component styles must expose visible keyboard focus');
-check(componentCss.includes('min-block-size: var(--size-touch-target)'), 'Interactive controls must use the logical 44px target token');
-check(componentCss.includes('prefers-reduced-motion: reduce'), 'Components must respect reduced motion');
-check(mainCss.includes('--size-touch-target: 2.75rem'), 'The touch-target token must remain 44px');
+check(componentCss.includes('min-block-size:var(--size-touch-target)'), 'Interactive controls must use the logical 44px target token');
+check(componentCss.includes('prefers-reduced-motion:reduce'), 'Components must respect reduced motion');
+check(mainCss.includes('--size-touch-target:2.75rem'), 'The touch-target token must remain 44px');
 check(darkCss.includes('[data-theme="dark"]'), 'Dark theme styles must remain available');
 record('Accessible names, ARIA references, form labels, image alternatives/dimensions, focus, touch, themes, and reduced motion');
 

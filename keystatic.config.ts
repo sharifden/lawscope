@@ -12,7 +12,7 @@ export default config({
     // branchPrefix: 'keystatic/'
   },
   ui: {
-    brand: { name: 'Lawscope Editorial' },
+    brand: { name: 'The GetLawscope Team' },
     navigation: {
       Content: ['articles', 'categories'],
       Settings: ['siteSettings'],
@@ -56,8 +56,8 @@ export default config({
         }),
         author: fields.text({
           label: 'Author name',
-          description: 'Truthful byline. Default: Lawscope Editorial',
-          defaultValue: 'Lawscope Editorial',
+          description: 'Truthful byline. Default: The GetLawscope Team',
+          defaultValue: 'The GetLawscope Team',
           validation: { isRequired: true },
         }),
         category: fields.relationship({
@@ -171,7 +171,7 @@ export default config({
       },
     }),
 
-    // ── Categories ── content/categories/*.md — controlled 10-item taxonomy
+    // ── Categories ── content/categories/*.md — controlled taxonomy (see APPROVED_CATEGORIES)
     categories: collection({
       label: 'Categories',
       slugField: 'slug',
@@ -205,7 +205,7 @@ export default config({
         }),
         order: fields.integer({
           label: 'Navigation order',
-          description: 'Locked unique 1–10.',
+          description: 'Locked unique navigation order.',
           validation: { isRequired: true },
         }),
         related_categories: fields.array(
@@ -216,8 +216,8 @@ export default config({
           }),
           {
             label: 'Related categories',
-            description: 'Exactly 3 distinct approved categories, not self.',
-            validation: { length: { min: 3, max: 3 } },
+            description: '1-3 distinct approved categories, not self.',
+            validation: { length: { min: 1, max: 3 } },
             itemLabel: props => props.value ?? 'Category',
           }
         ),

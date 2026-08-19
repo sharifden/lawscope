@@ -2,8 +2,8 @@
 title: "Disputing Errors on a Credit Report: Core Steps"
 slug: disputing-credit-report-errors
 publish_date: 2026-08-05T09:00:00Z
-author: Lawscope Editorial
-category: consumer-law
+author: The GetLawscope Team
+category: legal-basics
 tags: [Credit Reports, Consumer Rights, Disputes]
 featured: false
 status: published
@@ -33,7 +33,7 @@ If identity theft may be involved, additional blocking, fraud-alert, security-fr
 
 ## Gather focused supporting records
 
-Useful documents may include account statements, payment confirmations, correspondence, identity-theft reports, court records, cancellation notices, or proof that an account belongs to someone else. Send copies rather than irreplaceable originals and redact unrelated sensitive information when appropriate.
+Useful documents may include account statements, payment confirmations, correspondence, identity-theft reports, [court records](/articles/how-to-read-a-court-decision/), cancellation notices, or proof that an [account belongs to someone else](/categories/legal-basics/). Send copies rather than irreplaceable originals and redact unrelated sensitive information when appropriate.
 
 Create a short list matching each disputed entry to the supporting document. A focused explanation can make the requested correction easier to understand.
 

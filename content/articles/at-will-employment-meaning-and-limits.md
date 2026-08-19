@@ -1,9 +1,10 @@
 ---
 title: "At-Will Employment: What It Means—and What It Does Not Mean"
+seo_title: "At-Will Employment: Meaning and Legal Limits"
 slug: at-will-employment-meaning-and-limits
 publish_date: 2026-08-11T09:00:00Z
-author: Lawscope Editorial
-category: employment-law
+author: The GetLawscope Team
+category: legal-basics
 tags: [At-Will Employment, Termination, Workplace Rights]
 featured: true
 status: published
@@ -37,7 +38,7 @@ Evidence can be direct or circumstantial. Timing, inconsistent explanations, com
 
 ## Retaliation and protected activity
 
-Many workplace laws prohibit retaliation when a worker exercises a protected right. Examples can include reporting discrimination, participating in an investigation, requesting a legally protected accommodation or leave, raising certain wage concerns, or reporting specified safety or legal violations.
+Many workplace laws prohibit retaliation when a worker exercises a protected right. Examples can include reporting discrimination, participating in an investigation, requesting a [legally protected accommodation](/articles/reasonable-accommodation-requests/) or leave, raising certain wage concerns, or reporting specified safety or legal violations.
 
 The scope of protection depends on the law involved and what the worker did. Not every workplace disagreement is protected activity. Because filing deadlines can be short, a worker concerned about retaliation may need prompt advice from the appropriate agency, union, or employment lawyer.
 
@@ -57,7 +58,7 @@ A worker should not assume that every ethical disagreement creates a public-poli
 
 At-will employment does not by itself answer questions about final wages, accrued paid time off, commissions, health coverage, unemployment benefits, or required notice in a large layoff. Different federal and state rules address those topics.
 
-An employee can gather the offer letter, handbook, pay records, benefit notices, performance reviews, disciplinary documents, and relevant communications. Preserving records lawfully and keeping a factual timeline can help an agency or lawyer assess what happened.
+An employee can gather the offer letter, handbook, pay records, benefit notices, performance reviews, disciplinary documents, and relevant communications. [Preserving records lawfully](/articles/preserving-evidence-after-an-injury/) and keeping a factual timeline can help an agency or lawyer assess what happened.
 
 ## The practical takeaway
 

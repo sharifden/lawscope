@@ -1,9 +1,10 @@
 ---
 title: "Child Custody Orders: Factors Courts Commonly Consider"
+seo_title: "Child Custody Orders: What Courts Consider"
 slug: child-custody-orders-common-factors
 publish_date: 2026-08-08T09:00:00Z
-author: Lawscope Editorial
-category: family-law
+author: The GetLawscope Team
+category: legal-basics
 tags: [Child Custody, Parenting Plans, Family Court]
 featured: false
 status: published
@@ -33,7 +34,7 @@ Reliable records can be more useful than broad accusations. Calendars, school co
 
 ## Safety and family circumstances
 
-Safety concerns can carry substantial weight. State law may direct courts to consider domestic violence, child abuse, neglect, substance misuse, unsafe supervision, or credible threats. Protective orders, police or medical records, agency findings, and testimony may be relevant, subject to evidence rules.
+Safety concerns can carry substantial weight. State law may direct courts to consider domestic violence, child abuse, neglect, substance misuse, unsafe supervision, or credible threats. Protective orders, [police or medical records](/articles/preserving-evidence-after-an-injury/), agency findings, and testimony may be relevant, subject to evidence rules.
 
 A parent facing an immediate safety issue should use appropriate emergency procedures rather than relying on informal agreements. Courts may order supervised exchanges, supervised parenting time, restricted contact, or other protections when supported by the law and evidence.
 
@@ -57,4 +58,4 @@ Depending on state law, age, maturity, and the facts, a court may consider a chi
 
 Custody litigation can involve strict filing, service, mediation, hearing, and evidence requirements. Existing orders remain enforceable until changed by a court unless the order or local law provides otherwise. A parent seeking a modification may need to prove a required change in circumstances as well as the child’s best interests.
 
-Organized records, a workable proposal, and advice from a licensed family-law attorney or legal-aid program can help a parent understand the rules that apply in the relevant state and county.
+Organized records, a workable proposal, and advice from a [licensed family-law attorney](/categories/legal-basics/) or legal-aid program can help a parent understand the rules that apply in the relevant state and county.
