@@ -53,7 +53,7 @@ async function buildFixture(environment, variables) {
       'articles/index.html',
       'articles/page/2/index.html',
       'categories/index.html',
-      'categories/consumer-law/index.html',
+      'categories/legal-basics/index.html',
       'articles/what-happens-after-an-arrest/index.html',
       'about/index.html',
       'contact/index.html',
@@ -240,7 +240,7 @@ for (const route of [
   'index.html',
   'articles/index.html',
   'categories/index.html',
-  'categories/consumer-law/index.html',
+  'categories/legal-basics/index.html',
   'articles/what-happens-after-an-arrest/index.html'
 ]) {
   const html = productionFixture.html[route];
@@ -374,7 +374,7 @@ const eligibleRoutes = [
   ['home', 'index.html'],
   ['articles', 'articles/index.html'],
   ['categories', 'categories/index.html'],
-  ['category', 'categories/consumer-law/index.html'],
+  ['category', 'categories/legal-basics/index.html'],
   ['article', 'articles/what-happens-after-an-arrest/index.html']
 ];
 for (const [name, relativePath] of eligibleRoutes) {

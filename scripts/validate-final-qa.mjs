@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { APPROVED_CATEGORIES, loadPublishedArticles } from './content-graph.mjs';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { brotliCompressSync, constants as zlibConstants } from 'node:zlib';
@@ -170,7 +171,16 @@ const publicRouteFiles = allGeneratedFiles
   })
   .sort();
 
-assert.equal(publicRouteFiles.length, 29, 'Final integration must assemble exactly 29 public static routes');
+// 9 fixed routes + one per approved category + one per published article.
+const expectedPublicRouteCount =
+  9 +
+  APPROVED_CATEGORIES.length +
+  (await loadPublishedArticles(projectRoot, new Date())).length;
+assert.equal(
+  publicRouteFiles.length,
+  expectedPublicRouteCount,
+  `Final integration must assemble exactly ${expectedPublicRouteCount} public static routes`
+);
 const records = [];
 for (const filePath of publicRouteFiles) {
   records.push({
@@ -180,7 +190,9 @@ for (const filePath of publicRouteFiles) {
   });
 }
 const recordByRoute = new Map(records.map((recordItem) => [recordItem.route, recordItem]));
-record('Complete 29-route public assembly across fixed, listing, category, and article templates');
+record(
+  `Complete ${expectedPublicRouteCount}-route public assembly across fixed, listing, category, and article templates`
+);
 
 const inboundLinks = new Map(records.map(({ route }) => [route, 0]));
 for (const recordItem of records) {

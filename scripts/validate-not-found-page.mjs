@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   NOT_FOUND_PAGE,
-  NOT_FOUND_POPULAR_CATEGORY_COUNT,
+  resolveNotFoundPopularCategoryCount,
   selectNotFoundPopularCategories
 } from './not-found-page.mjs';
 import { loadCategories } from './content-graph.mjs';
@@ -117,17 +117,16 @@ assert.ok(html.includes('href="/contact/#contact-subject">Contact page</a>'));
 
 // Controlled popular categories: exactly five, unique, and deterministic.
 const categoryLinks = extractPopularCategoryLinks(html);
-assert.equal(categoryLinks.length, NOT_FOUND_POPULAR_CATEGORY_COUNT);
-assert.equal(new Set(categoryLinks.map(({ route }) => route)).size, NOT_FOUND_POPULAR_CATEGORY_COUNT);
+const expectedPopularCategoryCount = resolveNotFoundPopularCategoryCount(categories);
+assert.equal(categoryLinks.length, expectedPopularCategoryCount);
+assert.equal(new Set(categoryLinks.map(({ route }) => route)).size, expectedPopularCategoryCount);
 assert.deepEqual(
   categoryLinks,
   selectedCategories.map(({ route, name }) => ({ route, name }))
 );
-assert.throws(() => selectNotFoundPopularCategories(categories.slice(0, 4)), /at least 5/);
+assert.throws(() => selectNotFoundPopularCategories([]), /at least one controlled category/);
 assert.throws(
-  () => selectNotFoundPopularCategories([
-    categories[0], categories[0], ...categories.slice(2, 5)
-  ]),
+  () => selectNotFoundPopularCategories([categories[0], categories[0]]),
   /unique/
 );
 
@@ -205,7 +204,7 @@ assert.equal(manifest.httpStatusForUnknownRoutes, 404);
 assert.equal(manifest.robotsDirective, 'noindex, nofollow');
 assert.equal(manifest.sitemapEligible, false);
 assert.equal(manifest.advertisingPolicy, 'omitted');
-assert.equal(manifest.popularCategoryCount, 5);
+assert.equal(manifest.popularCategoryCount, expectedPopularCategoryCount);
 assert.equal(manifest.activeNavigationItem, null);
 assert.deepEqual(manifest.popularCategories, selectedCategories.map((category) => ({ ...category })));
 assert.equal(packageData.scripts['validate:not-found'], 'node scripts/validate-not-found-page.mjs');

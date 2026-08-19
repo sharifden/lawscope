@@ -3,7 +3,7 @@ title: "Disputing Errors on a Credit Report: Core Steps"
 slug: disputing-credit-report-errors
 publish_date: 2026-08-05T09:00:00Z
 author: The GetLawscope Team
-category: consumer-law
+category: legal-basics
 tags: [Credit Reports, Consumer Rights, Disputes]
 featured: false
 status: published

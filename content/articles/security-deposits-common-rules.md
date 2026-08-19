@@ -4,7 +4,7 @@ seo_title: "Security Deposits: Tenant and Landlord Rules"
 slug: security-deposits-common-rules
 publish_date: 2026-08-10T09:00:00Z
 author: The GetLawscope Team
-category: real-estate-property-law
+category: legal-basics
 tags: [Security Deposits, Renting, Landlord Tenant]
 featured: true
 status: published

@@ -16,6 +16,96 @@
       "permanent": true
     },
     {
+      "source": "/categories/criminal-law",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/criminal-law/",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/family-law",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/family-law/",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/business-law",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/business-law/",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/employment-law",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/employment-law/",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/real-estate-property-law",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/real-estate-property-law/",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/immigration-law",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/immigration-law/",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/consumer-law",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/consumer-law/",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/civil-rights",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/civil-rights/",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/legal-news-updates",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/legal-news-updates/",
+      "destination": "/categories/legal-basics/",
+      "permanent": true
+    },
+    {
       "source": "/dashboard",
       "destination": "/admin/",
       "permanent": false

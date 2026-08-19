@@ -573,8 +573,11 @@ let links = await searchFor(harness, 'read court decision framework');
 contract(harness.results.dataset.searchState === 'results', 'Title query must produce results.');
 contract(links.length === 1, 'Court-decision title query must resolve one baseline guide.');
 contract(links[0].href.includes('how-to-read-a-court-decision'), 'Title query must rank the matching article.');
-links = await searchFor(harness, 'consumer law');
-contract(links.length === 1 && links[0].href.includes('credit-report-errors'), 'Category matching must work.');
+links = await searchFor(harness, 'personal injury');
+contract(
+  links.length === 1 && links[0].href.includes('preserving-evidence-after-an-injury'),
+  'Category matching must work.'
+);
 links = await searchFor(harness, 'parenting plans');
 contract(links.length === 1 && links[0].href.includes('child-custody'), 'Tag matching must work.');
 links = await searchFor(harness, 'investigation results');
@@ -583,7 +586,7 @@ links = await searchFor(harness, 'at will employment');
 contract(links.length === 1 && links[0].href.includes('at-will-employment'), 'Punctuation-normalized title matching must work.');
 links = await searchFor(harness, 'consumer investigation');
 contract(links.length === 1 && links[0].href.includes('credit-report-errors'), 'Tokens may match across weighted fields.');
-links = await searchFor(harness, 'law');
+links = await searchFor(harness, 'legal');
 contract(links.length === 6, 'Broad queries must render no more than the configured initial limit.');
 contract(harness.status.textContent.includes('Showing the first 6'), 'Bounded result announcements must disclose truncation.');
 contract(harness.state.fetchCalls.length === 1, 'Settled searches must reuse the in-memory index.');
@@ -616,7 +619,7 @@ harness.list.emit('keydown', {
 });
 contract(prevented && harness.documentMock.activeElement === harness.field, 'Up Arrow on the first result must return to input.');
 
-harness.field.value = 'consumer law';
+harness.field.value = 'credit report';
 prevented = false;
 harness.form.emit('submit', {
   preventDefault() { prevented = true; }

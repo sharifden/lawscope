@@ -4,7 +4,7 @@ seo_title: "Child Custody Orders: What Courts Consider"
 slug: child-custody-orders-common-factors
 publish_date: 2026-08-08T09:00:00Z
 author: The GetLawscope Team
-category: family-law
+category: legal-basics
 tags: [Child Custody, Parenting Plans, Family Court]
 featured: false
 status: published

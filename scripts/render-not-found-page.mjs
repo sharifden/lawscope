@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   NOT_FOUND_PAGE,
-  NOT_FOUND_POPULAR_CATEGORY_COUNT,
+  resolveNotFoundPopularCategoryCount,
   selectNotFoundPopularCategories
 } from './not-found-page.mjs';
 
@@ -109,7 +109,7 @@ export async function renderNotFoundPage({
     advertisingPolicy: 'omitted',
     search: { ...NOT_FOUND_PAGE.search },
     contactRoute: NOT_FOUND_PAGE.contactRoute,
-    popularCategoryCount: NOT_FOUND_POPULAR_CATEGORY_COUNT,
+    popularCategoryCount: resolveNotFoundPopularCategoryCount(categories),
     popularCategories: popularCategories.map((category) => ({ ...category })),
     compactSharedFooter: true,
     activeNavigationItem: null

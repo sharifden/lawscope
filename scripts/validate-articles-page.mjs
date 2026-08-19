@@ -362,10 +362,10 @@ const generatedCategoryOptionValues = [
 ].map((match) => match[1]).filter((value) => value !== 'newest' && value !== 'updated');
 const expectedCategorySlugs = categories.map((category) => category.slug);
 if (
-  generatedCategoryOptionValues.length !== 10 ||
+  generatedCategoryOptionValues.length !== expectedCategorySlugs.length ||
   generatedCategoryOptionValues.join('|') !== expectedCategorySlugs.join('|')
 ) {
-  problems.push('generated /articles/: category options must derive from all ten controlled categories');
+  problems.push('generated /articles/: category options must derive from the controlled categories');
 }
 
 const pageOneSlugs = [...pageOneActiveResults.matchAll(/data-article-slug="([^"]+)"/g)].map(

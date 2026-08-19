@@ -4,7 +4,7 @@ seo_title: "How to Read a Court Decision"
 slug: how-to-read-a-court-decision
 publish_date: 2026-08-03T09:00:00Z
 author: The GetLawscope Team
-category: legal-news-updates
+category: legal-basics
 tags: [Court Decisions, Case Law, Legal Research]
 featured: false
 status: published

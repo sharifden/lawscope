@@ -9,6 +9,7 @@ import {
 } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { APPROVED_CATEGORIES, loadPublishedArticles } from './content-graph.mjs';
 import { fileURLToPath } from 'node:url';
 import { readJpegDimensions } from './content-graph.mjs';
 import {
@@ -26,7 +27,14 @@ const projectRoot = path.resolve(scriptDirectory, '..');
 const configuredOutputDirectory = process.env.LAWSCOPE_OUTPUT_DIR
   ? path.resolve(process.env.LAWSCOPE_OUTPUT_DIR)
   : path.join(projectRoot, 'generated');
-const EXPECTED_ROUTE_COUNT = 29;
+// Fixed routes (home, /articles/, /articles/page/2/, /categories/, about, contact,
+// editorial-policy, privacy-policy, legal-disclaimer) + one route per category + one per article.
+const PUBLISHED_ARTICLE_COUNT = (
+  await loadPublishedArticles(projectRoot, new Date())
+).length;
+const FIXED_ROUTE_COUNT = 9;
+const EXPECTED_ROUTE_COUNT =
+  FIXED_ROUTE_COUNT + APPROVED_CATEGORIES.length + PUBLISHED_ARTICLE_COUNT;
 const INDEX_DIRECTIVE = 'index, follow';
 const NOINDEX_DIRECTIVE = 'noindex, nofollow';
 const REQUIRED_META_PROPERTIES = [

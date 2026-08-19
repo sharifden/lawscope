@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  APPROVED_CATEGORIES,
   compareArticles,
   loadCategories,
   loadPublishedArticles
@@ -53,7 +54,7 @@ function unescapeHtml(value) {
 }
 
 function fixtureArticle(index, {
-  category = 'employment-law',
+  category = 'legal-basics',
   featured = false,
   day = index + 1
 } = {}) {
@@ -177,12 +178,12 @@ requireFragments('category empty state', emptyPartial, [
 ]);
 
 // Deterministic empty, one-entry, feature, ad, category-isolation, and pagination fixtures.
-const fixtureCategory = categories.find((category) => category.slug === 'employment-law');
+const fixtureCategory = categories.find((category) => category.slug === 'legal-basics');
 contract(Boolean(fixtureCategory), 'fixtures: Employment Law controlled category must exist');
 const emptyModel = createCategoryPageModel(fixtureCategory, []);
 contract(emptyModel.totalArticles === 0, 'empty fixture: total must be zero');
 contract(emptyModel.pages.length === 1, 'empty fixture: canonical first page must still exist');
-contract(emptyModel.pages[0].route === '/categories/employment-law/', 'empty fixture: canonical route mismatch');
+contract(emptyModel.pages[0].route === '/categories/legal-basics/', 'empty fixture: canonical route mismatch');
 contract(emptyModel.pages[0].visibleArticles.length === 0, 'empty fixture: no articles may be visible');
 
 const singleFeaturedArticle = fixtureArticle(1, { featured: true });
@@ -215,7 +216,7 @@ contract(sevenItemSequence[CATEGORY_AD_INSERT_AFTER].type === 'advertisement', '
 
 const matchingFixtureArticles = Array.from({ length: 7 }, (_, index) => fixtureArticle(index + 1));
 const foreignFixtureArticles = Array.from({ length: 4 }, (_, index) => fixtureArticle(index + 1, {
-  category: 'criminal-law'
+  category: 'personal-injury'
 }));
 const isolatedModel = createCategoryPageModel(
   fixtureCategory,
@@ -224,8 +225,8 @@ const isolatedModel = createCategoryPageModel(
 contract(isolatedModel.totalArticles === matchingFixtureArticles.length, 'isolation fixture: cross-category entries must be excluded');
 contract(isolatedModel.pages.every((page) => page.visibleArticles.every((article) => article.category === fixtureCategory.slug)), 'isolation fixture: every visible article must exactly match the controlled slug');
 assert.throws(
-  () => createCategoryPagination('employment-law', [foreignFixtureArticles[0]]),
-  /outside employment-law/,
+  () => createCategoryPagination('legal-basics', [foreignFixtureArticles[0]]),
+  /outside legal-basics/,
   'category pagination must reject mixed-category input'
 );
 contractCount += 1;
@@ -239,44 +240,63 @@ contract(CATEGORY_PAGE_SIZE === 9, 'pagination fixture: category page size must 
 contract(multiPageModel.pages.length === 3, 'pagination fixture: 20 entries must produce three routes');
 contract(multiPageModel.pages.map((page) => page.visibleArticles.length).join(',') === '9,9,2', 'pagination fixture: visible page capacities must be 9, 9, and 2');
 contract(multiPageModel.pages.map((page) => page.items.length).join(',') === '8,9,2', 'pagination fixture: first-page feature must occupy one of nine positions');
-contract(multiPageModel.pages[1].route === '/categories/employment-law/page/2/', 'pagination fixture: page-two clean route mismatch');
-contract(multiPageModel.pages[2].previousRoute === '/categories/employment-law/page/2/', 'pagination fixture: page-three previous route mismatch');
-contract(multiPageModel.pages[0].nextRoute === '/categories/employment-law/page/2/', 'pagination fixture: page-one next route mismatch');
+contract(multiPageModel.pages[1].route === '/categories/legal-basics/page/2/', 'pagination fixture: page-two clean route mismatch');
+contract(multiPageModel.pages[2].previousRoute === '/categories/legal-basics/page/2/', 'pagination fixture: page-three previous route mismatch');
+contract(multiPageModel.pages[0].nextRoute === '/categories/legal-basics/page/2/', 'pagination fixture: page-one next route mismatch');
 const allVisibleFixtureSlugs = multiPageModel.pages.flatMap((page) => page.visibleArticles.map((article) => article.slug));
 contract(allVisibleFixtureSlugs.length === 20 && new Set(allVisibleFixtureSlugs).size === 20, 'pagination fixture: all articles must appear exactly once');
 for (const page of multiPageModel.pages) {
   const expectedOrder = [...page.items].sort(compareArticles).map((article) => article.slug);
   contract(page.items.map((article) => article.slug).join(',') === expectedOrder.join(','), `pagination fixture: regular feed page ${page.pageNumber} must remain newest first`);
 }
-contract(categoryPageRoute('employment-law', 1) === '/categories/employment-law/', 'route fixture: first-page route mismatch');
-contract(categoryPageRoute('employment-law', 4) === '/categories/employment-law/page/4/', 'route fixture: paginated route mismatch');
-assert.throws(() => categoryPageRoute('../employment-law'), /valid controlled slug/);
+contract(categoryPageRoute('legal-basics', 1) === '/categories/legal-basics/', 'route fixture: first-page route mismatch');
+contract(categoryPageRoute('legal-basics', 4) === '/categories/legal-basics/page/4/', 'route fixture: paginated route mismatch');
+assert.throws(() => categoryPageRoute('../legal-basics'), /valid controlled slug/);
 contractCount += 1;
 
 const allCategoryFixturePages = createAllCategoryPages(categories, matchingFixtureArticles);
 contract(allCategoryFixturePages.length === categories.length, 'all-category fixture: every controlled empty/few-entry route must be created');
-contract(allCategoryFixturePages.every((page) => page.relatedCategories.length === 3), 'all-category fixture: every page must resolve three relationships');
+const maximumRelatedCategories = Math.min(3, categories.length - 1);
+contract(
+  allCategoryFixturePages.every(
+    (page) =>
+      page.relatedCategories.length >= 1 &&
+      page.relatedCategories.length <= maximumRelatedCategories
+  ),
+  `all-category fixture: every page must resolve 1-${maximumRelatedCategories} relationships`
+);
 
 // Controlled relationships and production manifest.
-contract(categories.length === 10, `controlled categories: expected ten, received ${categories.length}`);
+contract(
+  categories.length === APPROVED_CATEGORIES.length,
+  `controlled categories: expected ${APPROVED_CATEGORIES.length}, received ${categories.length}`
+);
 for (const category of categories) {
-  contract(Array.isArray(category.related_categories) && category.related_categories.length === 3, `${category.slug}: expected exactly three relationships`);
-  contract(new Set(category.related_categories).size === 3, `${category.slug}: relationships must be unique`);
+  contract(
+    Array.isArray(category.related_categories) &&
+      category.related_categories.length >= 1 &&
+      category.related_categories.length <= maximumRelatedCategories,
+    `${category.slug}: expected 1-${maximumRelatedCategories} relationships`
+  );
+  contract(
+    new Set(category.related_categories).size === category.related_categories.length,
+    `${category.slug}: relationships must be unique`
+  );
   contract(!category.related_categories.includes(category.slug), `${category.slug}: self relationship is not allowed`);
   contract(category.related_categories.every((slug) => categories.some((candidate) => candidate.slug === slug)), `${category.slug}: related slugs must all be controlled`);
 }
 requireFragments('content relationship validation', graphScript, [
   'related_categories',
-  'exactly three editorially related categories are required',
+  'distinct approved categories',
   'cannot relate to itself',
   'unknown related category'
 ]);
-contract(manifest.categoryCount === 10, 'category manifest: category count must be ten');
+contract(manifest.categoryCount === APPROVED_CATEGORIES.length, `category manifest: category count must be ${APPROVED_CATEGORIES.length}`);
 contract(manifest.pageSize === 9, 'category manifest: page size must be nine');
 contract(manifest.adInsertAfter === 6, 'category manifest: ad position must be six');
 contract(manifest.canonicalStrategy === 'clean-category-page-routes', 'category manifest: canonical strategy mismatch');
-contract(manifest.totalGeneratedRoutes === 10, 'category manifest: launch corpus must generate ten category routes');
-contract(manifest.categories.length === 10, 'category manifest: ten category records required');
+contract(manifest.totalGeneratedRoutes === APPROVED_CATEGORIES.length, `category manifest: launch corpus must generate ${APPROVED_CATEGORIES.length} category routes`);
+contract(manifest.categories.length === APPROVED_CATEGORIES.length, `category manifest: ${APPROVED_CATEGORIES.length} category records required`);
 
 const metadataTitles = new Set();
 const metadataDescriptions = new Set();
@@ -286,6 +306,10 @@ for (const category of categories) {
     .filter((article) => article.category === category.slug)
     .sort(compareArticles);
   const expectedSlugs = matchingArticles.map((article) => article.slug);
+  const expectedFirstPage = createCategoryPageModel(category, publishedArticles).pages[0];
+  // A featured entry renders in its own block, so the card grid holds only the listing items.
+  const expectedCardSlugs = expectedFirstPage.items.map((article) => article.slug);
+  const expectedVisibleSlugs = expectedFirstPage.visibleArticles.map((article) => article.slug);
   const escapedName = escapeHtml(category.name);
   const escapedDescription = escapeHtml(category.description);
   const canonical = `https://getlawscope.com${category.route}`;
@@ -314,8 +338,20 @@ for (const category of categories) {
   contract(!/{{[A-Z0-9_]+}}/.test(html), `${category.slug}: unresolved build placeholder found`);
   contract((html.match(/<main\b/g) || []).length === 1, `${category.slug}: expected one main landmark`);
   contract((html.match(/<h1\b/g) || []).length === 1, `${category.slug}: expected one H1`);
-  contract(!html.includes('class="category-featured"'), `${category.slug}: one-entry launch state must not duplicate an article as featured`);
-  contract(!html.includes(`data-ad-slot="category-${category.slug}-in-feed"`), `${category.slug}: short launch feed must omit in-feed inventory`);
+  const expectsFeatured = Boolean(selectCategoryFeaturedArticle(matchingArticles));
+  contract(
+    html.includes('class="category-featured"') === expectsFeatured,
+    `${category.slug}: featured placement must match the controlled selection rule`
+  );
+  const firstPageVisibleCount = Math.min(
+    matchingArticles.length,
+    CATEGORY_PAGE_SIZE
+  );
+  const expectsInFeedAd = firstPageVisibleCount > CATEGORY_AD_INSERT_AFTER;
+  contract(
+    html.includes(`data-ad-slot="category-${category.slug}-in-feed"`) === expectsInFeedAd,
+    `${category.slug}: in-feed inventory must match the controlled insertion rule`
+  );
 
   const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
   const descriptionMatch = html.match(/<meta name="description" content="([^"]+)">/);
@@ -340,7 +376,7 @@ for (const category of categories) {
 
   const cardSlugs = [...html.matchAll(/<article class="article-card"[\s\S]*?<a[\s\S]*?href="\/articles\/([^/]+)\//g)]
     .map((match) => match[1]);
-  contract(cardSlugs.join(',') === expectedSlugs.join(','), `${category.slug}: visible card slugs must exactly match newest-first category entries`);
+  contract(cardSlugs.join(',') === expectedCardSlugs.join(','), `${category.slug}: visible card slugs must exactly match newest-first category entries`);
   const foreignSlugs = publishedArticles
     .filter((article) => article.category !== category.slug)
     .map((article) => article.slug);
@@ -352,7 +388,10 @@ for (const category of categories) {
     const relatedSlugs = [...relatedMatch[0].matchAll(/href="\/categories\/([^/]+)\//g)]
       .map((match) => match[1]);
     contract(relatedSlugs.join(',') === category.related_categories.join(','), `${category.slug}: related links must match editorial order exactly`);
-    contract(relatedSlugs.length === 3, `${category.slug}: expected exactly three related links`);
+    contract(
+      relatedSlugs.length === category.related_categories.length,
+      `${category.slug}: expected ${category.related_categories.length} related links`
+    );
   }
 
   const jsonLdMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
@@ -380,11 +419,25 @@ for (const category of categories) {
   if (manifestCategory) {
     contract(manifestCategory.route === category.route, `${category.slug}: manifest route mismatch`);
     contract(manifestCategory.totalArticles === matchingArticles.length, `${category.slug}: manifest total mismatch`);
-    contract(manifestCategory.totalPages === 1, `${category.slug}: launch page count must be one`);
+    const expectedTotalPages = Math.max(
+      1,
+      Math.ceil(matchingArticles.length / CATEGORY_PAGE_SIZE)
+    );
+    contract(
+      manifestCategory.totalPages === expectedTotalPages,
+      `${category.slug}: page count must be ${expectedTotalPages}`
+    );
     contract(manifestCategory.relatedCategorySlugs.join(',') === category.related_categories.join(','), `${category.slug}: manifest relationships mismatch`);
-    contract(manifestCategory.pages[0].visibleArticleSlugs.join(',') === expectedSlugs.join(','), `${category.slug}: manifest visible slugs mismatch`);
-    contract(manifestCategory.pages[0].featuredArticleSlug === null, `${category.slug}: launch manifest must not promote a lone entry`);
-    contract(manifestCategory.pages[0].containsInFeedAdInsertion === false, `${category.slug}: launch manifest must not insert inventory`);
+    contract(manifestCategory.pages[0].visibleArticleSlugs.join(',') === expectedVisibleSlugs.join(','), `${category.slug}: manifest visible slugs mismatch`);
+    const expectedFeaturedSlug = selectCategoryFeaturedArticle(matchingArticles)?.slug ?? null;
+    contract(
+      manifestCategory.pages[0].featuredArticleSlug === expectedFeaturedSlug,
+      `${category.slug}: manifest featured slug must follow the controlled selection rule`
+    );
+    contract(
+      manifestCategory.pages[0].containsInFeedAdInsertion === expectsInFeedAd,
+      `${category.slug}: manifest in-feed insertion must follow the controlled rule`
+    );
   }
 }
 contract(metadataTitles.size === categories.length, 'metadata: every category title must be unique');

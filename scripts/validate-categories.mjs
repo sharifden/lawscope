@@ -115,8 +115,10 @@ for (const fragment of cssContracts) {
 
 const categories = await loadCategories(projectRoot);
 const expectedSlugs = APPROVED_CATEGORIES.map((category) => category.slug);
-if (categories.length !== 10) {
-  problems.push(`content: expected exactly ten categories, received ${categories.length}`);
+if (categories.length !== APPROVED_CATEGORIES.length) {
+  problems.push(
+    `content: expected exactly ${APPROVED_CATEGORIES.length} categories, received ${categories.length}`
+  );
 }
 if (JSON.stringify(categories.map((category) => category.slug)) !== JSON.stringify(expectedSlugs)) {
   problems.push('content: category order or approved slug set does not match the locked taxonomy');
@@ -144,7 +146,9 @@ try {
     path.join(temporaryRoot, 'content/categories'),
     { recursive: true }
   );
-  await unlink(path.join(temporaryRoot, 'content/categories/family-law.md'));
+  const [firstCategory, secondCategory] = APPROVED_CATEGORIES;
+  const removableCategoryFile = `content/categories/${secondCategory.slug}.md`;
+  await unlink(path.join(temporaryRoot, removableCategoryFile));
   let missingCategoryRejected = false;
   try {
     await loadCategories(temporaryRoot);
@@ -156,14 +160,17 @@ try {
   }
 
   await cp(
-    path.join(projectRoot, 'content/categories/family-law.md'),
-    path.join(temporaryRoot, 'content/categories/family-law.md')
+    path.join(projectRoot, removableCategoryFile),
+    path.join(temporaryRoot, removableCategoryFile)
   );
-  const criminalPath = path.join(temporaryRoot, 'content/categories/criminal-law.md');
-  const criminalSource = await readFile(criminalPath, 'utf8');
+  const iconFixturePath = path.join(
+    temporaryRoot,
+    `content/categories/${firstCategory.slug}.md`
+  );
+  const iconFixtureSource = await readFile(iconFixturePath, 'utf8');
   await writeFile(
-    criminalPath,
-    criminalSource.replace('icon: fa-scale-balanced', 'icon: fa-gavel'),
+    iconFixturePath,
+    iconFixtureSource.replace(`icon: ${firstCategory.icon}`, 'icon: fa-gavel'),
     'utf8'
   );
   let unapprovedIconRejected = false;
@@ -190,8 +197,8 @@ if (generatedTiles.length !== categories.length) {
     `generated home: expected ${categories.length} category tiles, received ${generatedTiles.length}`
   );
 }
-if (!generatedCategoriesSection.includes('data-category-count="10"')) {
-  problems.push('generated home: category count must equal the ten rendered entries');
+if (!generatedCategoriesSection.includes(`data-category-count="${categories.length}"`)) {
+  problems.push('generated home: category count must equal the rendered entries');
 }
 if (!generatedCategoriesSection.includes('<h2 id="popular-categories-title">Explore Popular Legal Topics</h2>')) {
   problems.push('generated home: missing the approved Popular Categories heading');
@@ -222,8 +229,10 @@ for (const [index, category] of categories.entries()) {
 if (JSON.stringify(manifest.homeCategorySlugs) !== JSON.stringify(expectedSlugs)) {
   problems.push('manifest: home category slugs do not match the controlled collection order');
 }
-if (manifest.homeCategoryCount !== 10) {
-  problems.push('manifest: home category count must be ten');
+if (manifest.homeCategoryCount !== APPROVED_CATEGORIES.length) {
+  problems.push(
+    `manifest: home category count must be ${APPROVED_CATEGORIES.length}`
+  );
 }
 
 function readHexToken(css, tokenName) {

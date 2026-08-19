@@ -3,7 +3,7 @@ title: "Choosing Between an LLC and a Corporation"
 slug: choosing-llc-or-corporation
 publish_date: 2026-08-09T09:00:00Z
 author: The GetLawscope Team
-category: business-law
+category: legal-basics
 tags: [LLC, Corporation, Business Formation]
 featured: true
 status: published

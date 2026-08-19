@@ -1,5 +1,6 @@
 import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { APPROVED_CATEGORIES } from './content-graph.mjs';
 import { fileURLToPath } from 'node:url';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -161,16 +162,7 @@ const requiredPaths = [
   'content/settings/legal-disclaimer.json',
   'js/ad-slots.js',
   'js/newsletter.js',
-  'content/categories/criminal-law.md',
-  'content/categories/family-law.md',
-  'content/categories/business-law.md',
-  'content/categories/employment-law.md',
-  'content/categories/personal-injury.md',
-  'content/categories/real-estate-property-law.md',
-  'content/categories/immigration-law.md',
-  'content/categories/consumer-law.md',
-  'content/categories/civil-rights.md',
-  'content/categories/legal-news-updates.md',
+  ...APPROVED_CATEGORIES.map(({ slug }) => `content/categories/${slug}.md`),
   'content/articles/what-happens-after-an-arrest.md',
   'content/articles/at-will-employment-meaning-and-limits.md',
   'content/articles/security-deposits-common-rules.md',
