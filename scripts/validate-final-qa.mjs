@@ -302,13 +302,22 @@ for (const { html, route } of records) {
     check(Boolean(dialog.attributes.get('aria-labelledby') || dialog.attributes.get('aria-label')), `${route}: dialog lacks a name`);
   }
 }
-const componentCss = await readFile(path.join(generatedRoot, 'css/components.css'), 'utf8');
-const mainCss = await readFile(path.join(generatedRoot, 'css/main.css'), 'utf8');
-const darkCss = await readFile(path.join(generatedRoot, 'css/dark-mode.css'), 'utf8');
+// Served CSS is minified, so these contract checks compare declaration text with
+// insignificant whitespace removed rather than assuming a pretty-printed build.
+const normalizeCssContract = (css) => css.replace(/\s*([:,{};])\s*/g, '$1');
+const componentCss = normalizeCssContract(
+  await readFile(path.join(generatedRoot, 'css/components.css'), 'utf8')
+);
+const mainCss = normalizeCssContract(
+  await readFile(path.join(generatedRoot, 'css/main.css'), 'utf8')
+);
+const darkCss = normalizeCssContract(
+  await readFile(path.join(generatedRoot, 'css/dark-mode.css'), 'utf8')
+);
 check(componentCss.includes(':focus-visible'), 'Component styles must expose visible keyboard focus');
-check(componentCss.includes('min-block-size: var(--size-touch-target)'), 'Interactive controls must use the logical 44px target token');
-check(componentCss.includes('prefers-reduced-motion: reduce'), 'Components must respect reduced motion');
-check(mainCss.includes('--size-touch-target: 2.75rem'), 'The touch-target token must remain 44px');
+check(componentCss.includes('min-block-size:var(--size-touch-target)'), 'Interactive controls must use the logical 44px target token');
+check(componentCss.includes('prefers-reduced-motion:reduce'), 'Components must respect reduced motion');
+check(mainCss.includes('--size-touch-target:2.75rem'), 'The touch-target token must remain 44px');
 check(darkCss.includes('[data-theme="dark"]'), 'Dark theme styles must remain available');
 record('Accessible names, ARIA references, form labels, image alternatives/dimensions, focus, touch, themes, and reduced motion');
 

@@ -87,6 +87,7 @@ const requiredPaths = [
   'scripts/site-settings.mjs',
   'scripts/preview.mjs',
   'js/header.js',
+  'js/deferred-styles.js',
   'js/theme.js',
   'js/consent.js',
   'js/analytics-config.js',

@@ -14,14 +14,17 @@
       href="/articles/{{ARTICLE_SLUG}}/"
       aria-label="Read {{ARTICLE_TITLE}}"
     >
-      <img
-        class="category-featured__image"
-        src="{{IMAGE_SOURCE}}"
-        width="{{IMAGE_WIDTH}}"
-        height="{{IMAGE_HEIGHT}}"
-        alt="{{IMAGE_ALT}}"
-        decoding="async"
-      >
+      <picture>
+        <source srcset="{{IMAGE_SOURCE_WEBP}}" type="image/webp">
+        <img
+          class="category-featured__image"
+          src="{{IMAGE_SOURCE}}"
+          width="{{IMAGE_WIDTH}}"
+          height="{{IMAGE_HEIGHT}}"
+          alt="{{IMAGE_ALT}}"
+          decoding="async"
+        >
+      </picture>
     </a>
     <div class="category-featured__content">
       <span class="category-badge">{{CATEGORY_NAME}}</span>

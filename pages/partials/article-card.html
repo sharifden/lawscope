@@ -10,15 +10,18 @@
     href="/articles/{{ARTICLE_SLUG}}/"
     aria-label="Read {{ARTICLE_TITLE}}"
   >
-    <img
-      class="article-card__image"
-      src="{{IMAGE_SOURCE}}"
-      width="{{IMAGE_WIDTH}}"
-      height="{{IMAGE_HEIGHT}}"
-      alt="{{IMAGE_ALT}}"
-      loading="lazy"
-      decoding="async"
-    >
+    <picture>
+      <source srcset="{{IMAGE_SOURCE_WEBP}}" type="image/webp">
+      <img
+        class="article-card__image"
+        src="{{IMAGE_SOURCE}}"
+        width="{{IMAGE_WIDTH}}"
+        height="{{IMAGE_HEIGHT}}"
+        alt="{{IMAGE_ALT}}"
+        loading="lazy"
+        decoding="async"
+      >
+    </picture>
   </a>
 
   <div class="article-card__content">

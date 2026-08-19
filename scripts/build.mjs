@@ -1,5 +1,6 @@
 import { access, cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
   loadCategories,
@@ -104,6 +105,11 @@ const publicPaths = [
   'assets',
   'css',
   'js'
+];
+
+const publicRootFiles = [
+  'favicon.ico',
+  'apple-touch-icon.png'
 ];
 
 async function exists(targetPath) {
@@ -364,6 +370,7 @@ async function renderArticleCard(articleCardTemplate, article) {
     PUBLISH_DATE_DISPLAY: formatPublishDate(publishDate),
     UPDATED_DATE_ISO: updatedDate ? updatedDate.toISOString() : '',
     IMAGE_SOURCE: article.featured_image,
+    IMAGE_SOURCE_WEBP: webpVariantPath(article.featured_image),
     IMAGE_WIDTH: imageDimensions.width,
     IMAGE_HEIGHT: imageDimensions.height,
     IMAGE_ALT: article.featured_image_alt
@@ -541,6 +548,7 @@ async function renderCategoryFeaturedArticle(featuredTemplate, article) {
     PUBLISH_DATE_ISO: publishDate.toISOString(),
     PUBLISH_DATE_DISPLAY: formatPublishDate(publishDate),
     IMAGE_SOURCE: article.featured_image,
+    IMAGE_SOURCE_WEBP: webpVariantPath(article.featured_image),
     IMAGE_WIDTH: imageDimensions.width,
     IMAGE_HEIGHT: imageDimensions.height,
     IMAGE_ALT: article.featured_image_alt
@@ -755,6 +763,202 @@ async function renderArticlesFeed(page, articleCardTemplate, articlesAdSlotHtml,
   return cardHtml.join('\n');
 }
 
+function webpVariantPath(imagePath) {
+  const source = String(imagePath || '');
+  return source.endsWith('.jpg') ? `${source.slice(0, -4)}.webp` : source;
+}
+
+function minifyCss(source) {
+  const out = [];
+  let index = 0;
+  while (index < source.length) {
+    const character = source[index];
+    if (character === '/' && source.startsWith('/*', index)) {
+      const end = source.indexOf('*/', index + 2);
+      index = end < 0 ? source.length : end + 2;
+      continue;
+    }
+    if (character === '"' || character === "'") {
+      let cursor = index + 1;
+      while (cursor < source.length) {
+        if (source[cursor] === '\\') {
+          cursor += 2;
+          continue;
+        }
+        if (source[cursor] === character) {
+          cursor += 1;
+          break;
+        }
+        cursor += 1;
+      }
+      out.push(source.slice(index, cursor));
+      index = cursor;
+      continue;
+    }
+    if (/\s/.test(character)) {
+      let cursor = index;
+      while (cursor < source.length && /\s/.test(source[cursor])) cursor += 1;
+      const previous = out.length > 0 ? out[out.length - 1].slice(-1) : '';
+      const next = cursor < source.length ? source[cursor] : '';
+      if (previous && next && /[\w%)\]\-_"'*]/.test(previous) && /[\w.#\-_("'[:*]/.test(next)) {
+        out.push(' ');
+      }
+      index = cursor;
+      continue;
+    }
+    out.push(character);
+    index += 1;
+  }
+
+  const minified = out
+    .join('')
+    .replace(/\s*([{};:,>~+])\s*/g, '$1')
+    .replace(/;}/g, '}')
+    .trim();
+
+  const openBraces = (source.match(/{/g) || []).length;
+  if ((minified.match(/{/g) || []).length !== openBraces) {
+    throw new Error('CSS minification changed the rule structure; aborting the build.');
+  }
+  return minified;
+}
+
+function minifyJs(source) {
+  const out = [];
+  let index = 0;
+  let previousSignificant = '';
+  while (index < source.length) {
+    const character = source[index];
+    const pair = source.slice(index, index + 2);
+
+    if (pair === '//') {
+      const end = source.indexOf('\n', index);
+      index = end < 0 ? source.length : end;
+      continue;
+    }
+    if (pair === '/*') {
+      const end = source.indexOf('*/', index + 2);
+      index = end < 0 ? source.length : end + 2;
+      continue;
+    }
+    if (character === '"' || character === "'") {
+      let cursor = index + 1;
+      while (cursor < source.length) {
+        if (source[cursor] === '\\') {
+          cursor += 2;
+          continue;
+        }
+        if (source[cursor] === character) {
+          cursor += 1;
+          break;
+        }
+        cursor += 1;
+      }
+      out.push(source.slice(index, cursor));
+      previousSignificant = source[cursor - 1];
+      index = cursor;
+      continue;
+    }
+    if (character === '`') {
+      let cursor = index + 1;
+      let depth = 0;
+      while (cursor < source.length) {
+        if (source[cursor] === '\\') {
+          cursor += 2;
+          continue;
+        }
+        if (source[cursor] === '`' && depth === 0) {
+          cursor += 1;
+          break;
+        }
+        if (source.startsWith('${', cursor)) {
+          depth += 1;
+          cursor += 2;
+          continue;
+        }
+        if (source[cursor] === '}' && depth > 0) depth -= 1;
+        cursor += 1;
+      }
+      out.push(source.slice(index, cursor));
+      previousSignificant = '`';
+      index = cursor;
+      continue;
+    }
+    if (character === '/' && '(,=:[!&|?{};+-*%~^<>'.includes(previousSignificant)) {
+      let cursor = index + 1;
+      let inClass = false;
+      while (cursor < source.length) {
+        if (source[cursor] === '\\') {
+          cursor += 2;
+          continue;
+        }
+        if (source[cursor] === '[') inClass = true;
+        else if (source[cursor] === ']') inClass = false;
+        else if (source[cursor] === '/' && !inClass) {
+          cursor += 1;
+          break;
+        } else if (source[cursor] === '\n') break;
+        cursor += 1;
+      }
+      out.push(source.slice(index, cursor));
+      previousSignificant = '/';
+      index = cursor;
+      continue;
+    }
+
+    out.push(character);
+    if (!/\s/.test(character)) previousSignificant = character;
+    index += 1;
+  }
+
+  return `${out
+    .join('')
+    .split('\n')
+    .map((line) => line.trim())
+    .join('\n')
+    .replace(/\n{2,}/g, '\n')
+    .trim()}\n`;
+}
+
+async function minifyOutputAssets(directory) {
+  const report = { cssBefore: 0, cssAfter: 0, jsBefore: 0, jsAfter: 0, jsFallbacks: [] };
+
+  const cssDirectory = path.join(directory, 'css');
+  for (const entry of await readdir(cssDirectory, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith('.css')) continue;
+    const filePath = path.join(cssDirectory, entry.name);
+    const source = await readFile(filePath, 'utf8');
+    const minified = minifyCss(source);
+    report.cssBefore += Buffer.byteLength(source, 'utf8');
+    report.cssAfter += Buffer.byteLength(minified, 'utf8');
+    await writeFile(filePath, minified, 'utf8');
+  }
+
+  const jsDirectory = path.join(directory, 'js');
+  const checkDirectory = path.join(directory, '.minify-check');
+  await mkdir(checkDirectory, { recursive: true });
+  for (const entry of await readdir(jsDirectory, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith('.js')) continue;
+    const filePath = path.join(jsDirectory, entry.name);
+    const source = await readFile(filePath, 'utf8');
+    const minified = minifyJs(source);
+    report.jsBefore += Buffer.byteLength(source, 'utf8');
+
+    const probePath = path.join(checkDirectory, entry.name);
+    await writeFile(probePath, minified, 'utf8');
+    const parsed = spawnSync(process.execPath, ['--check', probePath], { encoding: 'utf8' });
+    if (parsed.status === 0) {
+      await writeFile(filePath, minified, 'utf8');
+      report.jsAfter += Buffer.byteLength(minified, 'utf8');
+    } else {
+      report.jsFallbacks.push(entry.name);
+      report.jsAfter += Buffer.byteLength(source, 'utf8');
+    }
+  }
+  await rm(checkDirectory, { recursive: true, force: true });
+  return report;
+}
+
 function outputPathForRoute(route) {
   return path.join(outputDirectory, route.replace(/^\//, ''), 'index.html');
 }
@@ -805,6 +1009,13 @@ for (const publicPath of publicPaths) {
 
   if (await exists(source)) {
     await cp(source, destination, { recursive: true });
+  }
+}
+
+for (const publicFile of publicRootFiles) {
+  const source = path.join(projectRoot, publicFile);
+  if (await exists(source)) {
+    await cp(source, path.join(outputDirectory, publicFile));
   }
 }
 
@@ -895,6 +1106,7 @@ const heroHtml = renderTemplate(heroTemplate, {
   PUBLISH_DATE_ISO: heroPublishDate.toISOString(),
   PUBLISH_DATE_DISPLAY: formatPublishDate(heroPublishDate),
   IMAGE_SOURCE: hero.featured_image,
+  IMAGE_SOURCE_WEBP: webpVariantPath(hero.featured_image),
   IMAGE_WIDTH: heroImageDimensions.width,
   IMAGE_HEIGHT: heroImageDimensions.height,
   IMAGE_ALT: hero.featured_image_alt
@@ -1556,6 +1768,7 @@ const renderedArticlePages = await Promise.all(
         READING_TIME: article.readingTime,
         ARTICLE_UPDATE_NOTE: updatedMetadata.note,
         IMAGE_SOURCE: article.featured_image,
+        IMAGE_SOURCE_WEBP: webpVariantPath(article.featured_image),
         IMAGE_WIDTH: imageDimensions.width,
         IMAGE_HEIGHT: imageDimensions.height,
         IMAGE_CAPTION: renderArticleImageCaption(article),
@@ -2088,6 +2301,8 @@ await writeFile(
   'utf8'
 );
 
+const assetMinification = await minifyOutputAssets(outputDirectory);
+
 const siteVerification = await injectSiteVerificationTag(
   outputDirectory,
   resolveGoogleSiteVerification(siteSettings)
@@ -2126,6 +2341,13 @@ console.log(
 );
 console.log(
   `Sitemap and robots: ${sitemap.entries.length} indexable canonical URLs; ${deploymentEnvironment === 'production' ? 'production crawler guidance' : 'nonproduction crawl blocking'} emitted.`
+);
+console.log(
+  `Asset minification: CSS ${assetMinification.cssBefore} → ${assetMinification.cssAfter} bytes; JS ${assetMinification.jsBefore} → ${assetMinification.jsAfter} bytes${
+    assetMinification.jsFallbacks.length > 0
+      ? `; kept original source for ${assetMinification.jsFallbacks.join(', ')}`
+      : ''
+  }.`
 );
 console.log(
   siteVerification.token

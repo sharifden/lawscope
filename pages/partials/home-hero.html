@@ -29,15 +29,18 @@
       href="/articles/{{HERO_SLUG}}/"
       aria-label="Read {{HERO_TITLE}}"
     >
-      <img
-        class="home-hero__image"
-        src="{{IMAGE_SOURCE}}"
-        width="{{IMAGE_WIDTH}}"
-        height="{{IMAGE_HEIGHT}}"
-        alt="{{IMAGE_ALT}}"
-        decoding="async"
-        fetchpriority="high"
-      >
+      <picture>
+        <source srcset="{{IMAGE_SOURCE_WEBP}}" type="image/webp">
+        <img
+          class="home-hero__image"
+          src="{{IMAGE_SOURCE}}"
+          width="{{IMAGE_WIDTH}}"
+          height="{{IMAGE_HEIGHT}}"
+          alt="{{IMAGE_ALT}}"
+          decoding="async"
+          fetchpriority="high"
+        >
+      </picture>
     </a>
   </figure>
 </section>
