@@ -47,7 +47,7 @@ Compare each request with the original filing and the applicable eligibility req
 
 A Notice of Intent to Deny, Revoke, Rescind, or Terminate signals a potentially adverse action and gives the recipient an opportunity to respond under the stated procedure. These notices can raise legal or factual issues that differ from a routine evidence request.
 
-Because the consequences may be serious, consider prompt help from a licensed immigration attorney or an accredited representative recognized by the U.S. Department of Justice. Avoid unlicensed “notarios” or consultants who are not authorized to provide legal advice.
+Because the consequences may be serious, consider prompt help from a [licensed immigration attorney](/categories/legal-basics/) or an accredited representative recognized by the U.S. Department of Justice. Avoid unlicensed “notarios” or consultants who are not authorized to provide legal advice.
 
 ## Transfer, approval, and denial notices
 
@@ -57,7 +57,7 @@ A denial notice should state reasons and may describe a motion, appeal, or other
 
 ## Address changes and fraud awareness
 
-Keep USCIS informed of an address change through the required official process; postal forwarding alone may not update agency records. Preserve confirmation of the change and continue monitoring case communications.
+Keep USCIS informed of an address change through the required official process; postal forwarding alone may not update agency records. [Preserve confirmation of the change](/articles/preserving-evidence-after-an-injury/) and continue monitoring case communications.
 
 USCIS notices should not direct payment through gift cards, cryptocurrency, or informal transfers. Verify suspicious communications using official USCIS contact tools rather than contact details supplied only by the suspicious message.
 

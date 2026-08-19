@@ -22,7 +22,7 @@ sources:
 
 ## Confirm the document
 
-Before interpreting a court decision, identify the court, date, case name, citation or docket number, and document type. A majority opinion, order, dissent, concurrence, trial-court ruling, and party brief do not carry the same meaning or authority.
+Before interpreting a court decision, identify the [court](/categories/legal-basics/), date, case name, citation or docket number, and document type. A majority opinion, [order](/articles/child-custody-orders-common-factors/), dissent, concurrence, trial-court ruling, and party brief do not carry the same meaning or authority.
 
 Use an official court source when available. Online summaries and headlines can help locate a case, but they may omit procedural details, later corrections, or limits in the opinion itself.
 

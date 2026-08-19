@@ -42,7 +42,7 @@ A deposit generally should not become an automatic renovation fund. At the same 
 
 Depending on the jurisdiction and lease, a landlord may be able to deduct unpaid rent, legally chargeable cleaning costs, repair costs for tenant-caused damage, or other specified amounts. Some places restrict particular fees or require that charges be reasonably related to actual loss.
 
-An itemized statement commonly identifies each deduction and the amount. Receipts, estimates, invoices, photographs, and rent records can help explain the calculation. Requirements differ on whether documents must be sent automatically or only upon request.
+An itemized statement commonly identifies each deduction and the amount. Receipts, estimates, invoices, [photographs](/articles/preserving-evidence-after-an-injury/), and rent records can help explain the calculation. Requirements differ on whether documents must be sent automatically or only upon request.
 
 ## Return deadlines and addresses
 
@@ -52,7 +52,7 @@ A tenant should provide a reliable forwarding address in a way that can be docum
 
 ## Disputes and next steps
 
-A tenant who disagrees with deductions can send a concise written request identifying the disputed items and attaching relevant records. A landlord can respond with the legal and factual basis for each charge. Clear correspondence sometimes resolves a disagreement without court.
+A tenant who disagrees with deductions can send a concise written request identifying the disputed items and attaching relevant records. A landlord can respond with the legal and factual basis for each charge. Clear correspondence sometimes resolves a disagreement [without court](/articles/how-to-read-a-court-decision/).
 
 If the dispute continues, options may include a housing agency, mediation, legal-aid organization, consumer-protection office, or small-claims court. Some statutes allow additional damages or attorney’s fees when a deposit is wrongfully withheld, while others impose specific notice requirements before suit.
 
