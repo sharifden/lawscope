@@ -5,6 +5,7 @@ import path from 'node:path';
 import { brotliCompressSync, constants as zlibConstants } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { createPreviewServer } from './preview.mjs';
+import { ARTICLES_PAGE_SIZE } from './articles-page.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const generatedRoot = process.env.LAWSCOPE_OUTPUT_DIR
@@ -171,11 +172,16 @@ const publicRouteFiles = allGeneratedFiles
   })
   .sort();
 
-// 9 fixed routes + one per approved category + one per published article.
+// Eight fixed routes + one article-listing page beyond the first + one per
+// approved category + one per published article.
+const publishedArticleCount = (
+  await loadPublishedArticles(projectRoot, new Date())
+).length;
 const expectedPublicRouteCount =
-  9 +
+  8 +
+  (Math.max(1, Math.ceil(publishedArticleCount / ARTICLES_PAGE_SIZE)) - 1) +
   APPROVED_CATEGORIES.length +
-  (await loadPublishedArticles(projectRoot, new Date())).length;
+  publishedArticleCount;
 assert.equal(
   publicRouteFiles.length,
   expectedPublicRouteCount,

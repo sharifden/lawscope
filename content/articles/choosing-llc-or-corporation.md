@@ -31,7 +31,7 @@ An LLC is owned by one or more members. State law and an operating agreement can
 
 A [corporation is owned by shareholders](/categories/legal-basics/). Shareholders elect directors, and directors oversee major decisions and appoint officers to manage daily operations. Corporate bylaws, resolutions, stock records, and meeting or consent procedures create a more standardized governance system.
 
-That formality can be useful when ownership will change or outside investors expect familiar rights. A small owner-managed business may prefer the contractual flexibility of an LLC, but it still benefits from [clear records](/articles/preserving-evidence-after-an-injury/) and a thorough operating agreement.
+That formality can be useful when ownership will change or outside investors expect familiar rights. A small owner-managed business may prefer the contractual flexibility of an LLC, but it still benefits from clear records and a thorough operating agreement.
 
 ## Liability protection has limits
 

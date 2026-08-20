@@ -106,15 +106,21 @@ const expectedArticles = selectLatestArticles(publishedArticles, {
   limit: 6
 });
 const expectedSlugs = expectedArticles.map((article) => article.slug);
+const expectedLatestCount = Math.min(
+  6,
+  publishedArticles.length - preferredExclusions.length
+);
 
-if (expectedArticles.length !== 6) {
-  problems.push(`selection: expected six latest entries, received ${expectedArticles.length}`);
+if (expectedArticles.length !== expectedLatestCount) {
+  problems.push(
+    `selection: expected ${expectedLatestCount} latest entries, received ${expectedArticles.length}`
+  );
 }
 if (new Set(expectedSlugs).size !== expectedSlugs.length) {
   problems.push('selection: latest entries contain duplicate slugs');
 }
 if (expectedSlugs.some((slug) => preferredExclusions.includes(slug))) {
-  problems.push('selection: hero or displayed Featured Article repeated despite six alternatives');
+  problems.push('selection: hero or displayed Featured Article repeated despite eligible alternatives');
 }
 for (let index = 1; index < expectedArticles.length; index += 1) {
   if (Date.parse(expectedArticles[index - 1].publish_date) < Date.parse(expectedArticles[index].publish_date)) {
@@ -164,12 +170,12 @@ const preferredOnly = selectLatestArticles(exclusionFixture, {
 if (JSON.stringify(preferredOnly) !== JSON.stringify(['guide-1', 'guide-2', 'guide-3'])) {
   problems.push('selection fixture: avoidable hero/featured duplication was not excluded');
 }
-const fallbackFill = selectLatestArticles(exclusionFixture, {
+const strictExclusion = selectLatestArticles(exclusionFixture, {
   excludeSlugs: ['guide-0', 'guide-1', 'guide-2', 'guide-3'],
   limit: 3
 }).map((article) => article.slug);
-if (JSON.stringify(fallbackFill) !== JSON.stringify(['guide-4', 'guide-0', 'guide-1'])) {
-  problems.push('selection fixture: fallback did not fill from newest excluded entries');
+if (JSON.stringify(strictExclusion) !== JSON.stringify(['guide-4'])) {
+  problems.push('selection fixture: excluded hero/featured entries must never fill the latest grid');
 }
 if (selectLatestArticles([], { limit: 6 }).length !== 0) {
   problems.push('selection fixture: empty article input must produce an empty latest selection');
@@ -285,7 +291,7 @@ if (JSON.stringify(manifest.latestPreferredExclusionSlugs) !== JSON.stringify(pr
   problems.push('manifest: latest preferred exclusions do not match hero/featured display');
 }
 if (!Array.isArray(manifest.latestRepeatedSlugs) || manifest.latestRepeatedSlugs.length !== 0) {
-  problems.push('manifest: current six-card selection should not repeat hero/featured entries');
+  problems.push('manifest: current latest selection should not repeat hero/featured entries');
 }
 
 if (problems.length > 0) {
@@ -298,5 +304,5 @@ console.log(
   `Latest Articles validation passed (${partialContracts.length + buildContracts.length + cssContracts.length} source contracts checked).`
 );
 console.log(
-  `Rendered ${expectedArticles.length} newest eligible non-duplicate cards in deterministic order; draft/future, tie-break, fallback-fill, empty, and fewer-entry fixtures passed.`
+  `Rendered ${expectedArticles.length} newest eligible non-duplicate cards in deterministic order; draft/future, tie-break, exclusion, empty, and fewer-entry fixtures passed.`
 );

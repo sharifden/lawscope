@@ -2103,7 +2103,7 @@ function newestArticleLastmod(articles) {
   );
   return sorted.length > 0
     ? resolveArticleSitemapLastmod(sorted[0])
-    : TRUST_PAGE_MODIFICATION_DATE;
+    : null;
 }
 
 const libraryLastmod = newestArticleLastmod(publishedArticles);
@@ -2145,7 +2145,7 @@ const seoRouteRecords = [
     seo,
     robotsDirective: seo.robotsDirective,
     sitemapType: page.pageNumber === 1 ? 'category' : 'category-pagination',
-    lastmod: categoryLastmodBySlug.get(page.categorySlug) ?? libraryLastmod
+    lastmod: categoryLastmodBySlug.get(page.categorySlug) ?? null
   })),
   ...renderedArticlePages.map(({ model, seo }) => ({
     route: model.route,
