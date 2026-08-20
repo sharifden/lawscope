@@ -12,6 +12,7 @@ import path from 'node:path';
 import { APPROVED_CATEGORIES, loadPublishedArticles } from './content-graph.mjs';
 import { fileURLToPath } from 'node:url';
 import { readJpegDimensions } from './content-graph.mjs';
+import { ARTICLES_PAGE_SIZE } from './articles-page.mjs';
 import {
   LEGACY_REDIRECT_POLICY,
   SEO_POLICY,
@@ -27,14 +28,21 @@ const projectRoot = path.resolve(scriptDirectory, '..');
 const configuredOutputDirectory = process.env.LAWSCOPE_OUTPUT_DIR
   ? path.resolve(process.env.LAWSCOPE_OUTPUT_DIR)
   : path.join(projectRoot, 'generated');
-// Fixed routes (home, /articles/, /articles/page/2/, /categories/, about, contact,
-// editorial-policy, privacy-policy, legal-disclaimer) + one route per category + one per article.
+// Eight fixed routes (home, /articles/, /categories/, about, contact,
+// editorial-policy, privacy-policy, legal-disclaimer) + one article-listing
+// page beyond the first + one route per category + one per published article.
 const PUBLISHED_ARTICLE_COUNT = (
   await loadPublishedArticles(projectRoot, new Date())
 ).length;
-const FIXED_ROUTE_COUNT = 9;
+const ARTICLE_LISTING_PAGE_COUNT = Math.max(
+  1,
+  Math.ceil(PUBLISHED_ARTICLE_COUNT / ARTICLES_PAGE_SIZE)
+);
 const EXPECTED_ROUTE_COUNT =
-  FIXED_ROUTE_COUNT + APPROVED_CATEGORIES.length + PUBLISHED_ARTICLE_COUNT;
+  8 +
+  (ARTICLE_LISTING_PAGE_COUNT - 1) +
+  APPROVED_CATEGORIES.length +
+  PUBLISHED_ARTICLE_COUNT;
 const INDEX_DIRECTIVE = 'index, follow';
 const NOINDEX_DIRECTIVE = 'noindex, nofollow';
 const REQUIRED_META_PROPERTIES = [

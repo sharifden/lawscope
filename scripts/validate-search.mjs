@@ -569,14 +569,14 @@ await flushAsync();
 contract(harness.results.dataset.searchState === 'idle', 'Loaded index with no query must return to instructions.');
 contract(harness.results.getAttribute('aria-busy') === 'false', 'Settled search must clear aria-busy.');
 
-let links = await searchFor(harness, 'read court decision framework');
+let links = await searchFor(harness, 'child custody orders factors');
 contract(harness.results.dataset.searchState === 'results', 'Title query must produce results.');
-contract(links.length === 1, 'Court-decision title query must resolve one baseline guide.');
-contract(links[0].href.includes('how-to-read-a-court-decision'), 'Title query must rank the matching article.');
-links = await searchFor(harness, 'personal injury');
+contract(links.length === 1, 'Custody-orders title query must resolve one baseline guide.');
+contract(links[0].href.includes('child-custody-orders-common-factors'), 'Title query must rank the matching article.');
+links = await searchFor(harness, 'legal basics');
 contract(
-  links.length === 1 && links[0].href.includes('preserving-evidence-after-an-injury'),
-  'Category matching must work.'
+  links.length === 6 && links.every((link) => link.href.includes('/articles/')),
+  'Category matching must work across the full library.'
 );
 links = await searchFor(harness, 'parenting plans');
 contract(links.length === 1 && links[0].href.includes('child-custody'), 'Tag matching must work.');

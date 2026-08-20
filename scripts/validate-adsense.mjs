@@ -48,10 +48,18 @@ async function buildFixture(environment, variables) {
       },
       maxBuffer: 10 * 1024 * 1024
     });
+    const fixturePagination = JSON.parse(
+      await readFile(path.join(outputDirectory, 'data/articles-pagination.json'), 'utf8')
+    );
+    const listingPageRoutes = [
+      'articles/index.html',
+      ...fixturePagination.pages
+        .slice(1)
+        .map((page) => `articles/page/${page.pageNumber}/index.html`)
+    ];
     const routes = [
       'index.html',
-      'articles/index.html',
-      'articles/page/2/index.html',
+      ...listingPageRoutes,
       'categories/index.html',
       'categories/legal-basics/index.html',
       'articles/what-happens-after-an-arrest/index.html',
@@ -404,16 +412,24 @@ for (const [name, relativePath] of excludedRoutes) {
   check(!html.includes('pagead2.googlesyndication.com'), `generated ${name}: provider URL must be excluded`);
 }
 
-const [homeHtml, articlesHtml, articlesPageTwoHtml, categoriesHtml, articleHtml] = await Promise.all([
+const paginationManifest = JSON.parse(
+  await readFile(path.join(generatedRoot, 'data/articles-pagination.json'), 'utf8')
+);
+const [homeHtml, articlesHtml, categoriesHtml, articleHtml] = await Promise.all([
   readFile(path.join(generatedRoot, 'index.html'), 'utf8'),
   readFile(path.join(generatedRoot, 'articles/index.html'), 'utf8'),
-  readFile(path.join(generatedRoot, 'articles/page/2/index.html'), 'utf8'),
   readFile(path.join(generatedRoot, 'categories/index.html'), 'utf8'),
   readFile(path.join(generatedRoot, 'articles/what-happens-after-an-arrest/index.html'), 'utf8')
 ]);
 check((homeHtml.match(/data-ad-unit-key="home_below_featured"/g) || []).length === 1, 'placement: home unit missing or duplicated');
 check((articlesHtml.match(/data-ad-unit-key="articles_in_feed"/g) || []).length === 1, 'placement: articles in-feed unit missing or duplicated');
-check(!articlesPageTwoHtml.includes('data-ad-unit-key='), 'placement: later articles pagination page must not contain inventory');
+if (paginationManifest.totalPages > 1) {
+  const articlesPageTwoHtml = await readFile(
+    path.join(generatedRoot, 'articles/page/2/index.html'),
+    'utf8'
+  );
+  check(!articlesPageTwoHtml.includes('data-ad-unit-key='), 'placement: later articles pagination page must not contain inventory');
+}
 check((categoriesHtml.match(/data-ad-unit-key="categories_overview"/g) || []).length === 1, 'placement: categories overview unit missing or duplicated');
 for (const unitKey of ['article_sidebar', 'article_mid', 'article_end']) {
   check((articleHtml.match(new RegExp(`data-ad-unit-key="${unitKey}"`, 'g')) || []).length === 1, `placement: ${unitKey} missing or duplicated`);

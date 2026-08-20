@@ -57,7 +57,7 @@ A denial notice should state reasons and may describe a motion, appeal, or other
 
 ## Address changes and fraud awareness
 
-Keep USCIS informed of an address change through the required official process; postal forwarding alone may not update agency records. [Preserve confirmation of the change](/articles/preserving-evidence-after-an-injury/) and continue monitoring case communications.
+Keep USCIS informed of an address change through the required official process; postal forwarding alone may not update agency records. Preserve confirmation of the change and continue monitoring case communications.
 
 USCIS notices should not direct payment through gift cards, cryptocurrency, or informal transfers. Verify suspicious communications using official USCIS contact tools rather than contact details supplied only by the suspicious message.
 

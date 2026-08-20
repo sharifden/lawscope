@@ -6,6 +6,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { ARTICLES_PAGE_SIZE } from './articles-page.mjs';
 import {
   ANALYTICS_EVENTS,
   GA4_PLACEHOLDER_MEASUREMENT_ID,
@@ -361,11 +362,16 @@ assert.ok(buildSource.includes('ARTICLE_SLUG: article.slug'));
 assert.ok(buildSource.includes('resolveAnalyticsFeatureState'));
 assert.ok(buildSource.includes("'data', 'analytics-manifest.json'"));
 
-// 9 fixed routes + one per approved category + one per published article.
+// Eight fixed routes + one article-listing page beyond the first + one per
+// approved category + one per published article.
+const PUBLISHED_ARTICLE_COUNT = (
+  await loadPublishedArticles(projectRoot, new Date())
+).length;
 const EXPECTED_CANONICAL_ROUTE_COUNT =
-  9 +
+  8 +
+  (Math.max(1, Math.ceil(PUBLISHED_ARTICLE_COUNT / ARTICLES_PAGE_SIZE)) - 1) +
   APPROVED_CATEGORIES.length +
-  (await loadPublishedArticles(projectRoot, new Date())).length;
+  PUBLISHED_ARTICLE_COUNT;
 const publicHtmlPaths = await collectPublicHtml(generatedRoot);
 const expectedPublicHtmlCount = EXPECTED_CANONICAL_ROUTE_COUNT + 1;
 assert.equal(

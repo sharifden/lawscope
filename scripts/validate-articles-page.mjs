@@ -21,7 +21,6 @@ const [
   helperSource,
   componentCss,
   pageOneHtml,
-  pageTwoHtml,
   paginationManifest,
   categories,
   publishedArticles
@@ -33,7 +32,6 @@ const [
   readFile(path.join(projectRoot, 'scripts/articles-page.mjs'), 'utf8'),
   readFile(path.join(projectRoot, 'css/components.css'), 'utf8'),
   readFile(path.join(projectRoot, 'generated/articles/index.html'), 'utf8'),
-  readFile(path.join(projectRoot, 'generated/articles/page/2/index.html'), 'utf8'),
   readFile(path.join(projectRoot, 'generated/data/articles-pagination.json'), 'utf8').then(JSON.parse),
   loadCategories(projectRoot),
   loadPublishedArticles(projectRoot, new Date('2026-08-15T23:59:59Z'))
@@ -251,18 +249,35 @@ if (new Set(manifestSlugs).size !== manifestSlugs.length) {
   problems.push('pagination manifest: an article appears on more than one listing page');
 }
 if (
-  paginationManifest.pages[0]?.route !== '/articles/' ||
-  paginationManifest.pages[1]?.route !== '/articles/page/2/' ||
-  paginationManifest.pages[0]?.nextRoute !== '/articles/page/2/' ||
-  paginationManifest.pages[1]?.previousRoute !== '/articles/'
+  paginationManifest.pages.length !== expectedPages.length ||
+  paginationManifest.pages.some((page, index) => {
+    const expected = expectedPages[index];
+    return (
+      page.route !== expected.route ||
+      page.previousRoute !== expected.previousRoute ||
+      page.nextRoute !== expected.nextRoute
+    );
+  })
 ) {
-  problems.push('pagination manifest: expected stable page 1/page 2 route graph');
+  problems.push('pagination manifest: page routes or Previous/Next graph are incorrect');
 }
 
-const generatedPages = [
-  { html: pageOneHtml, label: 'generated /articles/', pageNumber: 1, expectedCardCount: 9 },
-  { html: pageTwoHtml, label: 'generated /articles/page/2/', pageNumber: 2, expectedCardCount: 1 }
-];
+const generatedPageHtmlByRoute = new Map([[expectedPages[0].route, pageOneHtml]]);
+for (const expectedPage of expectedPages.slice(1)) {
+  generatedPageHtmlByRoute.set(
+    expectedPage.route,
+    await readFile(
+      path.join(projectRoot, `generated/articles/page/${expectedPage.pageNumber}/index.html`),
+      'utf8'
+    )
+  );
+}
+const generatedPages = expectedPages.map((expectedPage) => ({
+  html: generatedPageHtmlByRoute.get(expectedPage.route),
+  label: `generated ${expectedPage.route}`,
+  pageNumber: expectedPage.pageNumber,
+  expectedCardCount: expectedPage.items.length
+}));
 for (const { html, label, pageNumber, expectedCardCount } of generatedPages) {
   const staticResults = activeResultsMarkup(html, label);
   if (/{{[A-Z0-9_]+}}/.test(html)) problems.push(`${label}: unresolved build token`);
@@ -305,35 +320,49 @@ for (const { html, label, pageNumber, expectedCardCount } of generatedPages) {
   assertUniqueIds(html, label);
 }
 
+const pageOneRange = expectedPages[0].firstItemNumber === expectedPages[0].lastItemNumber
+  ? `Page 1 displays article ${expectedPages[0].firstItemNumber}.`
+  : `Page 1 displays articles ${expectedPages[0].firstItemNumber}–${expectedPages[0].lastItemNumber}.`;
 requireFragments(pageOneHtml, [
   '<title>U.S. Law Articles &amp; Legal Guides | Lawscope</title>',
   '<link rel="canonical" href="https://getlawscope.com/articles/">',
-  '<link rel="next" href="https://getlawscope.com/articles/page/2/">',
-  'Page 1 displays articles 1–9.',
-  'href="/articles/page/2/" rel="next"',
+  pageOneRange,
   'aria-label="Page 1, current page"',
-  'aria-label="Go to page 2"',
   'data-ad-slot="articles-in-feed"',
   'data-ad-feature-enabled="false"',
   'data-ad-state="disabled"',
   'aria-label="Advertisement"'
 ], 'generated /articles/');
-requireFragments(pageTwoHtml, [
-  '<title>U.S. Law Articles &amp; Legal Guides – Page 2 | Lawscope</title>',
-  '<link rel="canonical" href="https://getlawscope.com/articles/page/2/">',
-  '<link rel="prev" href="https://getlawscope.com/articles/">',
-  'Page 2 displays article 10.',
-  '<li class="breadcrumb__item"><a href="/articles/">Articles</a></li>',
-  '<li class="breadcrumb__item" aria-current="page">Page 2</li>',
-  'href="/articles/" rel="prev"',
-  'aria-label="Page 2, current page"'
-], 'generated /articles/page/2/');
+if (expectedPages.length > 1) {
+  requireFragments(pageOneHtml, [
+    '<link rel="next" href="https://getlawscope.com/articles/page/2/">',
+    'href="/articles/page/2/" rel="next"',
+    'aria-label="Go to page 2"'
+  ], 'generated /articles/');
+}
+for (const expectedPage of expectedPages.slice(1)) {
+  const pageRange = expectedPage.firstItemNumber === expectedPage.lastItemNumber
+    ? `Page ${expectedPage.pageNumber} displays article ${expectedPage.firstItemNumber}.`
+    : `Page ${expectedPage.pageNumber} displays articles ${expectedPage.firstItemNumber}–${expectedPage.lastItemNumber}.`;
+  requireFragments(generatedPageHtmlByRoute.get(expectedPage.route), [
+    `U.S. Law Articles &amp; Legal Guides – Page ${expectedPage.pageNumber} | Lawscope`,
+    `<link rel="canonical" href="https://getlawscope.com${expectedPage.route}">`,
+    `<link rel="prev" href="https://getlawscope.com${expectedPage.previousRoute}">`,
+    pageRange,
+    '<li class="breadcrumb__item"><a href="/articles/">Articles</a></li>',
+    `<li class="breadcrumb__item" aria-current="page">Page ${expectedPage.pageNumber}</li>`,
+    `href="${expectedPage.previousRoute}" rel="prev"`,
+    `aria-label="Page ${expectedPage.pageNumber}, current page"`
+  ], `generated ${expectedPage.route}`);
+}
 
 if (pageOneHtml.includes('<link rel="prev"')) {
   problems.push('generated /articles/: first page must not declare rel=prev');
 }
-if (pageTwoHtml.includes('<link rel="next"')) {
-  problems.push('generated /articles/page/2/: last page must not declare rel=next');
+for (const expectedPage of expectedPages.slice(1)) {
+  if (generatedPageHtmlByRoute.get(expectedPage.route).includes('<link rel="next"')) {
+    problems.push(`generated ${expectedPage.route}: last page must not declare rel=next`);
+  }
 }
 for (const { html, label } of generatedPages) {
   const canonicalMatch = html.match(/<link rel="canonical" href="([^"]+)">/);
@@ -343,7 +372,6 @@ for (const { html, label } of generatedPages) {
 }
 
 const pageOneActiveResults = activeResultsMarkup(pageOneHtml, 'generated /articles/');
-const pageTwoActiveResults = activeResultsMarkup(pageTwoHtml, 'generated /articles/page/2/');
 const adIndex = pageOneActiveResults.indexOf('data-ad-slot="articles-in-feed"');
 const cardsBeforeAd = countMatches(pageOneActiveResults.slice(0, adIndex), /data-article-slug=/g);
 const seventhCardIndex = [...pageOneActiveResults.matchAll(/data-article-slug=/g)][6]?.index ?? -1;
@@ -353,8 +381,13 @@ if (adIndex < 0 || cardsBeforeAd !== 6 || seventhCardIndex < adIndex) {
 if (countMatches(pageOneHtml, /data-ad-slot="articles-in-feed"/g) !== 1) {
   problems.push('generated /articles/: expected exactly one in-feed ad insertion point');
 }
-if (pageTwoHtml.includes('data-ad-slot="articles-in-feed"')) {
-  problems.push('generated /articles/page/2/: short pages must not receive an in-feed ad');
+for (const expectedPage of expectedPages.slice(1)) {
+  if (
+    expectedPage.items.length <= ARTICLES_AD_INSERT_AFTER &&
+    generatedPageHtmlByRoute.get(expectedPage.route).includes('data-ad-slot="articles-in-feed"')
+  ) {
+    problems.push(`generated ${expectedPage.route}: short pages must not receive an in-feed ad`);
+  }
 }
 
 const generatedCategoryOptionValues = [
@@ -368,17 +401,17 @@ if (
   problems.push('generated /articles/: category options must derive from the controlled categories');
 }
 
-const pageOneSlugs = [...pageOneActiveResults.matchAll(/data-article-slug="([^"]+)"/g)].map(
-  (match) => match[1]
-);
-const pageTwoSlugs = [...pageTwoActiveResults.matchAll(/data-article-slug="([^"]+)"/g)].map(
-  (match) => match[1]
-);
-if (
-  pageOneSlugs.join('|') !== expectedPages[0].items.map(({ slug }) => slug).join('|') ||
-  pageTwoSlugs.join('|') !== expectedPages[1].items.map(({ slug }) => slug).join('|')
-) {
-  problems.push('generated cards: static page content differs from the deterministic page models');
+for (const expectedPage of expectedPages) {
+  const html = generatedPageHtmlByRoute.get(expectedPage.route);
+  const activeResults = activeResultsMarkup(html, `generated ${expectedPage.route}`);
+  const renderedSlugs = [...activeResults.matchAll(/data-article-slug="([^"]+)"/g)].map(
+    (match) => match[1]
+  );
+  if (renderedSlugs.join('|') !== expectedPage.items.map(({ slug }) => slug).join('|')) {
+    problems.push(
+      `generated cards: ${expectedPage.route} static content differs from the deterministic page model`
+    );
+  }
 }
 
 for (const articleMatch of pageOneActiveResults.matchAll(/<article[\s\S]*?class="article-card"[\s\S]*?<\/article>/g)) {
@@ -393,12 +426,12 @@ for (const articleMatch of pageOneActiveResults.matchAll(/<article[\s\S]*?class=
   }
 }
 
-const pageOneSchema = parseStructuredData(pageOneHtml, 'generated /articles/');
-const pageTwoSchema = parseStructuredData(pageTwoHtml, 'generated /articles/page/2/');
-for (const [schema, route, itemCount, label] of [
-  [pageOneSchema, 'https://getlawscope.com/articles/', 9, 'generated /articles/'],
-  [pageTwoSchema, 'https://getlawscope.com/articles/page/2/', 1, 'generated /articles/page/2/']
-]) {
+for (const expectedPage of expectedPages) {
+  const html = generatedPageHtmlByRoute.get(expectedPage.route);
+  const label = `generated ${expectedPage.route}`;
+  const route = `https://getlawscope.com${expectedPage.route}`;
+  const itemCount = expectedPage.items.length;
+  const schema = parseStructuredData(html, label);
   if (!schema) continue;
   if (schema['@type'] !== 'CollectionPage' || schema.url !== route) {
     problems.push(`${label}: schema type or canonical URL is incorrect`);

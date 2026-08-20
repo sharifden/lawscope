@@ -28,7 +28,7 @@ Identify the setting before relying on a form or deadline. An employer’s proce
 
 ## A request does not always need special words
 
-In many settings, a person does not need to say “reasonable accommodation” or cite a statute. A communication may be enough if it explains that a change or assistance is needed because of a disability-related limitation. Still, a [clear written request](/articles/preserving-evidence-after-an-injury/) can reduce uncertainty about what was asked and when.
+In many settings, a person does not need to say “reasonable accommodation” or cite a statute. A communication may be enough if it explains that a change or assistance is needed because of a disability-related limitation. Still, a clear written request can reduce uncertainty about what was asked and when.
 
 Identify the policy, practice, environment, schedule, communication method, or other barrier involved. Describe the requested change and how it would help address the limitation. A person does not necessarily need to disclose every detail of a diagnosis.
 

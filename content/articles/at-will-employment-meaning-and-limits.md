@@ -58,7 +58,7 @@ A worker should not assume that every ethical disagreement creates a public-poli
 
 At-will employment does not by itself answer questions about final wages, accrued paid time off, commissions, health coverage, unemployment benefits, or required notice in a large layoff. Different federal and state rules address those topics.
 
-An employee can gather the offer letter, handbook, pay records, benefit notices, performance reviews, disciplinary documents, and relevant communications. [Preserving records lawfully](/articles/preserving-evidence-after-an-injury/) and keeping a factual timeline can help an agency or lawyer assess what happened.
+An employee can gather the offer letter, handbook, pay records, benefit notices, performance reviews, disciplinary documents, and relevant communications. Preserving records lawfully and keeping a factual timeline can help an agency or lawyer assess what happened.
 
 ## The practical takeaway
 

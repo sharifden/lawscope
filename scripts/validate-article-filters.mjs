@@ -5,6 +5,7 @@ import { APPROVED_CATEGORIES } from './content-graph.mjs';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { loadCategories, loadPublishedArticles } from './content-graph.mjs';
+import { ARTICLES_PAGE_SIZE, createArticlesPagination } from './articles-page.mjs';
 import {
   ARTICLE_FILTER_DEFAULT_SORT,
   compareArticleFilterRecords,
@@ -30,7 +31,6 @@ const [
   modelSource,
   componentCss,
   pageOneHtml,
-  pageTwoHtml,
   documentation,
   categories,
   publishedArticles
@@ -42,11 +42,23 @@ const [
   readProjectFile('js/article-filter-model.js'),
   readProjectFile('css/components.css'),
   readProjectFile('generated/articles/index.html'),
-  readProjectFile('generated/articles/page/2/index.html'),
   readProjectFile('docs/module-18-category-filters.md'),
   loadCategories(projectRoot),
   loadPublishedArticles(projectRoot, new Date())
 ]);
+
+const expectedFilterPages = createArticlesPagination(publishedArticles, {
+  pageSize: ARTICLES_PAGE_SIZE
+});
+const generatedFilterPageHtml = new Map([
+  [expectedFilterPages[0].route, pageOneHtml]
+]);
+for (const expectedPage of expectedFilterPages.slice(1)) {
+  generatedFilterPageHtml.set(
+    expectedPage.route,
+    await readProjectFile(`generated/articles/page/${expectedPage.pageNumber}/index.html`)
+  );
+}
 
 let contractCount = 0;
 function contract(condition, message) {
@@ -73,7 +85,7 @@ contract(
   categorySlugs.length === APPROVED_CATEGORIES.length,
   `The controlled CMS graph must expose exactly ${APPROVED_CATEGORIES.length} categories.`
 );
-contract(publishedArticles.length === 10, 'The validation fixture expects all ten published launch articles.');
+contract(publishedArticles.length === 8, 'The validation fixture expects all eight currently published articles.');
 
 includesAll(sourceTemplate, [
   '<script src="/js/article-filters.js" type="module" defer></script>',
@@ -149,10 +161,11 @@ includesAll(componentCss, [
   '@media (prefers-reduced-motion: reduce)'
 ], 'components.css');
 
-for (const [html, route, staticCount, supplementCount] of [
-  [pageOneHtml, 'https://getlawscope.com/articles/', 9, 1],
-  [pageTwoHtml, 'https://getlawscope.com/articles/page/2/', 1, 9]
-]) {
+for (const expectedPage of expectedFilterPages) {
+  const html = generatedFilterPageHtml.get(expectedPage.route);
+  const route = `https://getlawscope.com${expectedPage.route}`;
+  const staticCount = expectedPage.items.length;
+  const supplementCount = publishedArticles.length - staticCount;
   const activeMarkup = extractBetween(
     html,
     'data-article-results',
@@ -309,8 +322,10 @@ for (const categorySlug of categorySlugs) {
     })),
     { q: '', category: categorySlug, sort: 'newest' }
   );
-  contract(result.length > 0, `Controlled category ${categorySlug} must resolve at least one published card.`);
-  contract(result.every((article) => article.category === categorySlug), `${categorySlug} filtering must not leak other categories.`);
+  contract(
+    result.every((article) => article.category === categorySlug),
+    `${categorySlug} filtering must not leak other categories.`
+  );
 }
 
 // Minimal executable controller harness for submit, reset, popstate, and page-2 routing.

@@ -167,14 +167,10 @@ export function selectLatestArticles(
 
   const orderedArticles = [...articles].sort(compareArticles);
   const exclusionSet = new Set(excludeSlugs);
-  const preferredArticles = orderedArticles.filter(
-    (article) => !exclusionSet.has(article.slug)
-  );
-  const fallbackArticles = orderedArticles.filter((article) =>
-    exclusionSet.has(article.slug)
-  );
 
-  return [...preferredArticles, ...fallbackArticles].slice(0, limit);
+  return orderedArticles
+    .filter((article) => !exclusionSet.has(article.slug))
+    .slice(0, limit);
 }
 
 export async function loadCategories(projectRoot) {
